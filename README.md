@@ -1,4 +1,6 @@
 # Flash Planner
+[![Build and Publish](https://github.com/kris701/FlashPlanner/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/kris701/FlashPlanner/actions/workflows/dotnet-desktop.yml)
+
 This is a project that contains a simple planner, operating on a grounded representation.
 You can either use the planner as the C# code or use the CLI interface to get plans.
 The planner expects a grounded representation of a PDDL domain+problem, that can be obtained from the Translator.
