@@ -9,10 +9,6 @@ namespace FlashPlanner.Search.Heuristics
     /// </summary>
     public class hGoal : BaseHeuristic
     {
-        public hGoal()
-        {
-        }
-
         public override int GetValue(StateMove parent, ISASState state, List<Operator> operators)
         {
             Evaluations++;
