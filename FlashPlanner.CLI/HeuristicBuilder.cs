@@ -1,13 +1,7 @@
-﻿using FlashPlanner.Search;
-using FlashPlanner.Search.Heuristics;
-using FlashPlanner.Search.HeuristicsCollections;
-using PDDLSharp.Models.SAS;
+﻿using FlashPlanner.Heuristics;
+using FlashPlanner.HeuristicsCollections;
 using PDDLSharp.Models.PDDL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.CLI
 {

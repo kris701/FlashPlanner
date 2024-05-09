@@ -1,5 +1,18 @@
-# Flash Planner
+
+<p align="center">
+    <img src="https://github.com/kris701/FlashPlanner/assets/22596587/d3f387a6-e0b5-4118-9801-c125a4e64100" width="200" height="200" />
+</p>
+
 [![Build and Publish](https://github.com/kris701/FlashPlanner/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/kris701/FlashPlanner/actions/workflows/dotnet-desktop.yml)
+![Nuget](https://img.shields.io/nuget/v/FlashPlanner)
+![Nuget](https://img.shields.io/nuget/dt/FlashPlanner)
+![GitHub last commit (branch)](https://img.shields.io/github/last-commit/kris701/FlashPlanner/main)
+![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/m/kris701/FlashPlanner)
+![Static Badge](https://img.shields.io/badge/Platform-Windows-blue)
+![Static Badge](https://img.shields.io/badge/Platform-Linux-blue)
+![Static Badge](https://img.shields.io/badge/Framework-dotnet--8.0-green)
+
+# Flash Planner
 
 This is a project that contains a simple planner, operating on a grounded representation.
 You can either use the planner as the C# code or use the CLI interface to get plans.
