@@ -1,0 +1,26 @@
+name: Build and Publish
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  BuildAndTest:
+    runs-on: ubuntu-latest
+    name: Run Tests
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@master
+
+      - name: Clone Benchmarks
+        run: git clone https://github.com/aibasel/downward-benchmarks/ Dependencies/downward-benchmarks
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal

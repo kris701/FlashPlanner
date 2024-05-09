@@ -1,30 +1,39 @@
 # Flash Planner
+This is a project that contains a simple planner, operating on a grounded representation.
+You can either use the planner as the C# code or use the CLI interface to get plans.
+The planner expects a grounded representation of a PDDL domain+problem, that can be obtained from the Translator.
 
-PDDLSharp also includes a small set of simple planners. To get a SAS representation of a [PDDLDecl](../../Models/PDDL/PDDLDecl.cs), please use the [translator](../../Translators/PDDLToSASTranslator.cs) designed for it.
+The following is an example of how to use the CLI interface:
+```
+dotnet run -- --domain domain.pddl --problem p01.pddl --search Classical_BestFirst --heuristic hWeighted(hFF(),10)
+```
+
+## Classical Planners
+
 These planners is able to find solutions for SMALL problems.
 The planners are:
-* [GreedyBFS](./FlashPlanner.Search/Search/Classical/GreedyBFS.cs): Greedy Best First Search
+* [GreedyBFS](FlashPlanner.Search/Search/Classical/GreedyBFS.cs): Greedy Best First Search
 * [GreedyBFSUAR](FlashPlanner.Search/Search/Classical/GreedyBFSUAR.cs): Greedy Best First Search with [Under-Approximation Refinement (UAR)](https://ojs.aaai.org/index.php/ICAPS/article/view/13678)
 * [GreedyBFSPO](FlashPlanner.Search/Search/Classical/GreedyBFSPO.cs): Greedy Best First Search with [Preferred Operators (PO)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf)
 * [GreedyBFSDHE](FlashPlanner.Search/Search/Classical/GreedyBFSDHE.cs): Greedy Best First Search with [Deferred Heuristic Evaluation (DHE)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf)
 
 For these planners, there is a set of heuristics as well.
-* [hConstant](./Heuristics/hConstant.cs): Returns a given constant all the time
-* [hDepth](./Heuristics/hDepth.cs): Simply returns a cost that is 1 lower than its parent
-* [hFF](./Heuristics/hFF.cs): Returns a cost based on a solution to the [relaxed planning graph](https://www.youtube.com/watch?app=desktop&v=7XH60fuMlIM) for the problem
-* [hAdd](./Heuristics/hAdd.cs): Retuns the sum of actions needed to achive every goal fact
-* [hMax](./Heuristics/hMax.cs): Returns the highest amount of actions needed to achive a goal fact.
-* [hGoal](./Heuristics/hGoal.cs): Returns the amount of goals that are achived in the given state, i.e. `h = allGoals - achivedGoals`
-* [hPath](./Heuristics/hPath.cs): Returns the cost of the current branch being evaluated
-* [hWeighted](./Heuristics/hWeighted.cs): Takes one of the previously given heuristics, and weights its result from a constant.
+* [hConstant](FlashPlanner.Search/Heuristics/hConstant.cs): Returns a given constant all the time
+* [hDepth](FlashPlanner.Search/Heuristics/hDepth.cs): Simply returns a cost that is 1 lower than its parent
+* [hFF](FlashPlanner.Search/Heuristics/hFF.cs): Returns a cost based on a solution to the [relaxed planning graph](https://www.youtube.com/watch?app=desktop&v=7XH60fuMlIM) for the problem
+* [hAdd](FlashPlanner.Search/Heuristics/hAdd.cs): Retuns the sum of actions needed to achive every goal fact
+* [hMax](FlashPlanner.Search/Heuristics/hMax.cs): Returns the highest amount of actions needed to achive a goal fact.
+* [hGoal](FlashPlanner.Search/Heuristics/hGoal.cs): Returns the amount of goals that are achived in the given state, i.e. `h = allGoals - achivedGoals`
+* [hPath](FlashPlanner.Search/Heuristics/hPath.cs): Returns the cost of the current branch being evaluated
+* [hWeighted](FlashPlanner.Search/Heuristics/hWeighted.cs): Takes one of the previously given heuristics, and weights its result from a constant.
 
 There are also a set of "collection heuristics" that runs on a set of heuristics:
-* [hColMax](./HeuristicsCollections/hColMax.cs): Gets the highest heuristic value from a set of heuristics
-* [hColSom](./HeuristicsCollections/hColSum.cs): Gets the sum of the heuristic values from a set of heuristics
+* [hColMax](FlashPlanner.Search/HeuristicsCollections/hColMax.cs): Gets the highest heuristic value from a set of heuristics
+* [hColSom](FlashPlanner.Search/HeuristicsCollections/hColSum.cs): Gets the sum of the heuristic values from a set of heuristics
 
 Again do note, that these planners are very inefficient, and will run out of memory with larger problems.
 
-#### Examples
+### Examples
 To find a plan using the Greedy Best First Search engine:
 ```csharp
 PDDLDecl decl = new PDDLDecl(...);
@@ -37,10 +46,10 @@ using (var greedyBFS = new GreedyBFS(sas, new hFF(decl)))
 ```
 
 ## Black Box Planners
-PDDLSharp also includes black box planners. This is a type of planners where the heuristic gets seriously limited, by not allowing it to know any structural knowledge of the domain.
+This is a type of planners where the heuristic gets seriously limited, by not allowing it to know any structural knowledge of the domain.
 
 The current planners are:
-* [GreedyBFS](./Search/BlackBox/GreedyBFS.cs): Greedy Best First Search
-* [GreedyBFSFocused](./Search/BlackBox/GreedyBFSFocused.cs): Greedy Best First Search with [Focused Macros](https://arxiv.org/abs/2004.13242)
+* [GreedyBFS](FlashPlanner.Search/Search/BlackBox/GreedyBFS.cs): Greedy Best First Search
+* [GreedyBFSFocused](FlashPlanner.Search/Search/BlackBox/GreedyBFSFocused.cs): Greedy Best First Search with [Focused Macros](https://arxiv.org/abs/2004.13242). 
 
-This also only support the [hGoal](./Heuristics/hGoal.cs) heuristic
+This also only support the [hGoal](FlashPlanner.Search/Heuristics/hGoal.cs) heuristic
