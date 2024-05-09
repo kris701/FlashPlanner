@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FlashPlanner.Search\FlashPlanner.Search.csproj" />
-    <ProjectReference Include="..\FlashPlanner.Translator\FlashPlanner.Translator.csproj" />
   </ItemGroup>
 
 </Project>

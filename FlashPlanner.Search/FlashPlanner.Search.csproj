@@ -10,8 +10,4 @@
     <PackageReference Include="PDDLSharp" Version="1.5.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\FlashPlanner.Translator\FlashPlanner.Translator.csproj" />
-  </ItemGroup>
-
 </Project>

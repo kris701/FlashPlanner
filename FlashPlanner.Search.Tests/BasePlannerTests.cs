@@ -1,5 +1,4 @@
-﻿using FlashPlanner.Translator;
-using PDDLSharp.ErrorListeners;
+﻿using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
@@ -9,6 +8,7 @@ using PDDLSharp.Models.SAS;
 using PDDLSharp.Parsers;
 using PDDLSharp.Parsers.PDDL;
 using PDDLSharp.Tools;
+using PDDLSharp.Translators;
 using System;
 using System.Collections.Generic;
 using System.Linq;

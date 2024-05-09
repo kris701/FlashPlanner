@@ -1,12 +1,12 @@
 ﻿using CommandLine;
 using CommandLine.Text;
-using FlashPlanner.Translator;
 using PDDLSharp.CodeGenerators.FastDownward.Plans;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
+using PDDLSharp.Translators;
 
 namespace FlashPlanner.CLI
 {
