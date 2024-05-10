@@ -1,7 +1,8 @@
-﻿using FlashPlanner.Tools;
+﻿using FlashPlanner.States;
+using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
-using PDDLSharp.StateSpaces.SAS;
+
 
 namespace FlashPlanner.Search.Classical
 {
@@ -18,7 +19,7 @@ namespace FlashPlanner.Search.Classical
             _graphGenerator = new OperatorRPG(decl);
         }
 
-        internal override ActionPlan? Solve(IHeuristic h, ISASState state)
+        internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
         {
             var preferedOperators = GetPreferredOperators();
             var preferredQueue = InitializeQueue(h, state, preferedOperators);

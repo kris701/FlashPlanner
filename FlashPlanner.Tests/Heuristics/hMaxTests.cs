@@ -1,6 +1,6 @@
 ﻿using FlashPlanner.Heuristics;
+using FlashPlanner.States;
 using FlashPlanner.Tools;
-using PDDLSharp.StateSpaces.SAS;
 using System;
 using System.Collections.Generic;
 using System.Linq;

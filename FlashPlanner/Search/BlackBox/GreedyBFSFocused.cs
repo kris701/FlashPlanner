@@ -1,11 +1,12 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.HeuristicsCollections;
+using FlashPlanner.States;
 using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.SAS;
-using PDDLSharp.StateSpaces.SAS;
+
 using PDDLSharp.Toolkits;
 using PDDLSharp.Translators;
 
@@ -30,7 +31,7 @@ namespace FlashPlanner.Search.BlackBox
             _pddlDecl = pddlDecl.Copy();
         }
 
-        internal override ActionPlan? Solve(IHeuristic h, ISASState state)
+        internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
         {
             Console.WriteLine($"[{GetPassedTime()}s] Learning Macros...");
             var learnedMacros = LearnFocusedMacros(NumberOfMacros, SearchBudget);
@@ -146,13 +147,13 @@ namespace FlashPlanner.Search.BlackBox
 
         private class EffectHeuristic : BaseHeuristic
         {
-            private readonly ISASState _initial;
-            public EffectHeuristic(ISASState initial)
+            private readonly SASStateSpace _initial;
+            public EffectHeuristic(SASStateSpace initial)
             {
                 _initial = initial;
             }
 
-            public override int GetValue(StateMove parent, ISASState state, List<Operator> operators)
+            public override int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
             {
                 Evaluations++;
                 var changed = 0;

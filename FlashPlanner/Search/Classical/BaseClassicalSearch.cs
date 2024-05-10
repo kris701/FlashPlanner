@@ -1,7 +1,7 @@
-﻿using FlashPlanner.Tools;
+﻿using FlashPlanner.States;
+using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
-using PDDLSharp.StateSpaces.SAS;
 using System.Diagnostics;
 using System.Timers;
 
@@ -111,7 +111,7 @@ namespace FlashPlanner.Search.Classical
                 LogTick();
         }
 
-        internal ISASState GenerateNewState(ISASState state, Operator op)
+        internal SASStateSpace GenerateNewState(SASStateSpace state, Operator op)
         {
             Generated++;
             var newState = state.Copy();
@@ -119,7 +119,7 @@ namespace FlashPlanner.Search.Classical
             return newState;
         }
 
-        internal RefPriorityQueue InitializeQueue(IHeuristic h, ISASState state, List<Operator> operators)
+        internal RefPriorityQueue InitializeQueue(IHeuristic h, SASStateSpace state, List<Operator> operators)
         {
             var queue = new RefPriorityQueue();
             var fromMove = new StateMove();
@@ -161,7 +161,7 @@ namespace FlashPlanner.Search.Classical
 
         internal GroundedAction GenerateFromOp(Operator op) => new GroundedAction(op.Name, op.Arguments);
 
-        internal abstract ActionPlan? Solve(IHeuristic h, ISASState state);
+        internal abstract ActionPlan? Solve(IHeuristic h, SASStateSpace state);
 
         public virtual void Dispose()
         {

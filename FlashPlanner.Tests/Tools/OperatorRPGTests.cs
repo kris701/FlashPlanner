@@ -1,4 +1,5 @@
-﻿using FlashPlanner.Tools;
+﻿using FlashPlanner.States;
+using FlashPlanner.Tools;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models;
 using PDDLSharp.Models.PDDL;
@@ -8,7 +9,6 @@ using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Models.SAS;
 using PDDLSharp.Parsers;
 using PDDLSharp.Parsers.PDDL;
-using PDDLSharp.StateSpaces.SAS;
 using PDDLSharp.Tools;
 using System;
 using System.Collections.Generic;

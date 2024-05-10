@@ -1,5 +1,6 @@
-﻿using PDDLSharp.Models.SAS;
-using PDDLSharp.StateSpaces.SAS;
+﻿using FlashPlanner.States;
+using PDDLSharp.Models.SAS;
+
 
 namespace FlashPlanner.Tools
 {
@@ -13,7 +14,7 @@ namespace FlashPlanner.Tools
             Declaration = declaration;
         }
 
-        public List<Operator> GenerateReplaxedPlan(ISASState state, List<Operator> operators)
+        public List<Operator> GenerateReplaxedPlan(SASStateSpace state, List<Operator> operators)
         {
             Failed = false;
             if (state is not RelaxedSASStateSpace)
@@ -104,7 +105,7 @@ namespace FlashPlanner.Tools
             throw new Exception();
         }
 
-        public List<Layer> GenerateRelaxedPlanningGraph(ISASState state, List<Operator> operators)
+        public List<Layer> GenerateRelaxedPlanningGraph(SASStateSpace state, List<Operator> operators)
         {
             state = state.Copy();
             bool[] covered = new bool[operators.Count];

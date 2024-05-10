@@ -1,6 +1,7 @@
-﻿using FlashPlanner.Tools;
+﻿using FlashPlanner.States;
+using FlashPlanner.Tools;
 using PDDLSharp.Models.SAS;
-using PDDLSharp.StateSpaces.SAS;
+
 
 namespace FlashPlanner.Heuristics
 {
@@ -12,7 +13,7 @@ namespace FlashPlanner.Heuristics
             _graphGenerator = new FactRPG();
         }
 
-        public override int GetValue(StateMove parent, ISASState state, List<Operator> operators)
+        public override int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
             Evaluations++;
             var cost = 0;

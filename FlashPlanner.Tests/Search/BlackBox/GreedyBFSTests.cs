@@ -8,6 +8,7 @@ using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Toolkit;
+using PlanVal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace FlashPlanner.Tests.Search.BlackBox
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var planner = new GreedyBFS(decl, new hGoal());
-            var validator = new PDDLSharp.Toolkit.PlanValidators.PlanValidator();
+            var validator = new PlanValidator();
 
             // ACT
             var result = planner.Solve();

@@ -1,8 +1,9 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.Search.Classical;
+using FlashPlanner.States;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
-using PDDLSharp.StateSpaces.SAS;
+
 
 namespace FlashPlanner.Search.BlackBox
 {
@@ -18,7 +19,7 @@ namespace FlashPlanner.Search.BlackBox
             }
         }
 
-        public List<int> GetApplicables(ISASState state)
+        public List<int> GetApplicables(SASStateSpace state)
         {
             var returnList = new List<int>();
             for (int i = 0; i < Declaration.Operators.Count; i++)
@@ -30,7 +31,7 @@ namespace FlashPlanner.Search.BlackBox
             return returnList;
         }
 
-        public ISASState Simulate(ISASState state, int opIndex)
+        public SASStateSpace Simulate(SASStateSpace state, int opIndex)
         {
             Generated++;
             var newState = state.Copy();

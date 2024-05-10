@@ -1,30 +1,31 @@
-﻿using PDDLSharp.Models.SAS;
-using PDDLSharp.StateSpaces.SAS;
+﻿using FlashPlanner.States;
+using PDDLSharp.Models.SAS;
+
 
 namespace FlashPlanner.Tools
 {
     public class StateMove
     {
-        public ISASState State { get; private set; }
+        public SASStateSpace State { get; private set; }
         public List<Operator> Steps { get; set; }
         public int hValue { get; set; }
         public bool Evaluated { get; set; } = true;
 
-        public StateMove(ISASState state, List<Operator> steps)
+        public StateMove(SASStateSpace state, List<Operator> steps)
         {
             State = state;
             Steps = steps;
             hValue = -1;
         }
 
-        public StateMove(ISASState state, int hvalue)
+        public StateMove(SASStateSpace state, int hvalue)
         {
             State = state;
             Steps = new List<Operator>();
             hValue = hvalue;
         }
 
-        public StateMove(ISASState state)
+        public StateMove(SASStateSpace state)
         {
             State = state;
             Steps = new List<Operator>();

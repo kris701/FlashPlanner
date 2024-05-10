@@ -8,7 +8,7 @@ using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Toolkit;
-using PDDLSharp.Toolkit.PlanValidators;
+using PlanVal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +31,7 @@ namespace FlashPlanner.Tests.Search.Classical
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var planner = new GreedyBFSDHE(decl, new hDepth());
-            var validator = new PDDLSharp.Toolkit.PlanValidators.PlanValidator();
+            var validator = new PlanValidator();
 
             // ACT
             var result = planner.Solve();
@@ -50,7 +50,7 @@ namespace FlashPlanner.Tests.Search.Classical
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var planner = new GreedyBFSDHE(decl, new hFF(decl));
-            var validator = new PDDLSharp.Toolkit.PlanValidators.PlanValidator();
+            var validator = new PlanValidator();
 
             // ACT
             var result = planner.Solve();

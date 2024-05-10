@@ -1,7 +1,8 @@
-﻿using FlashPlanner.Tools;
+﻿using FlashPlanner.States;
+using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
-using PDDLSharp.StateSpaces.SAS;
+
 
 namespace FlashPlanner.Search.BlackBox
 {
@@ -11,7 +12,7 @@ namespace FlashPlanner.Search.BlackBox
         {
         }
 
-        internal override ActionPlan? Solve(IHeuristic h, ISASState state)
+        internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
         {
             while (!Aborted && _openList.Count > 0)
             {
