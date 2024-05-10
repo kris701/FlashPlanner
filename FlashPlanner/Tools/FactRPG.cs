@@ -7,15 +7,12 @@ namespace FlashPlanner.Tools
     // Fact Relaxed Planning Graph
     public class FactRPG : BaseRPG
     {
-        public Dictionary<Fact, int> GenerateRelaxedGraph(SASStateSpace state, List<Operator> operators)
+        public Dictionary<int, int> GenerateRelaxedGraph(SASStateSpace state, List<Operator> operators)
         {
-            if (state is not RelaxedSASStateSpace)
-                state = new RelaxedSASStateSpace(state.Declaration, state.State);
-
-            state = state.Copy();
+            state = new RelaxedSASStateSpace(state);
             bool[] covered = new bool[operators.Count];
-            var dict = new Dictionary<Fact, int>();
-            foreach (var fact in state.State)
+            var dict = new Dictionary<int, int>();
+            foreach (var fact in state)
                 dict.Add(fact, 0);
 
             int layer = 1;
@@ -25,16 +22,16 @@ namespace FlashPlanner.Tools
                 if (apply.Count == 0)
                     return dict;
 
-                state = state.Copy();
-                int changed = state.State.Count;
+                state = new RelaxedSASStateSpace(state);
+                int changed = state.Count;
                 foreach (var op in apply)
                 {
-                    state.ExecuteNode(op);
+                    state.Execute(op);
                     foreach (var add in op.Add)
-                        if (!dict.ContainsKey(add))
-                            dict.Add(add, layer);
+                        if (!dict.ContainsKey(add.ID))
+                            dict.Add(add.ID, layer);
                 }
-                if (changed == state.State.Count)
+                if (changed == state.Count)
                     return dict;
 
                 layer++;

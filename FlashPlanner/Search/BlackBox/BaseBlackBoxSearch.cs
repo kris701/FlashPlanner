@@ -4,7 +4,6 @@ using FlashPlanner.States;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
 
-
 namespace FlashPlanner.Search.BlackBox
 {
     public abstract class BaseBlackBoxSearch : BaseClassicalSearch
@@ -25,7 +24,7 @@ namespace FlashPlanner.Search.BlackBox
             for (int i = 0; i < Declaration.Operators.Count; i++)
             {
                 if (Aborted) break;
-                if (state.IsNodeTrue(Declaration.Operators[i]))
+                if (state.IsApplicable(Declaration.Operators[i]))
                     returnList.Add(i);
             }
             return returnList;
@@ -34,8 +33,8 @@ namespace FlashPlanner.Search.BlackBox
         public SASStateSpace Simulate(SASStateSpace state, int opIndex)
         {
             Generated++;
-            var newState = state.Copy();
-            newState.ExecuteNode(Declaration.Operators[opIndex]);
+            var newState = new SASStateSpace(state);
+            newState.Execute(Declaration.Operators[opIndex]);
             return newState;
         }
 

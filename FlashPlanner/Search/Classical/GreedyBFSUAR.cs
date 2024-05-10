@@ -3,7 +3,6 @@ using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
 
-
 namespace FlashPlanner.Search.Classical
 {
     // Greedy Search with Under-Approximation Refinement
@@ -30,7 +29,7 @@ namespace FlashPlanner.Search.Classical
             while (!Aborted)
             {
                 // Refinement Guards
-                if (_openList.Count == 0 || _openList.Queue.Peek().hValue == int.MaxValue)
+                if (_openList.Count == 0 || _openList.Peek().hValue == int.MaxValue)
                     operators = RefineOperators(operators);
 
                 var stateMove = ExpandBestState();
@@ -39,7 +38,7 @@ namespace FlashPlanner.Search.Classical
                 foreach (var op in operators)
                 {
                     if (Aborted) break;
-                    if (stateMove.State.IsNodeTrue(op))
+                    if (stateMove.State.IsApplicable(op))
                     {
                         var newMove = new StateMove(GenerateNewState(stateMove.State, op));
                         if (newMove.State.IsInGoal())
@@ -162,7 +161,7 @@ namespace FlashPlanner.Search.Classical
             {
                 foreach (var newOperator in newOperators)
                 {
-                    if (closed.State.IsNodeTrue(newOperator))
+                    if (closed.State.IsApplicable(newOperator))
                     {
                         _closedList.Remove(closed);
                         _openList.Enqueue(closed, closed.hValue);
@@ -210,7 +209,7 @@ namespace FlashPlanner.Search.Classical
                 {
                     if (!operators.Contains(op))
                     {
-                        if (item.State.IsNodeTrue(op))
+                        if (item.State.IsApplicable(op))
                         {
                             applicableOperators.Add(op);
                         }

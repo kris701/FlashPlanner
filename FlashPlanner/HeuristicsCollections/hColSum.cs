@@ -2,7 +2,6 @@
 using FlashPlanner.Tools;
 using PDDLSharp.Models.SAS;
 
-
 namespace FlashPlanner.HeuristicsCollections
 {
     /// <summary>

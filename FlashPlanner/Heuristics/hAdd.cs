@@ -2,7 +2,6 @@
 using FlashPlanner.Tools;
 using PDDLSharp.Models.SAS;
 
-
 namespace FlashPlanner.Heuristics
 {
     public class hAdd : BaseHeuristic
@@ -20,9 +19,9 @@ namespace FlashPlanner.Heuristics
             var dict = _graphGenerator.GenerateRelaxedGraph(state, operators);
             foreach (var fact in state.Declaration.Goal)
             {
-                if (!dict.ContainsKey(fact))
+                if (!dict.ContainsKey(fact.ID))
                     return int.MaxValue;
-                var factCost = dict[fact];
+                var factCost = dict[fact.ID];
                 if (factCost == int.MaxValue)
                     return int.MaxValue;
                 cost += factCost;

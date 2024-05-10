@@ -2,7 +2,6 @@
 using FlashPlanner.Tools;
 using PDDLSharp.Models.SAS;
 
-
 namespace FlashPlanner.HeuristicsCollections
 {
     /// <summary>
@@ -17,7 +16,6 @@ namespace FlashPlanner.HeuristicsCollections
         public hColMax(List<IHeuristic> heuristics) : base(heuristics)
         {
         }
-
 
         public override int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
         {

@@ -8,21 +8,18 @@ namespace FlashPlanner.States
         {
         }
 
-        public RelaxedSASStateSpace(SASDecl declaration, HashSet<Fact> state) : base(declaration, state)
+        public RelaxedSASStateSpace(RelaxedSASStateSpace other) : base(other)
         {
         }
 
-        public override void ExecuteNode(Operator node)
+        public RelaxedSASStateSpace(SASStateSpace other) : base(other)
+        {
+        }
+
+        public override void Execute(Operator node)
         {
             foreach (var fact in node.Add)
-                State.Add(fact);
-        }
-
-        public override RelaxedSASStateSpace Copy()
-        {
-            var newState = new Fact[State.Count];
-            State.CopyTo(newState);
-            return new RelaxedSASStateSpace(Declaration, newState.ToHashSet());
+                Add(fact);
         }
     }
 }

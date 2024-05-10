@@ -5,9 +5,9 @@ namespace FlashPlanner.Tools
     public class Layer
     {
         public List<Operator> Operators { get; set; }
-        public HashSet<Fact> Propositions { get; set; }
+        public HashSet<int> Propositions { get; set; }
 
-        public Layer(List<Operator> actions, HashSet<Fact> propositions)
+        public Layer(List<Operator> actions, HashSet<int> propositions)
         {
             Operators = actions;
             Propositions = propositions;
@@ -16,7 +16,7 @@ namespace FlashPlanner.Tools
         public Layer()
         {
             Operators = new List<Operator>();
-            Propositions = new HashSet<Fact>();
+            Propositions = new HashSet<int>();
         }
 
         public override string? ToString()

@@ -42,7 +42,7 @@ namespace FlashPlanner.Tests.Tools
             Assert.IsFalse(generator.Failed);
             Assert.IsFalse(state.IsInGoal());
             foreach (var item in result)
-                state.ExecuteNode(item);
+                state.Execute(item);
             Assert.IsTrue(state.IsInGoal());
         }
 

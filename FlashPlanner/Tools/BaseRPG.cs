@@ -12,7 +12,7 @@ namespace FlashPlanner.Tools
             var result = new List<Operator>(from);
             for (int i = 0; i < covered.Length; i++)
             {
-                if (!covered[i] && state.IsNodeTrue(operators[i]))
+                if (!covered[i] && state.IsApplicable(operators[i]))
                 {
                     result.Add(operators[i]);
                     covered[i] = true;

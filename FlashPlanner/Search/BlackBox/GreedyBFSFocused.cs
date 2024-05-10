@@ -6,7 +6,6 @@ using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.SAS;
-
 using PDDLSharp.Toolkits;
 using PDDLSharp.Translators;
 
@@ -157,10 +156,10 @@ namespace FlashPlanner.Search.BlackBox
             {
                 Evaluations++;
                 var changed = 0;
-                foreach (var item in _initial.State)
+                foreach (var item in _initial._state)
                     if (!state.Contains(item))
                         changed++;
-                foreach (var item in state.State)
+                foreach (var item in state._state)
                     if (!_initial.Contains(item))
                         changed++;
                 if (changed > 0)

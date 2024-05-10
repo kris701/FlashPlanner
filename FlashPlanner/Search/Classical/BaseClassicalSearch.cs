@@ -114,8 +114,8 @@ namespace FlashPlanner.Search.Classical
         internal SASStateSpace GenerateNewState(SASStateSpace state, Operator op)
         {
             Generated++;
-            var newState = state.Copy();
-            newState.ExecuteNode(op);
+            var newState = new SASStateSpace(state);
+            newState.Execute(op);
             return newState;
         }
 
@@ -168,7 +168,7 @@ namespace FlashPlanner.Search.Classical
             _closedList.Clear();
             _closedList.EnsureCapacity(0);
             _openList.Clear();
-            _openList.Queue.EnsureCapacity(0);
+            _openList.EnsureCapacity(0);
 
             _logWatch.Stop();
             _logTimer.Stop();

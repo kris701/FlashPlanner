@@ -3,7 +3,6 @@ using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
 
-
 namespace FlashPlanner.Search.Classical
 {
     /// <summary>
@@ -34,7 +33,7 @@ namespace FlashPlanner.Search.Classical
                     foreach (var op in preferedOperators)
                     {
                         if (Aborted) break;
-                        if (stateMove.State.IsNodeTrue(op))
+                        if (stateMove.State.IsApplicable(op))
                         {
                             var newMove = new StateMove(GenerateNewState(stateMove.State, op));
                             if (newMove.State.IsInGoal())
@@ -58,7 +57,7 @@ namespace FlashPlanner.Search.Classical
                     foreach (var op in Declaration.Operators)
                     {
                         if (Aborted) break;
-                        if (stateMove.State.IsNodeTrue(op))
+                        if (stateMove.State.IsApplicable(op))
                         {
                             var newMove = new StateMove(GenerateNewState(stateMove.State, op));
                             if (newMove.State.IsInGoal())

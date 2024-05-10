@@ -1,7 +1,6 @@
 ﻿using FlashPlanner.States;
 using PDDLSharp.Models.SAS;
 
-
 namespace FlashPlanner.Tools
 {
     public class OperatorRPG : BaseRPG
@@ -18,9 +17,9 @@ namespace FlashPlanner.Tools
         {
             Failed = false;
             if (state is not RelaxedSASStateSpace)
-                state = new RelaxedSASStateSpace(Declaration, state.State);
+                state = new RelaxedSASStateSpace(state);
 
-            var graphLayers = GenerateRelaxedPlanningGraph(state, operators);
+            var graphLayers = GenerateRelaxedPlanningGraph(state as RelaxedSASStateSpace, operators);
             if (graphLayers.Count == 0)
             {
                 Failed = true;
@@ -100,34 +99,34 @@ namespace FlashPlanner.Tools
         private int FirstLevel(Fact fact, List<Layer> layers)
         {
             for (int i = 0; i < layers.Count; i++)
-                if (layers[i].Propositions.Contains(fact))
+                if (layers[i].Propositions.Contains(fact.ID))
                     return i;
             throw new Exception();
         }
 
-        public List<Layer> GenerateRelaxedPlanningGraph(SASStateSpace state, List<Operator> operators)
+        public List<Layer> GenerateRelaxedPlanningGraph(RelaxedSASStateSpace state, List<Operator> operators)
         {
-            state = state.Copy();
+            state = new RelaxedSASStateSpace(state);
             bool[] covered = new bool[operators.Count];
             List<Layer> layers = new List<Layer>();
             var newLayer = new Layer(
                 GetNewApplicableOperators(state, new List<Operator>(), operators, covered),
-                state.State);
+                state._state);
             layers.Add(newLayer);
             int previousLayer = 0;
             while (!state.IsInGoal())
             {
                 // Apply applicable actions to state
-                state = state.Copy();
+                state = new RelaxedSASStateSpace(state);
                 foreach (var op in layers[previousLayer].Operators)
-                    state.ExecuteNode(op);
+                    state.Execute(op);
 
-                if (state.State.Count == layers[previousLayer].Propositions.Count)
+                if (state.Count == layers[previousLayer].Propositions.Count)
                     return new List<Layer>();
 
                 newLayer = new Layer(
                     GetNewApplicableOperators(state, layers[previousLayer].Operators, operators, covered),
-                    state.State);
+                    state._state);
 
                 // Error condition: there are no applicable actions at all (most likely means the problem is unsolvable)
                 if (newLayer.Operators.Count == 0 && !state.IsInGoal())

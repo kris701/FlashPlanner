@@ -3,7 +3,6 @@ using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
 
-
 namespace FlashPlanner.Search.BlackBox
 {
     public class GreedyBFS : BaseBlackBoxSearch

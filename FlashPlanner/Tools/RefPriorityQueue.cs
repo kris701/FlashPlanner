@@ -2,40 +2,42 @@
 {
     public class RefPriorityQueue
     {
-        public HashSet<int> ReferenceList { get; }
-        public PriorityQueue<StateMove, int> Queue { get; }
+        private readonly HashSet<StateMove> _referenceList;
+        private readonly PriorityQueue<StateMove, int> _queue;
 
         public RefPriorityQueue()
         {
-            ReferenceList = new HashSet<int>();
-            Queue = new PriorityQueue<StateMove, int>();
+            _referenceList = new HashSet<StateMove>();
+            _queue = new PriorityQueue<StateMove, int>();
         }
 
-        public bool Contains(StateMove move) => ReferenceList.Contains(move.GetHashCode());
-        public int Count => Queue.Count;
+        public StateMove Peek() => _queue.Peek();
+        public void EnsureCapacity(int value) => _queue.EnsureCapacity(value);
+        public bool Contains(StateMove move) => _referenceList.Contains(move);
+        public int Count => _queue.Count;
         public void Clear()
         {
-            ReferenceList.Clear();
-            Queue.Clear();
+            _referenceList.Clear();
+            _queue.Clear();
         }
 
         public void Enqueue(StateMove move, int priority)
         {
-            Queue.Enqueue(move, priority);
-            ReferenceList.Add(move.GetHashCode());
+            _queue.Enqueue(move, priority);
+            _referenceList.Add(move);
         }
 
         public StateMove Dequeue()
         {
-            var item = Queue.Dequeue();
-            ReferenceList.Remove(item.GetHashCode());
+            var item = _queue.Dequeue();
+            _referenceList.Remove(item);
             return item;
         }
 
         public List<StateMove> DequeueAll()
         {
             var list = new List<StateMove>();
-            while (Queue.Count > 0)
+            while (_queue.Count > 0)
                 list.Add(Dequeue());
             return list;
         }
