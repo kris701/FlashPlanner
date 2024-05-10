@@ -39,11 +39,8 @@ namespace FlashPlanner.CLI
             var translator = new PDDLToSASTranslator();
             var sasDecl = translator.Translate(pddlDecl);
 
-            Console.WriteLine("Building heuristic...");
-            var heuristic = HeuristicBuilder.ParseHeuristic(opts.HeuristicOption, sasDecl, pddlDecl);
-
             Console.WriteLine("Building search engine...");
-            using (var planner = SearchBuilder.GetPlanner(opts.SearchOption, pddlDecl, sasDecl, heuristic))
+            using (var planner = SearchBuilder.GetPlanner(pddlDecl, sasDecl, opts.SearchOption))
             {
                 planner.Log = true;
                 var solution = planner.Solve();

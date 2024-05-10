@@ -2,7 +2,7 @@
   "profiles": {
     "FlashPlanner.CLI": {
       "commandName": "Project",
-      "commandLineArgs": "--domain ../../../../Dependencies/downward-benchmarks/gripper/domain.pddl --problem ../../../../Dependencies/downward-benchmarks/gripper/prob01.pddl --search Classical_BestFirst --heuristic hFF()"
+      "commandLineArgs": "--domain ../../../../Dependencies/downward-benchmarks/gripper/domain.pddl --problem ../../../../Dependencies/downward-benchmarks/gripper/prob01.pddl --search \"greedy_underaprox(hColSum((hFF(),hWeighted(hGoal(),100),hWeighted(hDepth(),55))))\""
     }
   }
 }

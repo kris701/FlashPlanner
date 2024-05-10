@@ -1,32 +1,109 @@
-﻿using PDDLSharp.Models.PDDL;
+﻿using FlashPlanner.CLI.SearchParsing;
+using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.SAS;
+using System.Collections;
 
 namespace FlashPlanner.CLI
 {
-    public enum SearchOptions
-    {
-        Classical_BestFirst,
-        Classical_BestFirst_DeferedHeuristic,
-        Classical_BestFirst_PreferedOps,
-        Classical_BestFirst_UnderAproxRefine,
-
-        BlackBox_BestFirst,
-        BlackBox_BestFirst_Focused,
-    }
-
     public static class SearchBuilder
     {
-        private static readonly Dictionary<SearchOptions, Func<PDDLDecl, SASDecl, IHeuristic, IPlanner>> _planners = new Dictionary<SearchOptions, Func<PDDLDecl, SASDecl, IHeuristic, IPlanner>>()
+        public static IPlanner GetPlanner(PDDLDecl pddlDecl, SASDecl sasDecl, string search)
         {
-            { SearchOptions.Classical_BestFirst, (p, s, h) => new Search.Classical.GreedyBFS(s, h) },
-            { SearchOptions.Classical_BestFirst_DeferedHeuristic, (p, s, h) => new Search.Classical.GreedyBFSDHE(s, h) },
-            { SearchOptions.Classical_BestFirst_PreferedOps, (p, s, h) => new Search.Classical.GreedyBFSPO(s, h) },
-            { SearchOptions.Classical_BestFirst_UnderAproxRefine, (p, s, h) => new Search.Classical.GreedyBFSUAR(s, h) },
+            var dict = new Dictionary<string, object?>();
+            dict.Add("sas", sasDecl);
+            dict.Add("pddl", pddlDecl);
 
-            { SearchOptions.BlackBox_BestFirst, (p, s, h) => new Search.BlackBox.GreedyBFS(s, h) },
-            { SearchOptions.BlackBox_BestFirst_Focused, (p, s, h) => new Search.BlackBox.GreedyBFSFocused(p, s, h) },
-        };
+            var target = Parse(search, dict);
+            if (target is IPlanner planner)
+                return planner;
+            throw new Exception("Invalid search argument!");
+        }
 
-        public static IPlanner GetPlanner(SearchOptions option, PDDLDecl pddlDecl, SASDecl sasDecl, IHeuristic h) => _planners[option](pddlDecl, sasDecl, h);
+        private static object Parse(string text, Dictionary<string, object?> args)
+        {
+            var targetItem = SearchConstructors.Register.FirstOrDefault(x => text.ToUpper().StartsWith(x.Name.ToUpper()));
+            if (targetItem == null)
+                throw new Exception("Invalid search parse target");
+
+            var newArgs = new Dictionary<string, object?>(args);
+
+            var subText = text.Substring(text.IndexOf('(') + 1, text.LastIndexOf(')') - text.IndexOf('(') - 1);
+            var subArgs = GetArgumentsAtLevel(subText);
+            int offset = 0;
+            foreach (var arg in targetItem.Arguments.Keys)
+            {
+                if (newArgs.ContainsKey(arg))
+                    continue;
+
+                if (IsTypeList(targetItem.Arguments[arg]))
+                {
+                    if (!subArgs[offset].StartsWith("(") || !subArgs[offset].EndsWith(")"))
+                        throw new Exception("Invalid search parse target");
+                    var listText = subArgs[offset].Substring(subArgs[offset].IndexOf('(') + 1, subArgs[offset].LastIndexOf(')') - subArgs[offset].IndexOf('(') - 1);
+                    var listArgs = GetArgumentsAtLevel(listText);
+                    var items = Activator.CreateInstance(targetItem.Arguments[arg]) as IList;
+                    if (items == null)
+                        throw new Exception("Invalid search parse target");
+
+                    foreach (var listItem in listArgs)
+                    {
+                        var parsed = Parse(listItem, newArgs);
+                        items.Add(parsed);
+                    }
+
+                    newArgs.Add(arg, items);
+                }
+                else
+                {
+                    if (targetItem.Arguments[arg].IsPrimitive)
+                        newArgs.Add(arg, Convert.ChangeType(subArgs[offset], targetItem.Arguments[arg]));
+                    else
+                    {
+                        var parsed = Parse(subArgs[offset], newArgs);
+                        if (parsed.GetType().IsAssignableTo(targetItem.Arguments[arg]))
+                            newArgs.Add(arg, parsed);
+                        else
+                            newArgs.Add(arg, Convert.ChangeType(parsed, targetItem.Arguments[arg]));
+                    }
+                }
+                offset++;
+            }
+
+            return targetItem.Constructor(newArgs);
+        }
+
+        private static bool IsList(object o)
+        {
+            var type = o.GetType();
+            return IsTypeList(type);
+        }
+
+        private static bool IsTypeList(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>);
+
+        private static List<string> GetArgumentsAtLevel(string text)
+        {
+            var items = new List<string>();
+            var current = "";
+            var level = 0;
+            for (int i = 0; i < text.Length; i++)
+            {
+                if (text[i] == '(')
+                    level++;
+                if (text[i] == ')')
+                    level--;
+
+                if (text[i] == ',' && level == 0)
+                {
+                    items.Add(current);
+                    current = "";
+                }
+                else
+                    current += text[i];
+            }
+            if (current != "")
+                items.Add(current);
+
+            return items;
+        }
     }
 }
