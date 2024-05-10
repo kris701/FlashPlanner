@@ -22,12 +22,12 @@ namespace FlashPlanner.Tests.Tools
     public class OperatorRPGTests : BasePlannerTests
     {
         [TestMethod]
-        [DataRow("TestData/gripper/domain.pddl", "TestData/gripper/prob01.pddl")]
-        [DataRow("TestData/gripper/domain.pddl", "TestData/gripper/prob06.pddl")]
-        [DataRow("TestData/depot/domain.pddl", "TestData/depot/p01.pddl")]
-        [DataRow("TestData/depot/domain.pddl", "TestData/depot/p05.pddl")]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s1-0.pddl")]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s2-4.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob06.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p05.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s1-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s2-4.pddl")]
         public void Can_GenerateRelaxedPlan_ResultsInGoal(string domain, string problem)
         {
             // ARRANGE
@@ -47,12 +47,12 @@ namespace FlashPlanner.Tests.Tools
         }
 
         [TestMethod]
-        [DataRow("TestData/gripper/domain.pddl", "TestData/gripper/prob01.pddl", 5)]
-        [DataRow("TestData/gripper/domain.pddl", "TestData/gripper/prob06.pddl", 29)]
-        [DataRow("TestData/depot/domain.pddl", "TestData/depot/p01.pddl", 10)]
-        [DataRow("TestData/depot/domain.pddl", "TestData/depot/p05.pddl", 37)]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s1-0.pddl", 3)]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s2-4.pddl", 6)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob01.pddl", 9)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob06.pddl", 29)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p01.pddl", 10)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p05.pddl", 37)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s1-0.pddl", 3)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s2-4.pddl", 6)]
         public void Can_GenerateRelaxedPlan_Length(string domain, string problem, int expected)
         {
             // ARRANGE
@@ -69,12 +69,12 @@ namespace FlashPlanner.Tests.Tools
         }
 
         [TestMethod]
-        [DataRow("TestData/gripper/domain.pddl", "TestData/gripper/prob01.pddl", 3)]
-        [DataRow("TestData/gripper/domain.pddl", "TestData/gripper/prob06.pddl", 3)]
-        [DataRow("TestData/depot/domain.pddl", "TestData/depot/p01.pddl", 5)]
-        [DataRow("TestData/depot/domain.pddl", "TestData/depot/p05.pddl", 7)]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s1-0.pddl", 4)]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s2-4.pddl", 4)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob01.pddl", 3)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob06.pddl", 3)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p01.pddl", 5)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p05.pddl", 7)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s1-0.pddl", 4)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s2-4.pddl", 4)]
         public void Can_GenerateGraph_Layer_Size(string domain, string problem, int expected)
         {
             // ARRANGE
@@ -90,12 +90,12 @@ namespace FlashPlanner.Tests.Tools
         }
 
         [TestMethod]
-        [DataRow("TestData/gripper/domain.pddl", "TestData/gripper/prob01.pddl", 6, 16, 20)]
-        [DataRow("TestData/gripper/domain.pddl", "TestData/gripper/prob06.pddl", 30, 88, 116)]
-        [DataRow("TestData/depot/domain.pddl", "TestData/depot/p01.pddl", 8, 28, 42, 56, 90)]
-        [DataRow("TestData/depot/domain.pddl", "TestData/depot/p05.pddl", 9, 36, 78, 166, 389, 628, 808)]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s1-0.pddl", 1, 3, 4, 4)]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s2-4.pddl", 3, 14, 16, 16)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob01.pddl", 10, 28, 36)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob06.pddl", 30, 88, 116)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p01.pddl", 8, 28, 42, 56, 90)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p05.pddl", 9, 36, 78, 166, 389, 628, 808)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s1-0.pddl", 1, 3, 4, 4)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s2-4.pddl", 3, 14, 16, 16)]
         public void Can_GenerateGraph_Layer_ActionSize(string domain, string problem, params int[] expecteds)
         {
             // ARRANGE
@@ -113,12 +113,12 @@ namespace FlashPlanner.Tests.Tools
         }
 
         [TestMethod]
-        [DataRow("TestData/gripper/domain.pddl", "TestData/gripper/prob01.pddl")]
-        [DataRow("TestData/gripper/domain.pddl", "TestData/gripper/prob06.pddl")]
-        [DataRow("TestData/depot/domain.pddl", "TestData/depot/p01.pddl")]
-        [DataRow("TestData/depot/domain.pddl", "TestData/depot/p05.pddl")]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s1-0.pddl")]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s2-4.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob06.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p05.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s1-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s2-4.pddl")]
         public void Can_GenerateGraph_Layer_Proposition_FirstAlwaysInits(string domain, string problem)
         {
             // ARRANGE

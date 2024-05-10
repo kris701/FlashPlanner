@@ -24,10 +24,13 @@ namespace FlashPlanner.Search.Classical
             var preferredQueue = InitializeQueue(h, state, preferedOperators);
 
             int iteration = 0;
-            while (!Aborted && _openList.Count > 0 || preferredQueue.Count > 0)
+            while (!Aborted && (_openList.Count > 0 || preferredQueue.Count > 0))
             {
-                if (iteration++ % 2 == 0 && preferredQueue.Count > 0)
+                if (iteration++ % 2 == 0)
                 {
+                    if (preferredQueue.Count == 0)
+                        continue;
+
                     var stateMove = ExpandBestState(preferredQueue);
 
                     foreach (var op in preferedOperators)
@@ -43,16 +46,17 @@ namespace FlashPlanner.Search.Classical
                                 var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
                                 newMove.Steps = new List<Operator>(stateMove.Steps) { op };
                                 newMove.hValue = value;
-                                preferredQueue.Enqueue(newMove, value);
+                                _openList.Enqueue(newMove, value);
                             }
                         }
                     }
                 }
                 else
                 {
+                    if (_openList.Count == 0)
+                        continue;
+
                     var stateMove = ExpandBestState();
-                    if (stateMove.State.IsInGoal())
-                        return new ActionPlan(GeneratePlanChain(stateMove.Steps));
 
                     foreach (var op in Declaration.Operators)
                     {
@@ -67,8 +71,8 @@ namespace FlashPlanner.Search.Classical
                                 var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
                                 newMove.Steps = new List<Operator>(stateMove.Steps) { op };
                                 newMove.hValue = value;
-                                preferredQueue.Enqueue(newMove, value);
                                 _openList.Enqueue(newMove, value);
+                                preferredQueue.Enqueue(newMove, value);
                             }
                         }
                     }

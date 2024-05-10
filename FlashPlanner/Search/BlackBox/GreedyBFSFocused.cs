@@ -20,6 +20,7 @@ namespace FlashPlanner.Search.BlackBox
     {
         public int NumberOfMacros { get; set; } = 8;
         public int SearchBudget { get; set; } = 1;
+        public List<ActionDecl> LearnedMacros { get; set; } = new List<ActionDecl>();
 
         private readonly PDDLDecl _pddlDecl;
 
@@ -33,14 +34,13 @@ namespace FlashPlanner.Search.BlackBox
         internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
         {
             Console.WriteLine($"[{GetPassedTime()}s] Learning Macros...");
-            var learnedMacros = LearnFocusedMacros(NumberOfMacros, SearchBudget);
-            Console.WriteLine($"[{GetPassedTime()}s] Found {learnedMacros.Count} macros");
-            _pddlDecl.Domain.Actions.AddRange(learnedMacros);
+            LearnedMacros = LearnFocusedMacros(NumberOfMacros, SearchBudget);
+            Console.WriteLine($"[{GetPassedTime()}s] Found {LearnedMacros.Count} macros");
+            _pddlDecl.Domain.Actions.AddRange(LearnedMacros);
             Console.WriteLine($"[{GetPassedTime()}s] Re-translating...");
             var translator = new PDDLToSASTranslator(true);
             translator.TimeLimit = TimeSpan.FromSeconds(1000);
             Declaration = translator.Translate(_pddlDecl);
-            state = new SASStateSpace(Declaration);
             Console.WriteLine($"[{GetPassedTime()}s] Searching...");
 
             while (!Aborted && _openList.Count > 0)
@@ -104,6 +104,9 @@ namespace FlashPlanner.Search.BlackBox
                     added++;
                 }
             }
+
+            for (int i = 0; i < returnMacros.Count; i++)
+                returnMacros[i].Name = $"{returnMacros[i].Name}_{i}";
 
             return returnMacros;
         }

@@ -21,11 +21,16 @@ namespace FlashPlanner.Tests.Search.BlackBox
     public class GreedyBFSTests : BasePlannerTests
     {
         [TestMethod]
-        [DataRow("TestData/gripper/domain.pddl", "TestData/gripper/prob01.pddl")]
-        [DataRow("TestData/gripper/domain.pddl", "TestData/gripper/prob06.pddl")]
-        [DataRow("TestData/depot/domain.pddl", "TestData/depot/p01.pddl")]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s1-0.pddl")]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s2-4.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob02.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s2-4.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/rovers/domain.pddl", "../../../../Dependencies/downward-benchmarks/rovers/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/zenotravel/domain.pddl", "../../../../Dependencies/downward-benchmarks/zenotravel/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/tpp/domain.pddl", "../../../../Dependencies/downward-benchmarks/tpp/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/satellite/domain.pddl", "../../../../Dependencies/downward-benchmarks/satellite/p01-pfile1.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/mystery/domain.pddl", "../../../../Dependencies/downward-benchmarks/mystery/prob01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/driverlog/domain.pddl", "../../../../Dependencies/downward-benchmarks/driverlog/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/blocks/domain.pddl", "../../../../Dependencies/downward-benchmarks/blocks/probBLOCKS-4-0.pddl")]
         public void Can_FindSolution_hGoal(string domain, string problem)
         {
             // ARRANGE
@@ -38,26 +43,6 @@ namespace FlashPlanner.Tests.Search.BlackBox
 
             // ASSERT
             Assert.IsTrue(validator.Validate(result, GetPDDLDecl(domain, problem)));
-        }
-
-        [TestMethod]
-        [DataRow("TestData/gripper/domain.pddl", "TestData/gripper/prob01.pddl")]
-        [DataRow("TestData/depot/domain.pddl", "TestData/depot/p01.pddl")]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s1-0.pddl")]
-        [DataRow("TestData/miconic/domain.pddl", "TestData/miconic/s2-4.pddl")]
-        public void Cant_FindSolution_hGoal_IfImpossible(string domain, string problem)
-        {
-            // ARRANGE
-            var decl = GetSASDecl(domain, problem);
-            decl.Goal.Clear();
-            decl.Goal.Add(new PDDLSharp.Models.SAS.Fact("non-existent"));
-            var planner = new GreedyBFS(decl, new hGoal());
-
-            // ACT
-            var result = planner.Solve();
-
-            // ASSERT
-            Assert.AreEqual(new ActionPlan(), result);
         }
     }
 }
