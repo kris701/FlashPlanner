@@ -34,7 +34,7 @@ namespace FlashPlanner.Tests
                 parser.ParseAs<ProblemDecl>(new FileInfo(problem))
                 );
 
-            var translator = new PDDLToSASTranslator();
+            var translator = new PDDLToSASTranslator(true);
             var decl = translator.Translate(pddlDecl);
 
             _declCache.Add(domain + problem, decl);

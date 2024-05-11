@@ -36,7 +36,7 @@ namespace FlashPlanner.CLI
             var pddlDecl = new PDDLDecl(domain, problem);
 
             Console.WriteLine("Translating...");
-            var translator = new PDDLToSASTranslator();
+            var translator = new PDDLToSASTranslator(true);
             var sasDecl = translator.Translate(pddlDecl);
 
             Console.WriteLine("Building search engine...");
