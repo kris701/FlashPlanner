@@ -1,4 +1,4 @@
-﻿using FlashPlanner.Translator;
+﻿using FlashPlanner.Translators;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;

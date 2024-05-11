@@ -2,7 +2,7 @@
 using FlashPlanner.HeuristicsCollections;
 using FlashPlanner.States;
 using FlashPlanner.Tools;
-using FlashPlanner.Translator;
+using FlashPlanner.Translators;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
@@ -80,7 +80,7 @@ namespace FlashPlanner.Search.BlackBox
             // Explore state space
             using (var search = new Classical.GreedyBFS(newDecl, new hColSum(new List<IHeuristic>() { g, h })))
             {
-                search.SearchLimit = TimeSpan.FromSeconds(budget);
+                search.TimeLimit = TimeSpan.FromSeconds(budget);
                 search.Solve();
                 foreach (var state in search._closedList)
                 {

@@ -1,6 +1,5 @@
 ﻿using CommandLine;
 using CommandLine.Text;
-using FlashPlanner.Translator;
 using PDDLSharp.CodeGenerators.FastDownward.Plans;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
@@ -35,13 +34,25 @@ namespace FlashPlanner.CLI
             var problem = pddlParser.ParseAs<ProblemDecl>(new FileInfo(opts.ProblemPath));
             var pddlDecl = new PDDLDecl(domain, problem);
 
+            Console.WriteLine("Building translator...");
+            var translator = InputArgumentBuilder.GetTranslator(pddlDecl, opts.TranslatorOption);
+            if (opts.TranslatorTimeLimit > 0)
+                translator.TimeLimit = TimeSpan.FromSeconds(opts.TranslatorTimeLimit);
+
             Console.WriteLine("Translating...");
-            var translator = new PDDLToSASTranslator(true);
             var sasDecl = translator.Translate(pddlDecl);
 
-            Console.WriteLine("Building search engine...");
-            using (var planner = SearchBuilder.GetPlanner(pddlDecl, sasDecl, opts.SearchOption))
+            if (translator.Aborted)
             {
+                Console.WriteLine("Translator Timed Out!...");
+                return;
+            }
+
+            Console.WriteLine("Building search engine...");
+            using (var planner = InputArgumentBuilder.GetPlanner(pddlDecl, sasDecl, opts.SearchOption))
+            {
+                if (opts.SearchTimeLimit > 0)
+                    planner.TimeLimit = TimeSpan.FromSeconds(opts.SearchTimeLimit);
                 planner.Log = true;
                 var solution = planner.Solve();
 

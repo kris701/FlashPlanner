@@ -1,4 +1,4 @@
-﻿using FlashPlanner.Translator.Components;
+﻿using FlashPlanner.Translators.Components;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
@@ -10,21 +10,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PDDLSharp.Translators.Tests.Tools
+namespace FlashPlanner.Tests.Translator.Components
 {
     [TestClass]
-    public class ForAllDeconstructorTests
+    public class ExistsDeconstructorTests
     {
-        public static IEnumerable<object[]> DeconstrucForAllData_Valid()
+        public static IEnumerable<object[]> DeconstructExists_Valid()
         {
             yield return new object[] {
                 new AndExp(new List<IExp>(){
-                    new ForAllExp(
+                    new ExistsExp(
                         new ParameterExp(new List<NameExp>(){ new NameExp("?a") }),
                         new PredicateExp("pred", new List<NameExp>(){ new NameExp("?a") }))
                 }),
                 new AndExp(new List<IExp>(){
-                    new AndExp(new List<IExp>()
+                    new OrExp(new List<IExp>()
                     {
                         new PredicateExp("pred", new List<NameExp>(){ new NameExp("obj1") }),
                         new PredicateExp("pred", new List<NameExp>(){ new NameExp("obj2") })
@@ -38,12 +38,12 @@ namespace PDDLSharp.Translators.Tests.Tools
 
             yield return new object[] {
                 new AndExp(new List<IExp>(){
-                    new ForAllExp(
+                    new ExistsExp(
                         new ParameterExp(new List<NameExp>(){ new NameExp("?a") }),
                         new PredicateExp("pred", new List<NameExp>(){ new NameExp("?a") }))
                 }),
                 new AndExp(new List<IExp>(){
-                    new AndExp(new List<IExp>()
+                    new OrExp(new List<IExp>()
                     {
                         new PredicateExp("pred", new List<NameExp>(){ new NameExp("obj1") }),
                         new PredicateExp("pred", new List<NameExp>(){ new NameExp("obj2") }),
@@ -59,12 +59,12 @@ namespace PDDLSharp.Translators.Tests.Tools
 
             yield return new object[] {
                 new AndExp(new List<IExp>(){
-                    new ForAllExp(
+                    new ExistsExp(
                         new ParameterExp(new List<NameExp>(){ new NameExp("?a"), new NameExp("?b") }),
                         new PredicateExp("pred", new List<NameExp>(){ new NameExp("?a"), new NameExp("?b") }))
                 }),
                 new AndExp(new List<IExp>(){
-                    new AndExp(new List<IExp>()
+                    new OrExp(new List<IExp>()
                     {
                         new PredicateExp("pred", new List<NameExp>(){ new NameExp("obj1"), new NameExp("obj1") }),
                         new PredicateExp("pred", new List<NameExp>(){ new NameExp("obj1"), new NameExp("obj2") }),
@@ -80,8 +80,8 @@ namespace PDDLSharp.Translators.Tests.Tools
         }
 
         [TestMethod]
-        [DynamicData(nameof(DeconstrucForAllData_Valid), DynamicDataSourceType.Method)]
-        public void Can_DeconstructForAll(INode input, INode expected, List<NameExp> objects)
+        [DynamicData(nameof(DeconstructExists_Valid), DynamicDataSourceType.Method)]
+        public void Can_DeconstructExists(INode input, INode expected, List<NameExp> objects)
         {
             // ARRANGE
             (input as AndExp).Children[0].Parent = input;
@@ -90,10 +90,10 @@ namespace PDDLSharp.Translators.Tests.Tools
             decl.Problem.Objects = new ObjectsDecl();
             decl.Problem.Objects.Objs = objects;
             var grounder = new ParametizedGrounder(decl);
-            var deconstructor = new ForAllDeconstructor(grounder);
+            var deconstructor = new ExistsDeconstructor(grounder);
 
             // ACT
-            var result = deconstructor.DeconstructForAlls(input);
+            var result = deconstructor.DeconstructExists(input);
 
             // ASSERT
             Assert.AreEqual(expected, result);

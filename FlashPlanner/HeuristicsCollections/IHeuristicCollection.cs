@@ -1,4 +1,6 @@
-﻿namespace FlashPlanner
+﻿using FlashPlanner.Heuristics;
+
+namespace FlashPlanner.HeuristicsCollections
 {
     public interface IHeuristicCollection : IHeuristic
     {

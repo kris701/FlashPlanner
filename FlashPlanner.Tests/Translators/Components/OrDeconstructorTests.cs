@@ -1,4 +1,4 @@
-﻿using FlashPlanner.Translator.Components;
+﻿using FlashPlanner.Translators.Components;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PDDLSharp.Translators.Tests.Tools
+namespace FlashPlanner.Tests.Translator.Components
 {
     [TestClass]
     public class OrDeconstructorTests

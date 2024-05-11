@@ -1,4 +1,5 @@
-﻿using FlashPlanner.States;
+﻿using FlashPlanner.Heuristics;
+using FlashPlanner.States;
 using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
@@ -21,7 +22,7 @@ namespace FlashPlanner.Search.Classical
         public bool Aborted { get; internal set; }
         public IHeuristic Heuristic { get; }
         public TimeSpan SearchTime => _logWatch.Elapsed;
-        public TimeSpan SearchLimit { get; set; } = TimeSpan.FromMinutes(30);
+        public TimeSpan TimeLimit { get; set; } = TimeSpan.FromMinutes(30);
 
         internal HashSet<StateMove> _closedList = new HashSet<StateMove>();
         internal RefPriorityQueue _openList = new RefPriorityQueue();
@@ -46,7 +47,7 @@ namespace FlashPlanner.Search.Classical
         private void SetupTimers()
         {
             _timeoutTimer = new System.Timers.Timer();
-            _timeoutTimer.Interval = SearchLimit.TotalMilliseconds;
+            _timeoutTimer.Interval = TimeLimit.TotalMilliseconds;
             _timeoutTimer.Elapsed += OnTimedOut;
             _timeoutTimer.AutoReset = false;
 

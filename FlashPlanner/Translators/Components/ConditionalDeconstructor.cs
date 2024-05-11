@@ -2,7 +2,7 @@
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 
-namespace FlashPlanner.Translator.Components
+namespace FlashPlanner.Translators.Components
 {
     public class ConditionalDeconstructor
     {

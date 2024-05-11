@@ -1,4 +1,4 @@
-﻿namespace FlashPlanner.Translator.Exceptions
+﻿namespace FlashPlanner.Translators.Exceptions
 {
     public class TranslatorException : Exception
     {

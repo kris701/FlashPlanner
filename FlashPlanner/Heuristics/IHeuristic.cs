@@ -3,7 +3,7 @@ using FlashPlanner.Tools;
 using PDDLSharp.Models.SAS;
 
 
-namespace FlashPlanner
+namespace FlashPlanner.Heuristics
 {
     public interface IHeuristic
     {

@@ -1,29 +1,14 @@
-﻿using FlashPlanner.CLI.SearchParsing;
-using PDDLSharp.Models.PDDL;
-using PDDLSharp.Models.SAS;
-using System.Collections;
+﻿using System.Collections;
 
-namespace FlashPlanner.CLI
+namespace FlashPlanner.CLI.ArgumentParsing
 {
-    public static class SearchBuilder
+    public static class ArgumentBuilder
     {
-        public static IPlanner GetPlanner(PDDLDecl pddlDecl, SASDecl sasDecl, string search)
+        public static object Parse(string text, Dictionary<string, object?> args, List<Argument> register)
         {
-            var dict = new Dictionary<string, object?>();
-            dict.Add("sas", sasDecl);
-            dict.Add("pddl", pddlDecl);
-
-            var target = Parse(search, dict);
-            if (target is IPlanner planner)
-                return planner;
-            throw new Exception("Invalid search argument!");
-        }
-
-        private static object Parse(string text, Dictionary<string, object?> args)
-        {
-            var targetItem = SearchConstructors.Register.FirstOrDefault(x => text.ToUpper().StartsWith(x.Name.ToUpper()));
+            var targetItem = register.FirstOrDefault(x => text.ToUpper().StartsWith(x.Name.ToUpper()));
             if (targetItem == null)
-                throw new Exception("Invalid search parse target");
+                throw new Exception("Invalid parse target");
 
             var newArgs = new Dictionary<string, object?>(args);
 
@@ -38,16 +23,16 @@ namespace FlashPlanner.CLI
                 if (IsTypeList(targetItem.Arguments[arg]))
                 {
                     if (!subArgs[offset].StartsWith("(") || !subArgs[offset].EndsWith(")"))
-                        throw new Exception("Invalid search parse target");
+                        throw new Exception("Invalid parse target");
                     var listText = subArgs[offset].Substring(subArgs[offset].IndexOf('(') + 1, subArgs[offset].LastIndexOf(')') - subArgs[offset].IndexOf('(') - 1);
                     var listArgs = GetArgumentsAtLevel(listText);
                     var items = Activator.CreateInstance(targetItem.Arguments[arg]) as IList;
                     if (items == null)
-                        throw new Exception("Invalid search parse target");
+                        throw new Exception("Invalid parse target");
 
                     foreach (var listItem in listArgs)
                     {
-                        var parsed = Parse(listItem, newArgs);
+                        var parsed = Parse(listItem, newArgs, register);
                         items.Add(parsed);
                     }
 
@@ -59,7 +44,7 @@ namespace FlashPlanner.CLI
                         newArgs.Add(arg, Convert.ChangeType(subArgs[offset], targetItem.Arguments[arg]));
                     else
                     {
-                        var parsed = Parse(subArgs[offset], newArgs);
+                        var parsed = Parse(subArgs[offset], newArgs, register);
                         if (parsed.GetType().IsAssignableTo(targetItem.Arguments[arg]))
                             newArgs.Add(arg, parsed);
                         else
@@ -70,12 +55,6 @@ namespace FlashPlanner.CLI
             }
 
             return targetItem.Constructor(newArgs);
-        }
-
-        private static bool IsList(object o)
-        {
-            var type = o.GetType();
-            return IsTypeList(type);
         }
 
         private static bool IsTypeList(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>);

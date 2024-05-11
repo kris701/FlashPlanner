@@ -1,16 +1,30 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.HeuristicsCollections;
+using FlashPlanner.Translators;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.SAS;
 
-namespace FlashPlanner.CLI.SearchParsing
+namespace FlashPlanner.CLI.ArgumentParsing
 {
-    public static class SearchConstructors
+    public static class Registers
     {
-        public static List<SearchOption> Register = new List<SearchOption>()
+        public static List<Argument> TranslatorRegister = new List<Argument>()
+        {
+            new Argument("primary", new Dictionary<string, Type>()
+            {
+                { "removeStatics", typeof(bool) }
+            }, (args) =>
+            {
+                if (args["removeStatics"] is bool remove)
+                    return new PDDLToSASTranslator(remove);
+                throw new Exception("Invalid arguments given for translator!");
+            })
+        };
+
+        public static List<Argument> SearchRegister = new List<Argument>()
         {
             // Search (Classical)
-            new SearchOption("greedy", new Dictionary<string, Type>(){
+            new Argument("greedy", new Dictionary<string, Type>(){
                 { "sas", typeof(SASDecl) },
                 { "h", typeof(IHeuristic) }
             }, (args) =>
@@ -19,7 +33,7 @@ namespace FlashPlanner.CLI.SearchParsing
                     return new Search.Classical.GreedyBFS(sas, h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
-            new SearchOption("greedy_defered", new Dictionary<string, Type>(){
+            new Argument("greedy_defered", new Dictionary<string, Type>(){
                 { "sas", typeof(SASDecl) },
                 { "h", typeof(IHeuristic) }
             }, (args) =>
@@ -28,7 +42,7 @@ namespace FlashPlanner.CLI.SearchParsing
                     return new Search.Classical.GreedyBFSDHE(sas, h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
-            new SearchOption("greedy_prefered", new Dictionary<string, Type>(){
+            new Argument("greedy_prefered", new Dictionary<string, Type>(){
                 { "sas", typeof(SASDecl) },
                 { "h", typeof(IHeuristic) }
             }, (args) =>
@@ -37,7 +51,7 @@ namespace FlashPlanner.CLI.SearchParsing
                     return new Search.Classical.GreedyBFSPO(sas, h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
-            new SearchOption("greedy_underaprox", new Dictionary<string, Type>(){
+            new Argument("greedy_underaprox", new Dictionary<string, Type>(){
                 { "sas", typeof(SASDecl) },
                 { "h", typeof(IHeuristic) }
             }, (args) =>
@@ -48,7 +62,7 @@ namespace FlashPlanner.CLI.SearchParsing
             }),
 
             // Search (BlackBox)
-            new SearchOption("greedy_bb", new Dictionary<string, Type>(){
+            new Argument("greedy_bb", new Dictionary<string, Type>(){
                 { "sas", typeof(SASDecl) },
                 { "h", typeof(IHeuristic) }
             }, (args) =>
@@ -57,7 +71,7 @@ namespace FlashPlanner.CLI.SearchParsing
                     return new Search.BlackBox.GreedyBFS(sas, h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
-            new SearchOption("greedy_bb_focused", new Dictionary<string, Type>(){
+            new Argument("greedy_bb_focused", new Dictionary<string, Type>(){
                 { "sas", typeof(SASDecl) },
                 { "h", typeof(IHeuristic) }
             }, (args) =>
@@ -68,8 +82,8 @@ namespace FlashPlanner.CLI.SearchParsing
             }),
 
             // Heuristics
-            new SearchOption("hAdd", new Dictionary<string, Type>(), (args) => new hAdd()),
-            new SearchOption("hConstant", new Dictionary<string, Type>(){
+            new Argument("hAdd", new Dictionary<string, Type>(), (args) => new hAdd()),
+            new Argument("hConstant", new Dictionary<string, Type>(){
                 { "c", typeof(int) }
             }, (args) =>
             {
@@ -77,17 +91,17 @@ namespace FlashPlanner.CLI.SearchParsing
                     return new hConstant(constant);
                 throw new Exception("Invalid arguments given for heuristic!");
             }),
-            new SearchOption("hDepth", new Dictionary<string, Type>(), (args) => new hDepth()),
-            new SearchOption("hFF", new Dictionary<string, Type>(), (args) =>
+            new Argument("hDepth", new Dictionary<string, Type>(), (args) => new hDepth()),
+            new Argument("hFF", new Dictionary<string, Type>(), (args) =>
             {
                 if (args["sas"] is SASDecl sas)
                     return new hFF(sas);
                 throw new Exception("Invalid arguments given for heuristic!");
             }),
-            new SearchOption("hGoal", new Dictionary<string, Type>(), (args) => new hGoal()),
-            new SearchOption("hMax", new Dictionary<string, Type>(), (args) => new hMax()),
-            new SearchOption("hPath", new Dictionary<string, Type>(), (args) => new hPath()),
-            new SearchOption("hWeighted", new Dictionary<string, Type>(){
+            new Argument("hGoal", new Dictionary<string, Type>(), (args) => new hGoal()),
+            new Argument("hMax", new Dictionary<string, Type>(), (args) => new hMax()),
+            new Argument("hPath", new Dictionary<string, Type>(), (args) => new hPath()),
+            new Argument("hWeighted", new Dictionary<string, Type>(){
                 { "hw", typeof(IHeuristic) },
                 { "w", typeof(double) }
             }, (args) =>
@@ -98,7 +112,7 @@ namespace FlashPlanner.CLI.SearchParsing
             }),
 
             // Collection Heuristics
-            new SearchOption("hColSum", new Dictionary<string, Type>()
+            new Argument("hColSum", new Dictionary<string, Type>()
             {
                 { "lists", typeof(List<IHeuristic>) }
             }, (args) =>
@@ -107,7 +121,7 @@ namespace FlashPlanner.CLI.SearchParsing
                     return new hColSum(listH);
                 throw new Exception("Invalid arguments given for heuristic!");
             }),
-            new SearchOption("hColMax", new Dictionary<string, Type>()
+            new Argument("hColMax", new Dictionary<string, Type>()
             {
                 { "listm", typeof(List<IHeuristic>) }
             }, (args) =>

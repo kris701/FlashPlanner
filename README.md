@@ -48,9 +48,9 @@ This project is also available as a package on the [NuGet Package Manager](https
 ## Examples
 To find a plan using the Greedy Best First Search engine:
 ```csharp
-PDDLDecl decl = new PDDLDecl(...);
-ITranslator translator = new PDDLToSASTranslator(true);
-SASDecl sas = translator.Translate(decl);
+var decl = new PDDLDecl(...);
+var translator = new PDDLToSASTranslator(true);
+var sas = translator.Translate(decl);
 using (var greedyBFS = new GreedyBFS(sas, new hFF(decl)))
 {
    var plan = greedyBFS.Solve();

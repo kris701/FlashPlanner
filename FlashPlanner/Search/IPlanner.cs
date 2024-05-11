@@ -1,14 +1,15 @@
-﻿using PDDLSharp.Models.FastDownward.Plans;
+﻿using FlashPlanner.Heuristics;
+using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
 
-namespace FlashPlanner
+namespace FlashPlanner.Search
 {
     public interface IPlanner : IDisposable
     {
         public SASDecl Declaration { get; }
         public IHeuristic Heuristic { get; }
 
-        public TimeSpan SearchLimit { get; set; }
+        public TimeSpan TimeLimit { get; set; }
 
         public int Generated { get; }
         public double GeneratedPrSecond { get; }

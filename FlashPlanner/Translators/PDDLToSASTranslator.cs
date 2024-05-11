@@ -1,5 +1,5 @@
-﻿using FlashPlanner.Translator.Components;
-using FlashPlanner.Translator.Exceptions;
+﻿using FlashPlanner.Translators.Components;
+using FlashPlanner.Translators.Exceptions;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
@@ -13,9 +13,9 @@ using PDDLSharp.Translators.Grounders;
 using System.Diagnostics;
 using System.Timers;
 
-namespace FlashPlanner.Translator
+namespace FlashPlanner.Translators
 {
-    public class PDDLToSASTranslator
+    public class PDDLToSASTranslator : ITranslator
     {
         public bool RemoveStaticsFromOutput { get; set; } = false;
         public TimeSpan TimeLimit { get; set; } = TimeSpan.FromMinutes(30);

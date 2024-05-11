@@ -2,7 +2,7 @@
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Translators.Grounders;
 
-namespace FlashPlanner.Translator.Components
+namespace FlashPlanner.Translators.Components
 {
     public class ForAllDeconstructor
     {

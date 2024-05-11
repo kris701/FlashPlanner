@@ -3,7 +3,7 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Overloads;
 
-namespace FlashPlanner.Translator.Components
+namespace FlashPlanner.Translators.Components
 {
     public class OrDeconstructor
     {
