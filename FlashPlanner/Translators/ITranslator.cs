@@ -9,6 +9,9 @@ namespace FlashPlanner.Translators
         public TimeSpan TimeLimit { get; set; }
         public bool Aborted { get; }
 
+        public int Facts { get; }
+        public int Operators { get; }
+
         public SASDecl Translate(PDDLDecl from);
     }
 }

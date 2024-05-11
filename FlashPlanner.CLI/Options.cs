@@ -13,8 +13,10 @@ namespace FlashPlanner.CLI
         [Option("translator", Required = false, HelpText = "What translator to use")]
         public string TranslatorOption { get; set; } = "primary(true)";
 
-        [Option("plan", Required = false, HelpText = "Target output plan file")]
-        public string PlanPath { get; set; } = "";
+        [Option("print-plan", Required = false, HelpText = "Should the resulting plan be printed to stdout?", Default = true)]
+        public bool PrintPlan { get; set; } = true;
+        [Option("plan", Required = false, HelpText = "Target output plan file", Default = "solution.plan")]
+        public string PlanPath { get; set; } = "solution.plan";
         [Option("translator-time-limit", Required = false, HelpText = "Time limit for the translator in seconds. (-1 is no time limit)", Default = -1)]
         public int TranslatorTimeLimit { get; set; } = -1;
         [Option("search-time-limit", Required = false, HelpText = "Time limit for the search in seconds. (-1 is no time limit)", Default = -1)]

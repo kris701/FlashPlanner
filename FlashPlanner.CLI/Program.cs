@@ -1,11 +1,14 @@
 ﻿using CommandLine;
 using CommandLine.Text;
+using FlashPlanner.Translators;
 using PDDLSharp.CodeGenerators.FastDownward.Plans;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
+using PDDLSharp.Models.SAS;
 using PDDLSharp.Parsers.PDDL;
+using System.Diagnostics;
 
 namespace FlashPlanner.CLI
 {
@@ -21,54 +24,152 @@ namespace FlashPlanner.CLI
 
         public static void Run(Options opts)
         {
+            WriteLineColor("Initializing", ConsoleColor.Blue);
+            WriteLineColor($"\tSearch Arguments:      {opts.SearchOption}");
+            if (opts.SearchTimeLimit > 0)
+                WriteLineColor($"\tSearch Time limit:     {opts.SearchTimeLimit}s");
+            WriteLineColor($"\tTranslation Arguments: {opts.TranslatorOption}");
+            if (opts.TranslatorTimeLimit > 0)
+                WriteLineColor($"\tTranslation Time limit:{opts.TranslatorTimeLimit}s");
+
+            WriteColor("\tChecking Files...");
             opts.DomainPath = RootPath(opts.DomainPath);
             opts.ProblemPath = RootPath(opts.ProblemPath);
-            if (opts.PlanPath == "")
-                opts.PlanPath = "solution.plan";
             opts.PlanPath = RootPath(opts.PlanPath);
 
-            Console.WriteLine("Parsing files...");
+            if (!File.Exists(opts.DomainPath))
+                throw new FileNotFoundException($"Domain file not found: {opts.DomainPath}");
+            if (!File.Exists(opts.ProblemPath))
+                throw new FileNotFoundException($"Problem file not found: {opts.ProblemPath}");
+
+            WriteLineColor("Done!", ConsoleColor.Green);
+
+            WriteColor("\tParsing Files...");
             var listener = new ErrorListener();
             var pddlParser = new PDDLParser(listener);
             var domain = pddlParser.ParseAs<DomainDecl>(new FileInfo(opts.DomainPath));
             var problem = pddlParser.ParseAs<ProblemDecl>(new FileInfo(opts.ProblemPath));
             var pddlDecl = new PDDLDecl(domain, problem);
+            WriteLineColor("Done!", ConsoleColor.Green);
 
-            Console.WriteLine("Building translator...");
+            var sasDecl = Translate(opts, pddlDecl);
+            if (sasDecl == null)
+                return;
+
+            Search(opts, pddlDecl, sasDecl);
+        }
+
+        private static SASDecl? Translate(Options opts, PDDLDecl pddlDecl)
+        {
+            WriteLineColor("Translation", ConsoleColor.Blue);
+
+            WriteColor("\tBuilding Translator...");
             var translator = InputArgumentBuilder.GetTranslator(pddlDecl, opts.TranslatorOption);
             if (opts.TranslatorTimeLimit > 0)
                 translator.TimeLimit = TimeSpan.FromSeconds(opts.TranslatorTimeLimit);
+            WriteLineColor("Done!", ConsoleColor.Green);
 
-            Console.WriteLine("Translating...");
+            var watch = new Stopwatch();
+
+            var logTimer = new System.Timers.Timer();
+            logTimer.Interval = 1000;
+            logTimer.AutoReset = true;
+            logTimer.Elapsed += (s, e) =>
+            {
+                WriteLineColor($"\t\t[{Math.Round(watch.Elapsed.TotalSeconds, 0)}s] Operators {translator.Operators} ({GetItemPrSecond(translator.Operators, watch.Elapsed)}/s). Facts {translator.Facts} ({GetItemPrSecond(translator.Facts, watch.Elapsed)}/s)", ConsoleColor.DarkGray);
+            };
+            logTimer.Start();
+            watch.Start();
+
+            WriteLineColor("\tTranslating...");
             var sasDecl = translator.Translate(pddlDecl);
+            logTimer.Stop();
+            watch.Stop();
 
             if (translator.Aborted)
             {
-                Console.WriteLine("Translator Timed Out!...");
-                return;
+                WriteLineColor("Timed out...", ConsoleColor.Yellow);
+                return null;
             }
+            WriteLineColor("\tTranslation successful!", ConsoleColor.Green);
+            WriteLineColor($"\tTranslation took {translator.TranslationTime.TotalSeconds} seconds");
+            WriteLineColor($"\tPeak memory usage: {Process.GetCurrentProcess().PrivateMemorySize64 / 1000000}MB");
+            WriteLineColor("\tTask contains:");
+            WriteLineColor($"\t\t{sasDecl.DomainVariables.Count} domain variables", ConsoleColor.DarkGray);
+            WriteLineColor($"\t\t{translator.Facts} total facts", ConsoleColor.DarkGray);
+            WriteLineColor($"\t\t{sasDecl.Operators.Count} operators", ConsoleColor.DarkGray);
+            WriteLineColor($"\t\t{sasDecl.Init.Count} initial facts", ConsoleColor.DarkGray);
+            WriteLineColor($"\t\t{sasDecl.Goal.Count} goal facts", ConsoleColor.DarkGray);
+            return sasDecl;
+        }
 
-            Console.WriteLine("Building search engine...");
+        private static void Search(Options opts, PDDLDecl pddlDecl, SASDecl sasDecl)
+        {
+            WriteLineColor("Search", ConsoleColor.Blue);
+            WriteColor("\tBuilding Search engine...");
+
             using (var planner = InputArgumentBuilder.GetPlanner(pddlDecl, sasDecl, opts.SearchOption))
             {
+                WriteLineColor("Done!", ConsoleColor.Green);
+                var watch = new Stopwatch();
+
+                var logTimer = new System.Timers.Timer();
+                logTimer.Interval = 1000;
+                logTimer.AutoReset = true;
+                logTimer.Elapsed += (s, e) =>
+                {
+                    WriteLineColor($"\t\t[{Math.Round(watch.Elapsed.TotalSeconds, 0)}s] Expanded {planner.Expanded} ({GetItemPrSecond(planner.Expanded, watch.Elapsed)}/s). Generated {planner.Generated} ({GetItemPrSecond(planner.Generated, watch.Elapsed)}/s). Evaluations {planner.Evaluations} ({GetItemPrSecond(planner.Evaluations, watch.Elapsed)}/s)", ConsoleColor.DarkGray);
+                };
+                logTimer.Start();
+                watch.Start();
+
+                WriteLineColor("\tStarting search...");
                 if (opts.SearchTimeLimit > 0)
                     planner.TimeLimit = TimeSpan.FromSeconds(opts.SearchTimeLimit);
-                planner.Log = true;
                 var solution = planner.Solve();
 
+                logTimer.Stop();
+                watch.Stop();
+
                 if (planner.Aborted)
-                    Console.WriteLine("Planner timed out!");
+                    WriteLineColor("Timed out...", ConsoleColor.Yellow);
+                else if (solution.Plan.Count == 0)
+                {
+                    WriteLineColor("\tNo solution could be found!", ConsoleColor.Red);
+                }
                 else
                 {
-                    Console.WriteLine("Planner succeded!");
-                    var planGenerator = new FastDownwardPlanGenerator(listener);
-                    var plan = planGenerator.Generate(solution);
-                    Console.WriteLine("Plan:");
-                    Console.WriteLine(plan);
+                    WriteLineColor("\tSolution found!", ConsoleColor.Green);
+                    WriteLineColor($"\tSearch took {planner.SearchTime.TotalSeconds} seconds");
+                    WriteLineColor($"\tPeak memory usage: {Process.GetCurrentProcess().PrivateMemorySize64 / 1000000}MB");
+                    WriteLineColor("\tPlanner info:");
+                    WriteLineColor($"\t\t{planner.Expanded} total expansions", ConsoleColor.DarkGray);
+                    WriteLineColor($"\t\t{planner.Generated} total generations", ConsoleColor.DarkGray);
+                    WriteLineColor($"\t\t{planner.Evaluations} total evaluations", ConsoleColor.DarkGray);
 
+                    var planGenerator = new FastDownwardPlanGenerator(new ErrorListener());
+                    var plan = planGenerator.Generate(solution);
+                    WriteLineColor($"Plan", ConsoleColor.Blue);
+                    WriteLineColor($"\tPlan has {solution.Plan.Count} steps with a cost of {solution.Cost}");
+                    WriteLineColor($"\tPlan uses {solution.Plan.DistinctBy(x => x.ActionName).Count()} actions out of {pddlDecl.Domain.Actions.Count}");
+                    if (opts.PrintPlan)
+                    {
+                        WriteLineColor($"\tThe plan is:");
+                        WriteLineColor($"\t\t{plan.Replace(Environment.NewLine, $"{Environment.NewLine}\t\t")}", ConsoleColor.DarkGray);
+                    }
+
+                    WriteColor("\tOutputting plan file...");
                     File.WriteAllText(opts.PlanPath, plan);
+                    WriteLineColor("Done!", ConsoleColor.Green);
                 }
             }
+        }
+
+        private static double GetItemPrSecond(int amount, TimeSpan elapsed)
+        {
+            if (elapsed.TotalMilliseconds == 0)
+                return 0;
+            return Math.Round(amount / (elapsed.TotalMilliseconds / 1000), 1);
         }
 
         private static void HandleParseError(IEnumerable<Error> errs)
@@ -96,6 +197,26 @@ namespace FlashPlanner.CLI
                 path = Path.Join(Directory.GetCurrentDirectory(), path);
             path = path.Replace("\\", "/");
             return path;
+        }
+
+        private static void WriteLineColor(string text, ConsoleColor? color = null)
+        {
+            if (color != null)
+                Console.ForegroundColor = (ConsoleColor)color;
+            else
+                Console.ResetColor();
+            Console.WriteLine(text);
+            Console.ResetColor();
+        }
+
+        private static void WriteColor(string text, ConsoleColor? color = null)
+        {
+            if (color != null)
+                Console.ForegroundColor = (ConsoleColor)color;
+            else
+                Console.ResetColor();
+            Console.Write(text);
+            Console.ResetColor();
         }
     }
 }

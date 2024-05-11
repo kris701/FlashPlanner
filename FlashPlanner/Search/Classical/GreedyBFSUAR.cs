@@ -228,10 +228,5 @@ namespace FlashPlanner.Search.Classical
 
             GC.SuppressFinalize(this);
         }
-
-        public override void LogTick()
-        {
-            Console.WriteLine($"[{GetPassedTime()}s] Expanded {Expanded} ({ExpandedPrSecond}/s). Generated {Generated} ({GeneratedPrSecond}/s). Evaluations {Heuristic.Evaluations} ({EvaluationsPrSecond}/s). Operators {OperatorsUsed} out of {Declaration.Operators.Count}");
-        }
     }
 }

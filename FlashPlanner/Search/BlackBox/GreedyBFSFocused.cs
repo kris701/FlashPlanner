@@ -33,15 +33,11 @@ namespace FlashPlanner.Search.BlackBox
 
         internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
         {
-            Console.WriteLine($"[{GetPassedTime()}s] Learning Macros...");
             LearnedMacros = LearnFocusedMacros(NumberOfMacros, SearchBudget);
-            Console.WriteLine($"[{GetPassedTime()}s] Found {LearnedMacros.Count} macros");
             _pddlDecl.Domain.Actions.AddRange(LearnedMacros);
-            Console.WriteLine($"[{GetPassedTime()}s] Re-translating...");
             var translator = new PDDLToSASTranslator(true);
             translator.TimeLimit = TimeSpan.FromSeconds(1000);
             Declaration = translator.Translate(_pddlDecl);
-            Console.WriteLine($"[{GetPassedTime()}s] Searching...");
 
             while (!Aborted && _openList.Count > 0)
             {

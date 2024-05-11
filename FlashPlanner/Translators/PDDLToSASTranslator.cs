@@ -21,6 +21,9 @@ namespace FlashPlanner.Translators
         public TimeSpan TimeLimit { get; set; } = TimeSpan.FromMinutes(30);
         public TimeSpan TranslationTime { get; internal set; }
         public bool Aborted { get; internal set; }
+        public int Facts { get; internal set; }
+        public int Operators { get; internal set; }
+
         private ParametizedGrounder? _grounder;
         private NodeDeconstructor? _deconstructor;
         private HashSet<Fact> _factSet = new HashSet<Fact>();
@@ -299,6 +302,7 @@ namespace FlashPlanner.Translators
                         if (!operators.Any(x => x.ContentEquals(newOp)))
                         {
                             newOp.ID = _opID++;
+                            Operators++;
                             operators.Add(newOp);
                         }
                     }
@@ -326,6 +330,7 @@ namespace FlashPlanner.Translators
             if (find == null)
             {
                 newFact.ID = _factID++;
+                Facts++;
                 _factSet.Add(newFact);
             }
             else
@@ -340,6 +345,7 @@ namespace FlashPlanner.Translators
             if (find == null)
             {
                 newFact.ID = _factID++;
+                Facts++;
                 _factSet.Add(newFact);
             }
             else
