@@ -56,3 +56,35 @@ using (var greedyBFS = new GreedyBFS(sas, new hFF(decl)))
    var plan = greedyBFS.Solve();
 }
 ```
+
+## Supported PDDL Requirements
+Here is the set of requirements that the planner supports.
+
+- [x] STRIPS (`:strips`)
+- [x] Typing (`:typing`)
+- [X] Disjunctive Preconditions (`:disjunctive-preconditions`)
+- [X] Equality (`:equality`)
+- [x] Quantified Preconditions (`:quantified-preconditions`)
+    - [x] Existential Preconditions (`:existential-preconditions`)
+    - [x] Universal Preconditions (`:universal-preconditions`)
+- [X] Conditional Effects (`:conditional-effects`)
+- [ ] Domain Axioms (`:domain-axioms`)
+    - [ ] Subgoals Through Axioms (`:subgoals-through-axioms`)
+    - [ ] Expression Evaluation (`:expression-evaluation`)
+- [X] ADL (`:adl`)
+- [ ] Fluents (`:fluents`)
+- [ ] Durative Actions (`:durative-actions`)
+    - [ ] Durative Inequalities (`:durative-inequalities`)
+    - [ ] Continuous Effects (`:continuous-effects`)
+- [X] Negative Preconditions (`:negative-preconditions`)
+- [ ] Derived Predicates (`:derived-predicates`)
+- [ ] Timed Initial Literals (`:timed-initial-literals`)
+- [ ] Action Expansions (`:action-expansions`)
+- [ ] Foreach Expansions (`:forach-expansions`)
+- [ ] DAG Expansions (`:dag-expansions`)
+- [ ] Safety Constraints (`:safety-constraints`)
+- [ ] Open World (`:open-world`)
+- [ ] True Negation (`:true-negation`)
+- [ ] UCPOP (`:ucpop`)
+- [ ] Constraints (`:constraints`)
+- [ ] Preferences (`:preferences`)

@@ -2,12 +2,12 @@
 using FlashPlanner.HeuristicsCollections;
 using FlashPlanner.States;
 using FlashPlanner.Tools;
+using FlashPlanner.Translator;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.SAS;
 using PDDLSharp.Toolkits;
-using PDDLSharp.Translators;
 
 namespace FlashPlanner.Search.BlackBox
 {

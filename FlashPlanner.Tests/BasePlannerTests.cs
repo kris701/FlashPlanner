@@ -1,4 +1,5 @@
-﻿using PDDLSharp.ErrorListeners;
+﻿using FlashPlanner.Translator;
+using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
@@ -33,7 +34,7 @@ namespace FlashPlanner.Tests
                 parser.ParseAs<ProblemDecl>(new FileInfo(problem))
                 );
 
-            ITranslator<PDDLDecl, SASDecl> translator = new PDDLToSASTranslator();
+            var translator = new PDDLToSASTranslator();
             var decl = translator.Translate(pddlDecl);
 
             _declCache.Add(domain + problem, decl);
