@@ -1,7 +1,6 @@
 ﻿using FlashPlanner.States;
 using PDDLSharp.Models.SAS;
 
-
 namespace FlashPlanner.Tools
 {
     public class StateMove
@@ -11,13 +10,6 @@ namespace FlashPlanner.Tools
         public int hValue { get; set; }
         public bool Evaluated { get; set; } = true;
 
-        public StateMove(SASStateSpace state, List<Operator> steps)
-        {
-            State = state;
-            Steps = steps;
-            hValue = -1;
-        }
-
         public StateMove(SASStateSpace state, int hvalue)
         {
             State = state;
@@ -25,18 +17,12 @@ namespace FlashPlanner.Tools
             hValue = hvalue;
         }
 
-        public StateMove(SASStateSpace state)
+        public StateMove(SASStateSpace state) : this(state, -1)
         {
-            State = state;
-            Steps = new List<Operator>();
-            hValue = -1;
         }
 
-        public StateMove()
+        public StateMove() : this(new SASStateSpace(new SASDecl()), -1)
         {
-            State = new SASStateSpace(new SASDecl());
-            Steps = new List<Operator>();
-            hValue = -1;
         }
 
         public override int GetHashCode()

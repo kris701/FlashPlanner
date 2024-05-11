@@ -15,13 +15,34 @@ using System.Timers;
 
 namespace FlashPlanner.Translators
 {
+    /// <summary>
+    /// Primary translator for FlashPlanner
+    /// </summary>
     public class PDDLToSASTranslator : ITranslator
     {
+        /// <summary>
+        /// A bool representing if statics should be removed from the resulting <seealso cref="SASDecl"/>
+        /// </summary>
         public bool RemoveStaticsFromOutput { get; set; } = false;
-        public TimeSpan TimeLimit { get; set; } = TimeSpan.FromMinutes(30);
+        /// <summary>
+        /// Time limit for the translation
+        /// </summary>
+        public TimeSpan TimeLimit { get; set; } = TimeSpan.FromMinutes(9999999999);
+        /// <summary>
+        /// Time it took to translate
+        /// </summary>
         public TimeSpan TranslationTime { get; internal set; }
+        /// <summary>
+        /// Aborted is true if the time limit was reached
+        /// </summary>
         public bool Aborted { get; internal set; }
+        /// <summary>
+        /// How many facts have been created during the translation
+        /// </summary>
         public int Facts { get; internal set; }
+        /// <summary>
+        /// How many operators have been created during the translation
+        /// </summary>
         public int Operators { get; internal set; }
 
         private ParametizedGrounder? _grounder;
@@ -32,6 +53,10 @@ namespace FlashPlanner.Translators
         private HashSet<Fact> _negativeFacts = new HashSet<Fact>();
         private readonly string _negatedPrefix = "$neg-";
 
+        /// <summary>
+        /// Constructor that can take in a bool saying if statics should be removed from the output
+        /// </summary>
+        /// <param name="removeStaticsFromOutput"></param>
         public PDDLToSASTranslator(bool removeStaticsFromOutput = false)
         {
             RemoveStaticsFromOutput = removeStaticsFromOutput;
@@ -55,6 +80,11 @@ namespace FlashPlanner.Translators
                 _deconstructor.Abort();
         }
 
+        /// <summary>
+        /// Convert a <seealso cref="PDDLDecl"/> into a <seealso cref="SASDecl"/>
+        /// </summary>
+        /// <param name="from"></param>
+        /// <returns></returns>
         public SASDecl Translate(PDDLDecl from)
         {
             if (!from.IsContextualised)

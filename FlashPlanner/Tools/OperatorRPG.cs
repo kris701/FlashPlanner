@@ -3,16 +3,35 @@ using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Tools
 {
+    /// <summary>
+    /// Operator Relaxed Planning Graphs
+    /// </summary>
     public class OperatorRPG : BaseRPG
     {
+        /// <summary>
+        /// Bool indicating if the generation failed
+        /// </summary>
         public bool Failed { get; internal set; } = false;
+        /// <summary>
+        /// The current <seealso cref="SASDecl"/>
+        /// </summary>
         public SASDecl Declaration { get; set; }
 
+        /// <summary>
+        /// Constructor with the <seealso cref="SASDecl"/>
+        /// </summary>
+        /// <param name="declaration"></param>
         public OperatorRPG(SASDecl declaration)
         {
             Declaration = declaration;
         }
 
+        /// <summary>
+        /// Generate a relaxed plan
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="operators"></param>
+        /// <returns></returns>
         public List<Operator> GenerateReplaxedPlan(SASStateSpace state, List<Operator> operators)
         {
             Failed = false;
@@ -104,6 +123,12 @@ namespace FlashPlanner.Tools
             throw new Exception();
         }
 
+        /// <summary>
+        /// Generate a relaxed planning graph
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="operators"></param>
+        /// <returns></returns>
         public List<Layer> GenerateRelaxedPlanningGraph(RelaxedSASStateSpace state, List<Operator> operators)
         {
             state = new RelaxedSASStateSpace(state);

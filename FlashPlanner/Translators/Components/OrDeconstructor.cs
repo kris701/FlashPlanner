@@ -1,13 +1,26 @@
-﻿using PDDLSharp.Models.PDDL;
+﻿using FlashPlanner.Translators.Exceptions;
+using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Overloads;
 
 namespace FlashPlanner.Translators.Components
 {
+    /// <summary>
+    /// A class able to deconstruct <seealso cref="OrExp"/> into simpler formats.
+    /// </summary>
     public class OrDeconstructor
     {
+        /// <summary>
+        /// Bool representing if the deconstructor should stop or not
+        /// </summary>
         public bool Aborted { get; set; } = false;
+
+        /// <summary>
+        /// Takes an action and makes simplified versions of it.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public List<ActionDecl> DeconstructOrs(ActionDecl action)
         {
             var deconstructed = new List<ActionDecl>();
@@ -30,7 +43,7 @@ namespace FlashPlanner.Translators.Components
             if (Aborted) return;
             var ors = act.Preconditions.FindTypes<OrExp>();
             if (ors.Any(x => x.Options.Count == 0 || x.Options.Count == 1))
-                throw new Exception();
+                throw new TranslatorException("Unknown error occured!");
             if (ors.Count <= 0)
             {
                 returnList.Add(act);

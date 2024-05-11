@@ -33,13 +33,5 @@
             _referenceList.Remove(item);
             return item;
         }
-
-        public List<StateMove> DequeueAll()
-        {
-            var list = new List<StateMove>();
-            while (_queue.Count > 0)
-                list.Add(Dequeue());
-            return list;
-        }
     }
 }

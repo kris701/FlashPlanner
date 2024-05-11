@@ -1,12 +1,19 @@
 ﻿using FlashPlanner.States;
 using PDDLSharp.Models.SAS;
 
-
 namespace FlashPlanner.Tools
 {
-    // Fact Relaxed Planning Graph
+    /// <summary>
+    /// Fact Relaxed Planning Graph
+    /// </summary>
     public class FactRPG : BaseRPG
     {
+        /// <summary>
+        /// Generate a relaxed planning graph
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="operators"></param>
+        /// <returns></returns>
         public Dictionary<int, int> GenerateRelaxedGraph(SASStateSpace state, List<Operator> operators)
         {
             state = new RelaxedSASStateSpace(state);

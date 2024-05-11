@@ -1,9 +1,11 @@
 ﻿using FlashPlanner.States;
 using PDDLSharp.Models.SAS;
 
-
 namespace FlashPlanner.Tools
 {
+    /// <summary>
+    /// Base class for generating relaxed planning graphs
+    /// </summary>
     public abstract class BaseRPG
     {
         internal List<Operator> GetNewApplicableOperators(SASStateSpace state, List<Operator> operators, bool[] covered) => GetNewApplicableOperators(state, new List<Operator>(), operators, covered);

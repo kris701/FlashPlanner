@@ -4,9 +4,21 @@ using PDDLSharp.Models.PDDL.Expressions;
 
 namespace FlashPlanner.Translators.Components
 {
+    /// <summary>
+    /// A class able to deconstruct <seealso cref="WhenExp"/> into simpler formats.
+    /// </summary>
     public class ConditionalDeconstructor
     {
+        /// <summary>
+        /// Bool representing if the deconstructor should stop or not
+        /// </summary>
         public bool Aborted { get; set; } = false;
+
+        /// <summary>
+        /// Takes an action and makes simplified versions of it.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
         public List<ActionDecl> DecontructConditionals(ActionDecl action)
         {
             var newActions = new List<ActionDecl>();

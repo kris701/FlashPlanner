@@ -13,12 +13,6 @@ namespace FlashPlanner.Tools
             Propositions = propositions;
         }
 
-        public Layer()
-        {
-            Operators = new List<Operator>();
-            Propositions = new HashSet<int>();
-        }
-
         public override string? ToString()
         {
             return $"Ops: {Operators.Count}, Props: {Propositions.Count}";

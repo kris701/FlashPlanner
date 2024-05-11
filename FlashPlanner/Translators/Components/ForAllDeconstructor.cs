@@ -1,19 +1,40 @@
-﻿using PDDLSharp.Models.PDDL;
+﻿using FlashPlanner.Translators.Exceptions;
+using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Translators.Grounders;
 
 namespace FlashPlanner.Translators.Components
 {
+    /// <summary>
+    /// A class able to deconstruct <seealso cref="ForAllExp"/> into simpler formats.
+    /// </summary>
     public class ForAllDeconstructor
     {
+        /// <summary>
+        /// The current grounder being used
+        /// </summary>
         public IGrounder<IParametized> Grounder { get; }
+        /// <summary>
+        /// Bool representing if the deconstructor should stop or not
+        /// </summary>
         public bool Aborted { get; set; } = false;
 
+        /// <summary>
+        /// Constructor with a grounder given
+        /// </summary>
+        /// <param name="grounder"></param>
         public ForAllDeconstructor(IGrounder<IParametized> grounder)
         {
             Grounder = grounder;
         }
 
+        /// <summary>
+        /// Takes in some <seealso cref="INode"/> expression, and simplifies the <seealso cref="ForAllExp"/> expressions
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        /// <exception cref="TranslatorException"></exception>
         public T DeconstructForAlls<T>(T node) where T : INode
         {
             var copy = node.Copy(node.Parent);
@@ -41,7 +62,7 @@ namespace FlashPlanner.Translators.Components
                     }
                 }
                 else
-                    throw new Exception("Parent for forall deconstruction must be a IWalkable!");
+                    throw new TranslatorException("Parent for forall deconstruction must be a IWalkable!");
                 forAlls = copy.FindTypes<ForAllExp>();
             }
 
