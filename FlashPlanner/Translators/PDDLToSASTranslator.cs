@@ -27,7 +27,7 @@ namespace FlashPlanner.Translators
         /// <summary>
         /// Time limit for the translation
         /// </summary>
-        public TimeSpan TimeLimit { get; set; } = TimeSpan.FromMinutes(9999999999);
+        public TimeSpan TimeLimit { get; set; } = TimeSpan.FromMinutes(30);
         /// <summary>
         /// Time it took to translate
         /// </summary>
