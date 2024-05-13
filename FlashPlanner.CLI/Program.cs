@@ -67,6 +67,8 @@ namespace FlashPlanner.CLI
             var translator = InputArgumentBuilder.GetTranslator(pddlDecl, opts.TranslatorOption);
             if (opts.TranslatorTimeLimit > 0)
                 translator.TimeLimit = TimeSpan.FromSeconds(opts.TranslatorTimeLimit);
+            if (opts.TranslatorMemoryLimit > 0)
+                translator.MemoryLimit = opts.TranslatorMemoryLimit;
             WriteLineColor("Done!", ConsoleColor.Green);
 
             var watch = new Stopwatch();
@@ -86,15 +88,16 @@ namespace FlashPlanner.CLI
             logTimer.Stop();
             watch.Stop();
 
-            if (translator.Aborted)
+            switch (translator.Code)
             {
-                WriteLineColor("Timed out...", ConsoleColor.Yellow);
-                return null;
+                case ILimitedComponent.ReturnCode.Success: WriteLineColor("\tTranslation successful!", ConsoleColor.Green); break;
+                case ILimitedComponent.ReturnCode.TimedOut: WriteLineColor("\tTranslator timed out...", ConsoleColor.Yellow); return null;
+                case ILimitedComponent.ReturnCode.MemoryLimitReached: WriteLineColor("\tTranslator reached memory limit...", ConsoleColor.Yellow); return null;
             }
-            WriteLineColor("\tTranslation successful!", ConsoleColor.Green);
-            WriteLineColor($"\tTranslation took {translator.TranslationTime.TotalSeconds} seconds");
-            WriteLineColor($"\tPeak memory usage: {Process.GetCurrentProcess().PrivateMemorySize64 / 1000000}MB");
-            WriteLineColor("\tTask contains:");
+
+            WriteLineColor($"\tTranslation took {translator.ExecutionTime.TotalSeconds} seconds");
+            WriteLineColor($"\tPeak memory usage: {translator.MemoryUsed}MB");
+            WriteLineColor("\tTranslator info:");
             WriteLineColor($"\t\t{sasDecl.DomainVariables.Count} domain variables", ConsoleColor.DarkGray);
             WriteLineColor($"\t\t{translator.Facts} total facts", ConsoleColor.DarkGray);
             WriteLineColor($"\t\t{sasDecl.Operators.Count} operators", ConsoleColor.DarkGray);
@@ -126,22 +129,28 @@ namespace FlashPlanner.CLI
                 WriteLineColor("\tStarting search...");
                 if (opts.SearchTimeLimit > 0)
                     planner.TimeLimit = TimeSpan.FromSeconds(opts.SearchTimeLimit);
+                if (opts.SearchMemoryLimit > 0)
+                    planner.MemoryLimit = opts.SearchMemoryLimit;
                 var solution = planner.Solve();
+
+                switch (planner.Code)
+                {
+                    case ILimitedComponent.ReturnCode.TimedOut: WriteLineColor("\tPlanner timed out...", ConsoleColor.Yellow); return;
+                    case ILimitedComponent.ReturnCode.MemoryLimitReached: WriteLineColor("\tPlanner reached memory limit...", ConsoleColor.Yellow); return;
+                }
 
                 logTimer.Stop();
                 watch.Stop();
 
-                if (planner.Aborted)
-                    WriteLineColor("Timed out...", ConsoleColor.Yellow);
-                else if (solution.Plan.Count == 0)
+                if (solution.Plan.Count == 0)
                 {
                     WriteLineColor("\tNo solution could be found!", ConsoleColor.Red);
                 }
                 else
                 {
                     WriteLineColor("\tSolution found!", ConsoleColor.Green);
-                    WriteLineColor($"\tSearch took {planner.SearchTime.TotalSeconds} seconds");
-                    WriteLineColor($"\tPeak memory usage: {Process.GetCurrentProcess().PrivateMemorySize64 / 1000000}MB");
+                    WriteLineColor($"\tSearch took {planner.ExecutionTime.TotalSeconds} seconds");
+                    WriteLineColor($"\tPeak memory usage: {planner.MemoryUsed}MB");
                     WriteLineColor("\tPlanner info:");
                     WriteLineColor($"\t\t{planner.Expanded} total expansions", ConsoleColor.DarkGray);
                     WriteLineColor($"\t\t{planner.Generated} total generations", ConsoleColor.DarkGray);

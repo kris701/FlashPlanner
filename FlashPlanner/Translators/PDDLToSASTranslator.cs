@@ -1,4 +1,5 @@
-﻿using FlashPlanner.Translators.Components;
+﻿using FlashPlanner.Helpers;
+using FlashPlanner.Translators.Components;
 using FlashPlanner.Translators.Exceptions;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
@@ -8,34 +9,22 @@ using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Models.SAS;
-using PDDLSharp.Tools;
 using PDDLSharp.Translators.Grounders;
 using System.Diagnostics;
 using System.Timers;
+using static FlashPlanner.Translators.ITranslator;
 
 namespace FlashPlanner.Translators
 {
     /// <summary>
     /// Primary translator for FlashPlanner
     /// </summary>
-    public class PDDLToSASTranslator : ITranslator
+    public class PDDLToSASTranslator : LimitedComponent, ITranslator
     {
         /// <summary>
         /// A bool representing if statics should be removed from the resulting <seealso cref="SASDecl"/>
         /// </summary>
         public bool RemoveStaticsFromOutput { get; set; } = false;
-        /// <summary>
-        /// Time limit for the translation
-        /// </summary>
-        public TimeSpan TimeLimit { get; set; } = TimeSpan.FromMinutes(30);
-        /// <summary>
-        /// Time it took to translate
-        /// </summary>
-        public TimeSpan TranslationTime { get; internal set; }
-        /// <summary>
-        /// Aborted is true if the time limit was reached
-        /// </summary>
-        public bool Aborted { get; internal set; }
         /// <summary>
         /// How many facts have been created during the translation
         /// </summary>
@@ -47,10 +36,10 @@ namespace FlashPlanner.Translators
 
         private ParametizedGrounder? _grounder;
         private NodeDeconstructor? _deconstructor;
-        private List<Fact> _factSet = new List<Fact>();
+        private Dictionary<string, List<Fact>> _factSet = new Dictionary<string, List<Fact>>();
         private int _factID = 0;
         private int _opID = 0;
-        private List<Fact> _negativeFacts = new List<Fact>();
+        private Dictionary<string, List<Fact>> _negativeFacts = new Dictionary<string, List<Fact>>();
         private readonly string _negatedPrefix = "$neg-";
 
         /// <summary>
@@ -62,18 +51,8 @@ namespace FlashPlanner.Translators
             RemoveStaticsFromOutput = removeStaticsFromOutput;
         }
 
-        private System.Timers.Timer GetTimer(TimeSpan interval)
+        public override void DoAbort()
         {
-            System.Timers.Timer newTimer = new System.Timers.Timer();
-            newTimer.Interval = interval.TotalMilliseconds;
-            newTimer.Elapsed += OnTimedOut;
-            newTimer.AutoReset = false;
-            return newTimer;
-        }
-
-        private void OnTimedOut(object? source, ElapsedEventArgs e)
-        {
-            Aborted = true;
             if (_grounder != null)
                 _grounder.Abort();
             if (_deconstructor != null)
@@ -87,6 +66,8 @@ namespace FlashPlanner.Translators
         /// <returns></returns>
         public SASDecl Translate(PDDLDecl from)
         {
+            Start();
+
             if (!from.IsContextualised)
             {
                 var listener = new ErrorListener();
@@ -94,14 +75,7 @@ namespace FlashPlanner.Translators
                 contextualiser.Contexturalise(from);
             }
 
-            Aborted = true;
             CheckIfValid(from);
-            Aborted = false;
-
-            var timer = GetTimer(TimeLimit);
-            timer.Start();
-            var watch = new Stopwatch();
-            watch.Start();
 
             var domainVariables = new HashSet<string>();
             var operators = new List<Operator>();
@@ -114,9 +88,19 @@ namespace FlashPlanner.Translators
             var deconstructor = new NodeDeconstructor(grounder);
             _deconstructor = deconstructor;
             _factID = 0;
-            _factSet = new List<Fact>();
+            _factSet = new Dictionary<string, List<Fact>>();
+            _negativeFacts = new Dictionary<string, List<Fact>>();
+
+            if (from.Domain.Predicates != null)
+            {
+                foreach(var pred in from.Domain.Predicates.Predicates)
+                {
+                    _factSet.Add(pred.Name, new List<Fact>());
+                    _negativeFacts.Add(pred.Name, new List<Fact>());
+                }
+            }
+
             _opID = 0;
-            _negativeFacts = new List<Fact>();
 
             // Domain variables
             if (from.Problem.Objects != null)
@@ -129,19 +113,19 @@ namespace FlashPlanner.Translators
             // Init
             if (from.Problem.Init != null)
                 inits = ExtractInitFacts(from.Problem.Init.Predicates, deconstructor);
-            if (Aborted) return new SASDecl();
+            if (Abort) return new SASDecl();
 
             // Goal
             if (from.Problem.Goal != null)
                 goals = ExtractGoalFacts(from.Problem.Goal.GoalExp, deconstructor);
-            if (Aborted) return new SASDecl();
+            if (Abort) return new SASDecl();
 
             // Operators
             operators = GetOperators(from, grounder, deconstructor);
-            if (Aborted) return new SASDecl();
+            if (Abort) return new SASDecl();
 
             // Handle negative preconditions, if there where any
-            if (_negativeFacts.Count > 0)
+            if (_negativeFacts.Any(x => x.Value.Count > 0))
             {
                 var negInits = ProcessNegativeFactsInOperators(operators);
                 inits = ProcessNegativeFactsInInit(negInits, inits);
@@ -158,9 +142,7 @@ namespace FlashPlanner.Translators
                 if (!result.Operators.Any(x => x.Add.Contains(goal)))
                     result.Operators.Clear();
 
-            watch.Stop();
-            timer.Stop();
-            TranslationTime = watch.Elapsed;
+            Stop();
             return result;
         }
 
@@ -168,13 +150,15 @@ namespace FlashPlanner.Translators
         {
             var negInits = new List<Fact>();
             // Adds negated facts to all ops
-            foreach (var fact in _negativeFacts)
+            foreach (var fact in _negativeFacts.Keys)
             {
+                if (_negativeFacts[fact].Count == 0)
+                    continue;
                 for (int i = 0; i < operators.Count; i++)
                 {
-                    var negDels = operators[i].Add.Where(x => x.Name == fact.Name).ToList();
-                    var negAdds = operators[i].Del.Where(x => x.Name == fact.Name).ToList();
-                    negInits.AddRange(operators[i].Pre.Where(x => x.Name.Contains(_negatedPrefix) && x.Name.Replace(_negatedPrefix, "") == fact.Name).ToHashSet());
+                    var negDels = operators[i].Add.Where(x => x.Name == fact).ToList();
+                    var negAdds = operators[i].Del.Where(x => x.Name == fact).ToList();
+                    negInits.AddRange(operators[i].Pre.Where(x => x.Name.Contains(_negatedPrefix) && x.Name.Replace(_negatedPrefix, "") == fact).ToHashSet());
 
                     if (negDels.Count == 0 && negAdds.Count == 0)
                         continue;
@@ -206,7 +190,7 @@ namespace FlashPlanner.Translators
                         operators[i].ID = id;
                     }
                 }
-                if (Aborted) return new List<Fact>();
+                if (Abort) return new List<Fact>();
             }
             return negInits;
         }
@@ -218,7 +202,7 @@ namespace FlashPlanner.Translators
                 var findTrue = new Fact(fact.Name.Replace(_negatedPrefix, ""), fact.Arguments);
                 if (!init.Any(x => x.ContentEquals(findTrue)))
                     init.Add(fact);
-                if (Aborted) return new List<Fact>();
+                if (Abort) return new List<Fact>();
             }
             return init;
         }
@@ -291,15 +275,15 @@ namespace FlashPlanner.Translators
             foreach (var action in decl.Domain.Actions)
             {
                 action.EnsureAnd();
-                if (Aborted) return new List<Operator>();
+                if (Abort) return new List<Operator>();
                 var deconstructedActions = deconstructor.DeconstructAction(action);
                 foreach (var deconstructed in deconstructedActions)
                 {
-                    if (Aborted) return new List<Operator>();
+                    if (Abort) return new List<Operator>();
                     var newActs = grounder.Ground(deconstructed).Cast<ActionDecl>();
                     foreach (var act in newActs)
                     {
-                        if (Aborted) return new List<Operator>();
+                        if (Abort) return new List<Operator>();
 
                         var preFacts = ExtractFactsFromExp(act.Preconditions);
                         if (preFacts[true].Intersect(preFacts[false]).Count() > 0)
@@ -314,8 +298,8 @@ namespace FlashPlanner.Translators
                         {
                             foreach (var fact in preFacts[false])
                             {
-                                if (!_negativeFacts.Any(x => x.Name == fact.Name))
-                                    _negativeFacts.Add(fact);
+                                if (_negativeFacts[fact.Name].Count == 0)
+                                    _negativeFacts[fact.Name].Add(fact);
 
                                 var nFact = GetNegatedOf(fact);
                                 pre.Add(nFact);
@@ -363,12 +347,12 @@ namespace FlashPlanner.Translators
             foreach (var arg in pred.Arguments)
                 args.Add(arg.Name);
             var newFact = new Fact(name, args.ToArray());
-            var find = _factSet.FirstOrDefault(x => x.ContentEquals(newFact));
+            var find = _factSet[name].FirstOrDefault(x => x.ContentEquals(newFact));
             if (find == null)
             {
                 newFact.ID = _factID++;
                 Facts++;
-                _factSet.Add(newFact);
+                _factSet[name].Add(newFact);
             }
             else
                 newFact.ID = find.ID;
@@ -378,12 +362,12 @@ namespace FlashPlanner.Translators
         private Fact GetNegatedOf(Fact fact)
         {
             var newFact = new Fact($"{_negatedPrefix}{fact.Name}", fact.Arguments);
-            var find = _factSet.FirstOrDefault(x => x.ContentEquals(newFact));
+            var find = _negativeFacts[fact.Name].FirstOrDefault(x => x.ContentEquals(newFact));
             if (find == null)
             {
                 newFact.ID = _factID++;
                 Facts++;
-                _factSet.Add(newFact);
+                _negativeFacts[fact.Name].Add(newFact);
             }
             else
                 newFact.ID = find.ID;

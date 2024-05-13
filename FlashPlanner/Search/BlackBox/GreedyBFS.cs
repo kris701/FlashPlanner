@@ -14,13 +14,13 @@ namespace FlashPlanner.Search.BlackBox
 
         internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
         {
-            while (!Aborted && _openList.Count > 0)
+            while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
                 var applicables = GetApplicables(stateMove.State);
                 foreach (var op in applicables)
                 {
-                    if (Aborted) break;
+                    if (Abort) break;
                     var newMove = new StateMove(Simulate(stateMove.State, op));
                     if (newMove.State.IsInGoal())
                         return new ActionPlan(GeneratePlanChain(stateMove.Steps, op));

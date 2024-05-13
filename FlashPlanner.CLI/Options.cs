@@ -21,5 +21,9 @@ namespace FlashPlanner.CLI
         public int TranslatorTimeLimit { get; set; } = -1;
         [Option("search-time-limit", Required = false, HelpText = "Time limit for the search in seconds. (-1 is no time limit)", Default = -1)]
         public int SearchTimeLimit { get; set; } = -1;
+        [Option("translator-memory-limit", Required = false, HelpText = "Memory limit for the translator in MB. (-1 is no limit)", Default = -1)]
+        public int TranslatorMemoryLimit { get; set; } = -1;
+        [Option("search-memory-limit", Required = false, HelpText = "Memory limit for the search in MB. (-1 is no limit)", Default = -1)]
+        public int SearchMemoryLimit { get; set; } = -1;
     }
 }

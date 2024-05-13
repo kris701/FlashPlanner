@@ -25,7 +25,7 @@ namespace FlashPlanner.Search.Classical
             var preferredQueue = InitializeQueue(h, state, preferedOperators);
 
             int iteration = 0;
-            while (!Aborted && (_openList.Count > 0 || preferredQueue.Count > 0))
+            while (!Abort && (_openList.Count > 0 || preferredQueue.Count > 0))
             {
                 if (iteration++ % 2 == 0)
                 {
@@ -36,7 +36,7 @@ namespace FlashPlanner.Search.Classical
 
                     foreach (var op in preferedOperators)
                     {
-                        if (Aborted) break;
+                        if (Abort) break;
                         if (stateMove.State.IsApplicable(op))
                         {
                             var newMove = new StateMove(GenerateNewState(stateMove.State, op));
@@ -61,7 +61,7 @@ namespace FlashPlanner.Search.Classical
 
                     foreach (var op in Declaration.Operators)
                     {
-                        if (Aborted) break;
+                        if (Abort) break;
                         if (stateMove.State.IsApplicable(op))
                         {
                             var newMove = new StateMove(GenerateNewState(stateMove.State, op));

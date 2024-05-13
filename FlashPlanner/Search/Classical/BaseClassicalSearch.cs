@@ -8,36 +8,22 @@ using System.Timers;
 
 namespace FlashPlanner.Search.Classical
 {
-    public abstract class BaseClassicalSearch : IPlanner
+    public abstract class BaseClassicalSearch : LimitedComponent, IPlanner
     {
         public SASDecl Declaration { get; internal set; }
         public int Generated { get; internal set; }
         public int Expanded { get; internal set; }
         public int Evaluations => Heuristic.Evaluations;
 
-        public bool Aborted { get; internal set; }
         public IHeuristic Heuristic { get; }
-        public TimeSpan SearchTime => _searchWatch.Elapsed;
-        public TimeSpan TimeLimit { get; set; } = TimeSpan.FromMinutes(30);
 
         internal HashSet<StateMove> _closedList = new HashSet<StateMove>();
         internal RefPriorityQueue _openList = new RefPriorityQueue();
-        private System.Timers.Timer _timeoutTimer = new System.Timers.Timer();
-        private Stopwatch _searchWatch = new Stopwatch();
 
         public BaseClassicalSearch(SASDecl decl, IHeuristic heuristic)
         {
             Declaration = decl;
             Heuristic = heuristic;
-            SetupTimers();
-        }
-
-        private void SetupTimers()
-        {
-            _timeoutTimer = new System.Timers.Timer();
-            _timeoutTimer.Interval = TimeLimit.TotalMilliseconds;
-            _timeoutTimer.Elapsed += OnTimedOut;
-            _timeoutTimer.AutoReset = false;
         }
 
         public ActionPlan Solve()
@@ -46,6 +32,8 @@ namespace FlashPlanner.Search.Classical
             if (state.IsInGoal())
                 return new ActionPlan(new List<GroundedAction>());
 
+            Start();
+
             _closedList = new HashSet<StateMove>();
             _openList = InitializeQueue(Heuristic, state, Declaration.Operators);
 
@@ -53,24 +41,14 @@ namespace FlashPlanner.Search.Classical
             Generated = 0;
             Heuristic.Reset();
 
-            SetupTimers();
-            _timeoutTimer.Start();
-            _searchWatch.Start();
-
             var result = Solve(Heuristic, state);
 
-            _searchWatch.Stop();
-            _timeoutTimer.Stop();
+            Stop();
 
             if (result == null)
                 return new ActionPlan();
 
             return result;
-        }
-
-        private void OnTimedOut(object? source, ElapsedEventArgs e)
-        {
-            Aborted = true;
         }
 
         internal SASStateSpace GenerateNewState(SASStateSpace state, Operator op)
@@ -131,8 +109,6 @@ namespace FlashPlanner.Search.Classical
             _closedList.EnsureCapacity(0);
             _openList.Clear();
             _openList.EnsureCapacity(0);
-
-            _timeoutTimer.Stop();
 
             GC.SuppressFinalize(this);
         }

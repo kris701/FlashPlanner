@@ -39,13 +39,13 @@ namespace FlashPlanner.Search.BlackBox
             translator.TimeLimit = TimeSpan.FromSeconds(1000);
             Declaration = translator.Translate(_pddlDecl);
 
-            while (!Aborted && _openList.Count > 0)
+            while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
                 var applicables = GetApplicables(stateMove.State);
                 foreach (var op in applicables)
                 {
-                    if (Aborted) break;
+                    if (Abort) break;
                     var newMove = new StateMove(Simulate(stateMove.State, op));
                     if (newMove.State.IsInGoal())
                         return new ActionPlan(GeneratePlanChain(stateMove.Steps, op));
@@ -68,7 +68,7 @@ namespace FlashPlanner.Search.BlackBox
             var newDecl = Declaration.Copy();
             var returnMacros = new List<ActionDecl>();
 
-            if (Aborted) return new List<ActionDecl>();
+            if (Abort) return new List<ActionDecl>();
             var queue = new FixedMaxPriorityQueue<ActionDecl>(nMacros);
             var h = new EffectHeuristic(new SASStateSpace(newDecl));
             var g = new hPath();
@@ -80,7 +80,7 @@ namespace FlashPlanner.Search.BlackBox
                 search.Solve();
                 foreach (var state in search._closedList)
                 {
-                    if (Aborted) return new List<ActionDecl>();
+                    if (Abort) return new List<ActionDecl>();
                     if (state.Steps.Count > 0)
                         queue.Enqueue(
                             GenerateMacroFromOperatorSteps(state.Steps),
@@ -92,7 +92,7 @@ namespace FlashPlanner.Search.BlackBox
             int added = 0;
             while (added < nMacros && queue.Count > 0)
             {
-                if (Aborted) return new List<ActionDecl>();
+                if (Abort) return new List<ActionDecl>();
                 var newMacro = queue.Dequeue();
                 if (!returnMacros.Contains(newMacro))
                 {

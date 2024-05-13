@@ -219,7 +219,7 @@ namespace FlashPlanner.Tests.Translator
             var sas = translator.Translate(decl);
 
             // ASSERT
-            Assert.IsTrue(translator.Aborted);
+            Assert.AreEqual(translator.Code, ILimitedComponent.ReturnCode.TimedOut);
         }
     }
 }

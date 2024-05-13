@@ -14,12 +14,12 @@ namespace FlashPlanner.Search.Classical
 
         internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
         {
-            while (!Aborted && _openList.Count > 0)
+            while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
                 foreach (var op in Declaration.Operators)
                 {
-                    if (Aborted) break;
+                    if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
                     {
                         var newMove = new StateMove(GenerateNewState(stateMove.State, op));

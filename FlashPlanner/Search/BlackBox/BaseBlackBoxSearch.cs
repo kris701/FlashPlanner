@@ -23,7 +23,7 @@ namespace FlashPlanner.Search.BlackBox
             var returnList = new List<int>();
             for (int i = 0; i < Declaration.Operators.Count; i++)
             {
-                if (Aborted) break;
+                if (Abort) break;
                 if (state.IsApplicable(Declaration.Operators[i]))
                     returnList.Add(i);
             }

@@ -27,7 +27,7 @@ namespace FlashPlanner.Search.Classical
             _fullyClosed = new HashSet<int>();
             bool haveOnce = false;
 
-            while (!Aborted)
+            while (!Abort)
             {
                 // Refinement Guards
                 if (_openList.Count == 0 || _openList.Peek().hValue == int.MaxValue)
@@ -38,7 +38,7 @@ namespace FlashPlanner.Search.Classical
                 int current = int.MaxValue;
                 foreach (var op in operators)
                 {
-                    if (Aborted) break;
+                    if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
                     {
                         var newMove = new StateMove(GenerateNewState(stateMove.State, op));
@@ -117,7 +117,7 @@ namespace FlashPlanner.Search.Classical
 
                     if (lookForApplicaple)
                     {
-                        Aborted = true;
+                        Abort = true;
                         return operators;
                     }
 
@@ -179,7 +179,7 @@ namespace FlashPlanner.Search.Classical
             var relaxedPlanOperators = new List<Operator>();
             foreach (var item in allSmallest)
             {
-                if (Aborted) return new List<Operator>();
+                if (Abort) return new List<Operator>();
                 var hash = item.GetHashCode();
                 if (_relaxedCache.ContainsKey(hash))
                     relaxedPlanOperators.AddRange(_relaxedCache[hash].Except(operators).Except(relaxedPlanOperators));
@@ -205,7 +205,7 @@ namespace FlashPlanner.Search.Classical
             var applicableOperators = new List<Operator>();
             foreach (var item in allSmallest)
             {
-                if (Aborted) return new List<Operator>();
+                if (Abort) return new List<Operator>();
                 foreach (var op in Declaration.Operators)
                 {
                     if (!operators.Contains(op))
