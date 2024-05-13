@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static FlashPlanner.LimitedComponent;
-
-namespace FlashPlanner
+﻿namespace FlashPlanner
 {
     public interface ILimitedComponent
     {

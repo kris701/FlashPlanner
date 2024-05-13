@@ -3,8 +3,6 @@ using FlashPlanner.States;
 using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
-using System.Diagnostics;
-using System.Timers;
 
 namespace FlashPlanner.Search.Classical
 {

@@ -1,6 +1,5 @@
 ﻿using CommandLine;
 using CommandLine.Text;
-using FlashPlanner.Translators;
 using PDDLSharp.CodeGenerators.FastDownward.Plans;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
@@ -25,12 +24,16 @@ namespace FlashPlanner.CLI
         public static void Run(Options opts)
         {
             WriteLineColor("Initializing", ConsoleColor.Blue);
-            WriteLineColor($"\tSearch Arguments:      {opts.SearchOption}");
+            WriteLineColor($"\tSearch Arguments:        {opts.SearchOption}");
             if (opts.SearchTimeLimit > 0)
-                WriteLineColor($"\tSearch Time limit:     {opts.SearchTimeLimit}s");
-            WriteLineColor($"\tTranslation Arguments: {opts.TranslatorOption}");
+                WriteLineColor($"\tSearch Time limit:       {opts.SearchTimeLimit}s");
+            if (opts.SearchMemoryLimit > 0)
+                WriteLineColor($"\tSearch Memory limit:     {opts.SearchMemoryLimit}MB");
+            WriteLineColor($"\tTranslation Arguments:   {opts.TranslatorOption}");
             if (opts.TranslatorTimeLimit > 0)
-                WriteLineColor($"\tTranslation Time limit:{opts.TranslatorTimeLimit}s");
+                WriteLineColor($"\tTranslation Time limit:  {opts.TranslatorTimeLimit}s");
+            if (opts.TranslatorMemoryLimit > 0)
+                WriteLineColor($"\tTranslation Memory limit:{opts.TranslatorMemoryLimit}MB");
 
             WriteColor("\tChecking Files...");
             opts.DomainPath = RootPath(opts.DomainPath);

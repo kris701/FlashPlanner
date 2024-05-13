@@ -1,5 +1,4 @@
-﻿using FlashPlanner.Helpers;
-using FlashPlanner.Translators.Components;
+﻿using FlashPlanner.Translators.Components;
 using FlashPlanner.Translators.Exceptions;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
@@ -10,9 +9,6 @@ using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Models.SAS;
 using PDDLSharp.Translators.Grounders;
-using System.Diagnostics;
-using System.Timers;
-using static FlashPlanner.Translators.ITranslator;
 
 namespace FlashPlanner.Translators
 {
@@ -93,7 +89,7 @@ namespace FlashPlanner.Translators
 
             if (from.Domain.Predicates != null)
             {
-                foreach(var pred in from.Domain.Predicates.Predicates)
+                foreach (var pred in from.Domain.Predicates.Predicates)
                 {
                     _factSet.Add(pred.Name, new List<Fact>());
                     _negativeFacts.Add(pred.Name, new List<Fact>());

@@ -1,12 +1,5 @@
 ﻿using FlashPlanner.Helpers;
-using FlashPlanner.Translators.Components;
-using PDDLSharp.Translators.Grounders;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace FlashPlanner
@@ -38,9 +31,9 @@ namespace FlashPlanner
         /// </summary>
         public bool Abort { get; set; }
 
-        private System.Timers.Timer _timeoutTimer = new System.Timers.Timer();
-        private System.Timers.Timer _memoryTimer = new System.Timers.Timer();
-        private Stopwatch _executionTime = new Stopwatch();
+        private readonly System.Timers.Timer _timeoutTimer = new System.Timers.Timer();
+        private readonly System.Timers.Timer _memoryTimer = new System.Timers.Timer();
+        private readonly Stopwatch _executionTime = new Stopwatch();
 
         public void Start()
         {

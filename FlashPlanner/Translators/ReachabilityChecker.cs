@@ -1,11 +1,5 @@
 ﻿using FlashPlanner.States;
-using FlashPlanner.Tools;
 using PDDLSharp.Models.SAS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FlashPlanner.Translators
 {
@@ -29,7 +23,7 @@ namespace FlashPlanner.Translators
             {
                 any = false;
                 var applicableNow = new List<Operator>();
-                for(int i = 0; i < decl.Operators.Count; i++)
+                for (int i = 0; i < decl.Operators.Count; i++)
                 {
                     if (!covered[i] && state.IsApplicable(decl.Operators[i]))
                     {
