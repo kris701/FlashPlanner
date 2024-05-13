@@ -55,9 +55,9 @@ namespace FlashPlanner.Tests.Translator
 
         [TestMethod]
         [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob01.pddl", 36)]
-        [DataRow("../../../../Dependencies/downward-benchmarks/logistics98/domain.pddl", "../../../../Dependencies/downward-benchmarks/logistics98/prob01.pddl", 1368)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/logistics98/domain.pddl", "../../../../Dependencies/downward-benchmarks/logistics98/prob01.pddl", 384)]
         [DataRow("../../../../Dependencies/downward-benchmarks/satellite/domain.pddl", "../../../../Dependencies/downward-benchmarks/satellite/p01-pfile1.pddl", 59)]
-        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p01.pddl", 270)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p01.pddl", 90)]
         [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s1-0.pddl", 4)]
         public void Can_Translate_ExpectedOperators(string domain, string problem, int expected)
         {

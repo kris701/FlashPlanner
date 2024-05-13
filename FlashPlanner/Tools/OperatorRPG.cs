@@ -44,13 +44,13 @@ namespace FlashPlanner.Tools
                 Failed = true;
                 return new List<Operator>();
             }
-            var selectedOperators = ReconstructPlan2(graphLayers);
+            var selectedOperators = ReconstructPlan(graphLayers);
 
             return selectedOperators;
         }
 
         // Hoffman & Nebel 2001, Figure 2
-        private List<Operator> ReconstructPlan2(List<Layer> graphLayers)
+        private List<Operator> ReconstructPlan(List<Layer> graphLayers)
         {
             var selectedOperators = new List<Operator>();
             var G = new Dictionary<int, HashSet<Fact>>();

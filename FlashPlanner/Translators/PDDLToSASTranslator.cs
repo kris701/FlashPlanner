@@ -47,10 +47,10 @@ namespace FlashPlanner.Translators
 
         private ParametizedGrounder? _grounder;
         private NodeDeconstructor? _deconstructor;
-        private HashSet<Fact> _factSet = new HashSet<Fact>();
+        private List<Fact> _factSet = new List<Fact>();
         private int _factID = 0;
         private int _opID = 0;
-        private HashSet<Fact> _negativeFacts = new HashSet<Fact>();
+        private List<Fact> _negativeFacts = new List<Fact>();
         private readonly string _negatedPrefix = "$neg-";
 
         /// <summary>
@@ -105,8 +105,8 @@ namespace FlashPlanner.Translators
 
             var domainVariables = new HashSet<string>();
             var operators = new List<Operator>();
-            var goal = new HashSet<Fact>();
-            var init = new HashSet<Fact>();
+            var goals = new List<Fact>();
+            var inits = new List<Fact>();
 
             var grounder = new ParametizedGrounder(from);
             _grounder = grounder;
@@ -114,9 +114,9 @@ namespace FlashPlanner.Translators
             var deconstructor = new NodeDeconstructor(grounder);
             _deconstructor = deconstructor;
             _factID = 0;
-            _factSet = new HashSet<Fact>();
+            _factSet = new List<Fact>();
             _opID = 0;
-            _negativeFacts = new HashSet<Fact>();
+            _negativeFacts = new List<Fact>();
 
             // Domain variables
             if (from.Problem.Objects != null)
@@ -128,12 +128,12 @@ namespace FlashPlanner.Translators
 
             // Init
             if (from.Problem.Init != null)
-                init = ExtractInitFacts(from.Problem.Init.Predicates, deconstructor);
+                inits = ExtractInitFacts(from.Problem.Init.Predicates, deconstructor);
             if (Aborted) return new SASDecl();
 
             // Goal
             if (from.Problem.Goal != null)
-                goal = ExtractGoalFacts(from.Problem.Goal.GoalExp, deconstructor);
+                goals = ExtractGoalFacts(from.Problem.Goal.GoalExp, deconstructor);
             if (Aborted) return new SASDecl();
 
             // Operators
@@ -144,19 +144,29 @@ namespace FlashPlanner.Translators
             if (_negativeFacts.Count > 0)
             {
                 var negInits = ProcessNegativeFactsInOperators(operators);
-                init = ProcessNegativeFactsInInit(negInits, init);
+                inits = ProcessNegativeFactsInInit(negInits, inits);
             }
 
-            var result = new SASDecl(domainVariables, operators, goal, init);
+            var result = new SASDecl(domainVariables, operators, goals.ToHashSet(), inits.ToHashSet());
+
+            // Only use operators that is reachable in a relaxed planning graph
+            var reachability = new ReachabilityChecker();
+            result.Operators = reachability.GetPotentiallyReachableOperators(result);
+
+            // Check if operators can satisfy goal condition
+            foreach (var goal in goals)
+                if (!result.Operators.Any(x => x.Add.Contains(goal)))
+                    result.Operators.Clear();
+
             watch.Stop();
             timer.Stop();
             TranslationTime = watch.Elapsed;
             return result;
         }
 
-        private HashSet<Fact> ProcessNegativeFactsInOperators(List<Operator> operators)
+        private List<Fact> ProcessNegativeFactsInOperators(List<Operator> operators)
         {
-            var negInits = new HashSet<Fact>();
+            var negInits = new List<Fact>();
             // Adds negated facts to all ops
             foreach (var fact in _negativeFacts)
             {
@@ -196,28 +206,28 @@ namespace FlashPlanner.Translators
                         operators[i].ID = id;
                     }
                 }
-                if (Aborted) return new HashSet<Fact>();
+                if (Aborted) return new List<Fact>();
             }
             return negInits;
         }
 
-        private HashSet<Fact> ProcessNegativeFactsInInit(HashSet<Fact> negInits, HashSet<Fact> init)
+        private List<Fact> ProcessNegativeFactsInInit(List<Fact> negInits, List<Fact> init)
         {
             foreach (var fact in negInits)
             {
                 var findTrue = new Fact(fact.Name.Replace(_negatedPrefix, ""), fact.Arguments);
                 if (!init.Any(x => x.ContentEquals(findTrue)))
                     init.Add(fact);
-                if (Aborted) return new HashSet<Fact>();
+                if (Aborted) return new List<Fact>();
             }
             return init;
         }
 
-        private Dictionary<bool, HashSet<Fact>> ExtractFactsFromExp(IExp exp, bool possitive = true)
+        private Dictionary<bool, List<Fact>> ExtractFactsFromExp(IExp exp, bool possitive = true)
         {
-            var facts = new Dictionary<bool, HashSet<Fact>>();
-            facts.Add(true, new HashSet<Fact>());
-            facts.Add(false, new HashSet<Fact>());
+            var facts = new Dictionary<bool, List<Fact>>();
+            facts.Add(true, new List<Fact>());
+            facts.Add(false, new List<Fact>());
 
             switch (exp)
             {
@@ -235,9 +245,9 @@ namespace FlashPlanner.Translators
             return facts;
         }
 
-        private Dictionary<bool, HashSet<Fact>> MergeDictionaries(Dictionary<bool, HashSet<Fact>> dict1, Dictionary<bool, HashSet<Fact>> dict2)
+        private Dictionary<bool, List<Fact>> MergeDictionaries(Dictionary<bool, List<Fact>> dict1, Dictionary<bool, List<Fact>> dict2)
         {
-            var resultDict = new Dictionary<bool, HashSet<Fact>>();
+            var resultDict = new Dictionary<bool, List<Fact>>();
             foreach (var key in dict1.Keys)
                 resultDict.Add(key, dict1[key]);
             foreach (var key in dict2.Keys)
@@ -246,9 +256,9 @@ namespace FlashPlanner.Translators
             return resultDict;
         }
 
-        private HashSet<Fact> ExtractInitFacts(List<IExp> inits, NodeDeconstructor deconstructor)
+        private List<Fact> ExtractInitFacts(List<IExp> inits, NodeDeconstructor deconstructor)
         {
-            var initFacts = new HashSet<Fact>();
+            var initFacts = new List<Fact>();
 
             var deconstructed = new List<IExp>();
             foreach (var exp in inits)
@@ -261,9 +271,9 @@ namespace FlashPlanner.Translators
             return initFacts;
         }
 
-        private HashSet<Fact> ExtractGoalFacts(IExp goalExp, NodeDeconstructor deconstructor)
+        private List<Fact> ExtractGoalFacts(IExp goalExp, NodeDeconstructor deconstructor)
         {
-            var goal = new HashSet<Fact>();
+            var goal = new List<Fact>();
             var deconstructed = deconstructor.Deconstruct(EnsureAnd(goalExp));
             if (deconstructed.FindTypes<OrExp>().Count > 0)
                 throw new TranslatorException("Translator does not support or expressions in goal declaration!");
@@ -329,12 +339,9 @@ namespace FlashPlanner.Translators
                             args.Add(arg.Name);
 
                         var newOp = new Operator(act.Name, args.ToArray(), pre.ToArray(), add.ToArray(), del.ToArray());
-                        if (!operators.Any(x => x.ContentEquals(newOp)))
-                        {
-                            newOp.ID = _opID++;
-                            Operators++;
-                            operators.Add(newOp);
-                        }
+                        newOp.ID = _opID++;
+                        Operators++;
+                        operators.Add(newOp);
                     }
                 }
 
