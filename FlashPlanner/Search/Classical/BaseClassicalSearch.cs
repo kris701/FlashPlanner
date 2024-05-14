@@ -8,6 +8,8 @@ namespace FlashPlanner.Search.Classical
 {
     public abstract class BaseClassicalSearch : LimitedComponent, IPlanner
     {
+        public override event LogEventHandler? DoLog;
+
         public SASDecl Declaration { get; internal set; }
         public int Generated { get; internal set; }
         public int Expanded { get; internal set; }

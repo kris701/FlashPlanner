@@ -1,8 +1,12 @@
 ﻿namespace FlashPlanner
 {
+    public delegate void LogEventHandler(string text);
+
     public interface ILimitedComponent
     {
         public enum ReturnCode { None, Success, TimedOut, MemoryLimitReached }
+
+        public event LogEventHandler? DoLog;
 
         /// <summary>
         /// Return code from the component

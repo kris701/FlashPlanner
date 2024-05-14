@@ -6,6 +6,8 @@ namespace FlashPlanner
 {
     public abstract class LimitedComponent : ILimitedComponent
     {
+        public abstract event LogEventHandler? DoLog;
+
         /// <summary>
         /// Return code from the component
         /// </summary>

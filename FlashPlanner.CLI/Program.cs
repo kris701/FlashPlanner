@@ -24,6 +24,8 @@ namespace FlashPlanner.CLI
         public static void Run(Options opts)
         {
             WriteLineColor("Initializing", ConsoleColor.Blue);
+            WriteLineColor($"\tDomain File:             {opts.DomainPath}");
+            WriteLineColor($"\tProblem File:            {opts.ProblemPath}");
             WriteLineColor($"\tSearch Arguments:        {opts.SearchOption}");
             if (opts.SearchTimeLimit > 0)
                 WriteLineColor($"\tSearch Time limit:       {opts.SearchTimeLimit}s");
@@ -74,6 +76,7 @@ namespace FlashPlanner.CLI
                 translator.MemoryLimit = opts.TranslatorMemoryLimit;
             WriteLineColor("Done!", ConsoleColor.Green);
 
+            translator.DoLog += OnLog;
             var watch = new Stopwatch();
 
             var logTimer = new System.Timers.Timer();
@@ -116,6 +119,7 @@ namespace FlashPlanner.CLI
 
             using (var planner = InputArgumentBuilder.GetPlanner(pddlDecl, sasDecl, opts.SearchOption))
             {
+                planner.DoLog += OnLog;
                 WriteLineColor("Done!", ConsoleColor.Green);
                 var watch = new Stopwatch();
 
@@ -175,6 +179,11 @@ namespace FlashPlanner.CLI
                     WriteLineColor("Done!", ConsoleColor.Green);
                 }
             }
+        }
+
+        private static void OnLog(string text)
+        {
+            WriteLineColor($"\t\t{text}", ConsoleColor.DarkGray);
         }
 
         private static double GetItemPrSecond(int amount, TimeSpan elapsed)

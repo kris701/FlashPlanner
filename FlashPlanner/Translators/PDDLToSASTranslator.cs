@@ -17,6 +17,8 @@ namespace FlashPlanner.Translators
     /// </summary>
     public class PDDLToSASTranslator : LimitedComponent, ITranslator
     {
+        public override event LogEventHandler? DoLog;
+
         /// <summary>
         /// A bool representing if statics should be removed from the resulting <seealso cref="SASDecl"/>
         /// </summary>
@@ -71,6 +73,7 @@ namespace FlashPlanner.Translators
                 contextualiser.Contexturalise(from);
             }
 
+            DoLog?.Invoke($"Checking if task can be translated...");
             CheckIfValid(from);
 
             var domainVariables = new HashSet<string>();
@@ -95,6 +98,7 @@ namespace FlashPlanner.Translators
                     _negativeFacts.Add(pred.Name, new List<Fact>());
                 }
             }
+            DoLog?.Invoke($"Fact translation dictionary contains {_factSet.Count} keys");
 
             _opID = 0;
 
@@ -117,12 +121,14 @@ namespace FlashPlanner.Translators
             if (Abort) return new SASDecl();
 
             // Operators
+            DoLog?.Invoke($"Grounding operators...");
             operators = GetOperators(from, grounder, deconstructor);
             if (Abort) return new SASDecl();
 
             // Handle negative preconditions, if there where any
             if (_negativeFacts.Any(x => x.Value.Count > 0))
             {
+                DoLog?.Invoke($"Task contains negative facts! Ensuring operators upholds them...");
                 var negInits = ProcessNegativeFactsInOperators(operators);
                 inits = ProcessNegativeFactsInInit(negInits, inits);
             }
@@ -131,12 +137,20 @@ namespace FlashPlanner.Translators
 
             // Only use operators that is reachable in a relaxed planning graph
             var reachability = new ReachabilityChecker();
-            result.Operators = reachability.GetPotentiallyReachableOperators(result);
+            DoLog?.Invoke($"Checking if all {result.Operators.Count} operators are reachable.");
+            var opsNow = reachability.GetPotentiallyReachableOperators(result);
+            DoLog?.Invoke($"{result.Operators.Count - opsNow.Count} operators removed by not being reachable.");
+            result.Operators = opsNow;
 
             // Check if operators can satisfy goal condition
             foreach (var goal in goals)
+            {
                 if (!result.Operators.Any(x => x.Add.Contains(goal)))
+                {
                     result.Operators.Clear();
+                    DoLog?.Invoke($"Goal fact '{goal}' cannot be reached! Removing all operators");
+                }
+            }
 
             Stop();
             return result;
@@ -268,8 +282,10 @@ namespace FlashPlanner.Translators
         private List<Operator> GetOperators(PDDLDecl decl, IGrounder<IParametized> grounder, NodeDeconstructor deconstructor)
         {
             var operators = new List<Operator>();
+            int count = 1;
             foreach (var action in decl.Domain.Actions)
             {
+                DoLog?.Invoke($"Grounding action '{action.Name}' [{count++} of {decl.Domain.Actions.Count}]");
                 action.EnsureAnd();
                 if (Abort) return new List<Operator>();
                 var deconstructedActions = deconstructor.DeconstructAction(action);
