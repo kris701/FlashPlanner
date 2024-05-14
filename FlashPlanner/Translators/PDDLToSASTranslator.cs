@@ -9,6 +9,7 @@ using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Models.SAS;
 using PDDLSharp.Translators.Grounders;
+using System;
 
 namespace FlashPlanner.Translators
 {
@@ -121,8 +122,11 @@ namespace FlashPlanner.Translators
             if (Abort) return new SASDecl();
 
             // Operators
+            DoLog?.Invoke($"Normalizing actions...");
+            var normalizedActions = NormalizeActions(from.Domain.Actions, deconstructor);
+            DoLog?.Invoke($"A total of {normalizedActions.Count} normalized actions to ground.");
             DoLog?.Invoke($"Grounding operators...");
-            operators = GetOperators(from, grounder, deconstructor);
+            operators = GetOperators(normalizedActions, grounder, deconstructor);
             if (Abort) return new SASDecl();
 
             // Handle negative preconditions, if there where any
@@ -279,68 +283,73 @@ namespace FlashPlanner.Translators
             return goal;
         }
 
-        private List<Operator> GetOperators(PDDLDecl decl, IGrounder<IParametized> grounder, NodeDeconstructor deconstructor)
+        private List<ActionDecl> NormalizeActions(List<ActionDecl> actions, NodeDeconstructor deconstructor)
+        {
+            var normalizedActions = new List<ActionDecl>();
+            int count = 1;
+            foreach (var action in actions)
+            {
+                DoLog?.Invoke($"Normalizing action '{action.Name}' [{count++} of {actions.Count}]");
+                action.EnsureAnd();
+                if (Abort) return new List<ActionDecl>();
+                normalizedActions.AddRange(deconstructor.DeconstructAction(action));
+            }
+            return normalizedActions;
+        }
+
+        private List<Operator> GetOperators(List<ActionDecl> actions, IGrounder<IParametized> grounder, NodeDeconstructor deconstructor)
         {
             var operators = new List<Operator>();
-            int count = 1;
-            foreach (var action in decl.Domain.Actions)
+            foreach (var action in actions)
             {
-                DoLog?.Invoke($"Grounding action '{action.Name}' [{count++} of {decl.Domain.Actions.Count}]");
-                action.EnsureAnd();
                 if (Abort) return new List<Operator>();
-                var deconstructedActions = deconstructor.DeconstructAction(action);
-                foreach (var deconstructed in deconstructedActions)
+                var newActs = grounder.Ground(action).Cast<ActionDecl>();
+                foreach (var act in newActs)
                 {
                     if (Abort) return new List<Operator>();
-                    var newActs = grounder.Ground(deconstructed).Cast<ActionDecl>();
-                    foreach (var act in newActs)
+
+                    var preFacts = ExtractFactsFromExp(act.Preconditions);
+                    if (preFacts[true].Intersect(preFacts[false]).Count() > 0)
+                        continue;
+                    var pre = preFacts[true];
+
+                    var effFacts = ExtractFactsFromExp(act.Effects);
+                    var add = effFacts[true];
+                    var del = effFacts[false];
+
+                    if (preFacts[false].Count > 0)
                     {
-                        if (Abort) return new List<Operator>();
-
-                        var preFacts = ExtractFactsFromExp(act.Preconditions);
-                        if (preFacts[true].Intersect(preFacts[false]).Count() > 0)
-                            continue;
-                        var pre = preFacts[true];
-
-                        var effFacts = ExtractFactsFromExp(act.Effects);
-                        var add = effFacts[true];
-                        var del = effFacts[false];
-
-                        if (preFacts[false].Count > 0)
+                        foreach (var fact in preFacts[false])
                         {
-                            foreach (var fact in preFacts[false])
-                            {
-                                if (_negativeFacts[fact.Name].Count == 0)
-                                    _negativeFacts[fact.Name].Add(fact);
+                            if (_negativeFacts[fact.Name].Count == 0)
+                                _negativeFacts[fact.Name].Add(fact);
 
-                                var nFact = GetNegatedOf(fact);
-                                pre.Add(nFact);
+                            var nFact = GetNegatedOf(fact);
+                            pre.Add(nFact);
 
-                                bool addToAdd = false;
-                                bool addToDel = false;
-                                if (add.Contains(fact))
-                                    addToDel = true;
-                                if (del.Contains(fact))
-                                    addToAdd = true;
+                            bool addToAdd = false;
+                            bool addToDel = false;
+                            if (add.Contains(fact))
+                                addToDel = true;
+                            if (del.Contains(fact))
+                                addToAdd = true;
 
-                                if (addToAdd)
-                                    add.Add(nFact);
-                                if (addToDel)
-                                    del.Add(nFact);
-                            }
+                            if (addToAdd)
+                                add.Add(nFact);
+                            if (addToDel)
+                                del.Add(nFact);
                         }
-
-                        var args = new List<string>();
-                        foreach (var arg in act.Parameters.Values)
-                            args.Add(arg.Name);
-
-                        var newOp = new Operator(act.Name, args.ToArray(), pre.ToArray(), add.ToArray(), del.ToArray());
-                        newOp.ID = _opID++;
-                        Operators++;
-                        operators.Add(newOp);
                     }
-                }
 
+                    var args = new List<string>();
+                    foreach (var arg in act.Parameters.Values)
+                        args.Add(arg.Name);
+
+                    var newOp = new Operator(act.Name, args.ToArray(), pre.ToArray(), add.ToArray(), del.ToArray());
+                    newOp.ID = _opID++;
+                    Operators++;
+                    operators.Add(newOp);
+                }
             }
             return operators;
         }
