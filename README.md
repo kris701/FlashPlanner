@@ -90,7 +90,7 @@ Here is the set of requirements that the planner supports.
 - [ ] Preferences (`:preferences`)
 
 ## Performance
-Here are some simple benchmarks to get an idea of the performance of this planner.
+Here are some simple coverage benchmarks to get an idea of the performance of this planner.
 It is compared against [Fast Downward](https://github.com/aibasel/downward).
 Both are run with greedy best first search with hFF.
 Benchmarks are only run on the first 20 problems.
@@ -99,5 +99,13 @@ The planners have a time limit of 60 seconds and a memory limit of 4GB.
 <!-- This section is auto generated. -->
 | Domain | Problems | Fast Downward | Flash Planner |
 | - | - | - | - |
+| blocks | 20 | 20 | 20 |
+| depot | 20 | 15 | 10 |
+| gripper | 20 | 20 | 20 |
+| logistics00 | 20 | 20 | 20 |
 | satellite | 20 | 20 | 17 |
 | miconic | 20 | 20 | 20 |
+| mystery | 20 | 12 | 6 |
+| rovers | 20 | 20 | 14 |
+| tpp | 20 | 20 | 13 |
+| zenotravel | 20 | 20 | 15 |

@@ -13,8 +13,16 @@ using ToMarkdown;
 var tmpFolder = "tmp";
 var targetBenchmarkFolder = "../../../../Dependencies/downward-benchmarks/";
 var targetDomains = new List<string>() {
+    "blocks",
+    "depot",
+    "gripper",
+    "logistics00",
     "satellite",
-    "miconic"
+    "miconic",
+    "mystery",
+    "rovers",
+    "tpp",
+    "zenotravel",
 };
 
 if (!Directory.Exists(tmpFolder))
