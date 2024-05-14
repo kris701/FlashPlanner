@@ -88,3 +88,16 @@ Here is the set of requirements that the planner supports.
 - [ ] UCPOP (`:ucpop`)
 - [ ] Constraints (`:constraints`)
 - [ ] Preferences (`:preferences`)
+
+## Performance
+Here are some simple benchmarks to get an idea of the performance of this planner.
+It is compared against [Fast Downward](https://github.com/aibasel/downward).
+Both are run with greedy best first search with hFF.
+Benchmarks are only run on the first 20 problems.
+The planners have a time limit of 60 seconds and a memory limit of 4GB.
+
+<!-- This section is auto generated. -->
+| Domain | Problems | Fast Downward | Flash Planner |
+| - | - | - | - |
+| satellite | 20 | 20 | 17 |
+| miconic | 20 | 20 | 20 |
