@@ -1,5 +1,5 @@
-﻿using FlashPlanner.Translators.Components;
-using FlashPlanner.Translators.Exceptions;
+﻿using FlashPlanner.Translators.Exceptions;
+using FlashPlanner.Translators.Normalizers;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
@@ -9,7 +9,6 @@ using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Models.SAS;
 using PDDLSharp.Translators.Grounders;
-using System;
 
 namespace FlashPlanner.Translators
 {
@@ -34,7 +33,7 @@ namespace FlashPlanner.Translators
         public int Operators { get; internal set; }
 
         private ParametizedGrounder? _grounder;
-        private NodeDeconstructor? _deconstructor;
+        private NodeNormalizer? _deconstructor;
         private Dictionary<string, List<Fact>> _factSet = new Dictionary<string, List<Fact>>();
         private int _factID = 0;
         private int _opID = 0;
@@ -85,7 +84,7 @@ namespace FlashPlanner.Translators
             var grounder = new ParametizedGrounder(from);
             _grounder = grounder;
             grounder.RemoveStaticsFromOutput = RemoveStaticsFromOutput;
-            var deconstructor = new NodeDeconstructor(grounder);
+            var deconstructor = new NodeNormalizer(grounder);
             _deconstructor = deconstructor;
             _factID = 0;
             _factSet = new Dictionary<string, List<Fact>>();
@@ -254,7 +253,7 @@ namespace FlashPlanner.Translators
             return resultDict;
         }
 
-        private List<Fact> ExtractInitFacts(List<IExp> inits, NodeDeconstructor deconstructor)
+        private List<Fact> ExtractInitFacts(List<IExp> inits, NodeNormalizer deconstructor)
         {
             var initFacts = new List<Fact>();
 
@@ -269,7 +268,7 @@ namespace FlashPlanner.Translators
             return initFacts;
         }
 
-        private List<Fact> ExtractGoalFacts(IExp goalExp, NodeDeconstructor deconstructor)
+        private List<Fact> ExtractGoalFacts(IExp goalExp, NodeNormalizer deconstructor)
         {
             var goal = new List<Fact>();
             var deconstructed = deconstructor.Deconstruct(EnsureAnd(goalExp));
@@ -283,7 +282,7 @@ namespace FlashPlanner.Translators
             return goal;
         }
 
-        private List<ActionDecl> NormalizeActions(List<ActionDecl> actions, NodeDeconstructor deconstructor)
+        private List<ActionDecl> NormalizeActions(List<ActionDecl> actions, NodeNormalizer deconstructor)
         {
             var normalizedActions = new List<ActionDecl>();
             int count = 1;
@@ -297,7 +296,7 @@ namespace FlashPlanner.Translators
             return normalizedActions;
         }
 
-        private List<Operator> GetOperators(List<ActionDecl> actions, IGrounder<IParametized> grounder, NodeDeconstructor deconstructor)
+        private List<Operator> GetOperators(List<ActionDecl> actions, IGrounder<IParametized> grounder, NodeNormalizer deconstructor)
         {
             var operators = new List<Operator>();
             foreach (var action in actions)

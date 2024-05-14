@@ -1,4 +1,4 @@
-﻿using FlashPlanner.Translators.Components;
+﻿using FlashPlanner.Translators.Normalizers;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
@@ -10,10 +10,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlashPlanner.Tests.Translator.Components
+namespace FlashPlanner.Tests.Translator.Normalizers
 {
     [TestClass]
-    public class ConditionalDeconstructorTests
+    public class ConditionalNormalizerTests
     {
         public static IEnumerable<object[]> DeconstructWhen_Valid()
         {
@@ -58,7 +58,7 @@ namespace FlashPlanner.Tests.Translator.Components
         public void Can_DeconstructWhen(ActionDecl input, int expectedPermutations)
         {
             // ARRANGE
-            var deconstructor = new ConditionalDeconstructor();
+            var deconstructor = new ConditionalNormalizer();
 
             // ACT
             var result = deconstructor.DecontructConditionals(input);

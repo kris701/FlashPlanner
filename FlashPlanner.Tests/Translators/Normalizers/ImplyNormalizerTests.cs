@@ -1,4 +1,4 @@
-﻿using FlashPlanner.Translators.Components;
+﻿using FlashPlanner.Translators.Normalizers;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
@@ -10,10 +10,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlashPlanner.Tests.Translator.Components
+namespace FlashPlanner.Tests.Translator.Normalizers
 {
     [TestClass]
-    public class ImplyDeconstructorTests
+    public class ImplyNormalizerTests
     {
         public static IEnumerable<object[]> DeconstrucImplyData_Valid()
         {
@@ -75,7 +75,7 @@ namespace FlashPlanner.Tests.Translator.Components
             // ARRANGE
             (input as AndExp).Children[0].Parent = input;
             (expected as AndExp).Children[0].Parent = expected;
-            var deconstructor = new ImplyDeconstructor();
+            var deconstructor = new ImplyNormalizer();
 
             // ACT
             var result = deconstructor.DeconstructImplies(input);

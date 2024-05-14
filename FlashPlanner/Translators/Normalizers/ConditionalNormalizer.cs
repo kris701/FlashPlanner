@@ -2,12 +2,12 @@
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 
-namespace FlashPlanner.Translators.Components
+namespace FlashPlanner.Translators.Normalizers
 {
     /// <summary>
     /// A class able to deconstruct <seealso cref="WhenExp"/> into simpler formats.
     /// </summary>
-    public class ConditionalDeconstructor
+    public class ConditionalNormalizer
     {
         /// <summary>
         /// Bool representing if the deconstructor should stop or not

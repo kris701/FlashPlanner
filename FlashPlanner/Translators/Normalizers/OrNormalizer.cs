@@ -4,12 +4,12 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Overloads;
 
-namespace FlashPlanner.Translators.Components
+namespace FlashPlanner.Translators.Normalizers
 {
     /// <summary>
     /// A class able to deconstruct <seealso cref="OrExp"/> into simpler formats.
     /// </summary>
-    public class OrDeconstructor
+    public class OrNormalizer
     {
         /// <summary>
         /// Bool representing if the deconstructor should stop or not

@@ -3,30 +3,30 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Translators.Grounders;
 
-namespace FlashPlanner.Translators.Components
+namespace FlashPlanner.Translators.Normalizers
 {
     /// <summary>
     /// Combined deconstructor
     /// </summary>
-    public class NodeDeconstructor
+    public class NodeNormalizer
     {
-        private readonly OrDeconstructor _orDeconstructor;
-        private readonly ForAllDeconstructor _forAllDeconstructor;
-        private readonly ExistsDeconstructor _existsDeconstructor;
-        private readonly ImplyDeconstructor _implyDeconstructor;
-        private readonly ConditionalDeconstructor _conditionalDeconstructor;
+        private readonly OrNormalizer _orDeconstructor;
+        private readonly ForAllNormalizer _forAllDeconstructor;
+        private readonly ExistsNormalizer _existsDeconstructor;
+        private readonly ImplyNormalizer _implyDeconstructor;
+        private readonly ConditionalNormalizer _conditionalDeconstructor;
 
         /// <summary>
         /// Constructor with a grounder given
         /// </summary>
         /// <param name="grounder"></param>
-        public NodeDeconstructor(IGrounder<IParametized> grounder)
+        public NodeNormalizer(IGrounder<IParametized> grounder)
         {
-            _orDeconstructor = new OrDeconstructor();
-            _forAllDeconstructor = new ForAllDeconstructor(grounder);
-            _existsDeconstructor = new ExistsDeconstructor(grounder);
-            _implyDeconstructor = new ImplyDeconstructor();
-            _conditionalDeconstructor = new ConditionalDeconstructor();
+            _orDeconstructor = new OrNormalizer();
+            _forAllDeconstructor = new ForAllNormalizer(grounder);
+            _existsDeconstructor = new ExistsNormalizer(grounder);
+            _implyDeconstructor = new ImplyNormalizer();
+            _conditionalDeconstructor = new ConditionalNormalizer();
         }
 
         /// <summary>

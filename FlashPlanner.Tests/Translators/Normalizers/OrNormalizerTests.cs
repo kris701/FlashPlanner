@@ -1,4 +1,4 @@
-﻿using FlashPlanner.Translators.Components;
+﻿using FlashPlanner.Translators.Normalizers;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
@@ -10,10 +10,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlashPlanner.Tests.Translator.Components
+namespace FlashPlanner.Tests.Translator.Normalizers
 {
     [TestClass]
-    public class OrDeconstructorTests
+    public class OrNormalizerTests
     {
         public static IEnumerable<object[]> DeconstrucOrData_Valid()
         {
@@ -97,7 +97,7 @@ namespace FlashPlanner.Tests.Translator.Components
         public void Can_DeconstructOr(ActionDecl input, int expectedCount)
         {
             // ARRANGE
-            var deconstructor = new OrDeconstructor();
+            var deconstructor = new OrNormalizer();
 
             // ACT
             var result = deconstructor.DeconstructOrs(input);

@@ -364,4 +364,3 @@ FodyWeavers.xsd
 
 Dependencies/**
 !Dependencies/readme.md
-/Dependencies/downward-benchmarks

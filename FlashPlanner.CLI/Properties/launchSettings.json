@@ -2,7 +2,7 @@
   "profiles": {
     "FlashPlanner.CLI": {
       "commandName": "Project",
-      "commandLineArgs": "--domain ../../../../Dependencies/downward-benchmarks/satellite/domain.pddl --problem ../../../../Dependencies/downward-benchmarks/satellite/p36-HC-pfile16.pddl --search \"greedy(hFF())\" --search-memory-limit 1024"
+      "commandLineArgs": "--domain ../../../../Dependencies/downward-benchmarks/satellite/domain.pddl --problem ../../../../Dependencies/downward-benchmarks/satellite/p10-pfile10.pddl --search \"greedy(hFF())\" --search-memory-limit 1024"
     }
   }
 }

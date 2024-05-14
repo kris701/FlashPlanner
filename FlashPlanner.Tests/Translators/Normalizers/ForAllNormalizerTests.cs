@@ -1,4 +1,4 @@
-﻿using FlashPlanner.Translators.Components;
+﻿using FlashPlanner.Translators.Normalizers;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
@@ -10,10 +10,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlashPlanner.Tests.Translator.Components
+namespace FlashPlanner.Tests.Translator.Normalizers
 {
     [TestClass]
-    public class ForAllDeconstructorTests
+    public class ForAllNormalizerTests
     {
         public static IEnumerable<object[]> DeconstrucForAllData_Valid()
         {
@@ -90,7 +90,7 @@ namespace FlashPlanner.Tests.Translator.Components
             decl.Problem.Objects = new ObjectsDecl();
             decl.Problem.Objects.Objs = objects;
             var grounder = new ParametizedGrounder(decl);
-            var deconstructor = new ForAllDeconstructor(grounder);
+            var deconstructor = new ForAllNormalizer(grounder);
 
             // ACT
             var result = deconstructor.DeconstructForAlls(input);

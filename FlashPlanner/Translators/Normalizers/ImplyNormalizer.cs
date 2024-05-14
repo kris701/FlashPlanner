@@ -2,12 +2,12 @@
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Expressions;
 
-namespace FlashPlanner.Translators.Components
+namespace FlashPlanner.Translators.Normalizers
 {
     /// <summary>
     /// A class able to deconstruct <seealso cref="ImplyExp"/> into simpler formats.
     /// </summary>
-    public class ImplyDeconstructor
+    public class ImplyNormalizer
     {
         /// <summary>
         /// Bool representing if the deconstructor should stop or not

@@ -3,12 +3,12 @@ using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Translators.Grounders;
 
-namespace FlashPlanner.Translators.Components
+namespace FlashPlanner.Translators.Normalizers
 {
     /// <summary>
     /// A class able to deconstruct <seealso cref="ExistsExp"/> into simpler formats.
     /// </summary>
-    public class ExistsDeconstructor
+    public class ExistsNormalizer
     {
         /// <summary>
         /// The current grounder being used
@@ -23,7 +23,7 @@ namespace FlashPlanner.Translators.Components
         /// Constructor with a grounder given
         /// </summary>
         /// <param name="grounder"></param>
-        public ExistsDeconstructor(IGrounder<IParametized> grounder)
+        public ExistsNormalizer(IGrounder<IParametized> grounder)
         {
             Grounder = grounder;
         }
