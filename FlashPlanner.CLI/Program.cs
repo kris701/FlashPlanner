@@ -2,6 +2,7 @@
 using CommandLine.Text;
 using PDDLSharp.CodeGenerators.FastDownward.Plans;
 using PDDLSharp.ErrorListeners;
+using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
@@ -61,7 +62,10 @@ namespace FlashPlanner.CLI
             if (sasDecl == null)
                 return;
 
-            Search(opts, pddlDecl, sasDecl);
+            var plan = Search(opts, pddlDecl, sasDecl);
+
+            if (opts.DoValidate && plan != null)
+                Validate(plan, pddlDecl);
         }
 
         private static SASDecl? Translate(Options opts, PDDLDecl pddlDecl)
@@ -112,10 +116,11 @@ namespace FlashPlanner.CLI
             return sasDecl;
         }
 
-        private static void Search(Options opts, PDDLDecl pddlDecl, SASDecl sasDecl)
+        private static ActionPlan? Search(Options opts, PDDLDecl pddlDecl, SASDecl sasDecl)
         {
             WriteLineColor("Search", ConsoleColor.Blue);
             WriteColor("\tBuilding Search engine...");
+            ActionPlan? solution = null;
 
             using (var planner = InputArgumentBuilder.GetPlanner(pddlDecl, sasDecl, opts.SearchOption))
             {
@@ -138,12 +143,12 @@ namespace FlashPlanner.CLI
                     planner.TimeLimit = TimeSpan.FromSeconds(opts.SearchTimeLimit);
                 if (opts.SearchMemoryLimit > 0)
                     planner.MemoryLimit = opts.SearchMemoryLimit;
-                var solution = planner.Solve();
+                solution = planner.Solve();
 
                 switch (planner.Code)
                 {
-                    case ILimitedComponent.ReturnCode.TimedOut: WriteLineColor("\tPlanner timed out...", ConsoleColor.Yellow); return;
-                    case ILimitedComponent.ReturnCode.MemoryLimitReached: WriteLineColor("\tPlanner reached memory limit...", ConsoleColor.Yellow); return;
+                    case ILimitedComponent.ReturnCode.TimedOut: WriteLineColor("\tPlanner timed out...", ConsoleColor.Yellow); return null;
+                    case ILimitedComponent.ReturnCode.MemoryLimitReached: WriteLineColor("\tPlanner reached memory limit...", ConsoleColor.Yellow); return null;
                 }
 
                 logTimer.Stop();
@@ -178,6 +183,23 @@ namespace FlashPlanner.CLI
                     File.WriteAllText(opts.PlanPath, plan);
                     WriteLineColor("Done!", ConsoleColor.Green);
                 }
+            }
+
+            return solution;
+        }
+
+        private static void Validate(ActionPlan plan, PDDLDecl decl)
+        {
+            WriteLineColor("Validating plan", ConsoleColor.Blue);
+            WriteColor("\tValidating...");
+
+            var validator = new PlanVal.PlanValidator();
+            if (validator.Validate(plan, decl))
+                WriteLineColor("Valid!", ConsoleColor.Green);
+            else
+            {
+                WriteLineColor("Invalid!", ConsoleColor.Red);
+                WriteLineColor($"\tReason: {validator.ValidationError}");
             }
         }
 
