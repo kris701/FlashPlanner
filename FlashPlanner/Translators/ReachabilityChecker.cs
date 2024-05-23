@@ -30,16 +30,13 @@ namespace FlashPlanner.Translators
                         any = true;
                         covered[i] = true;
                         applicableNow.Add(decl.Operators[i]);
+                        applicables.Add(decl.Operators[i]);
                     }
                 }
 
                 foreach (var op in applicableNow)
                     state.Execute(op);
             }
-
-            for (int i = 0; i < decl.Operators.Count; i++)
-                if (covered[i])
-                    applicables.Add(decl.Operators[i]);
 
             return applicables;
         }

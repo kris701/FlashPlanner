@@ -60,6 +60,16 @@ namespace FlashPlanner.CLI.ArgumentParsing
                     return new Search.Classical.GreedyBFSUAR(sas, h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
+            new Argument("beam", new Dictionary<string, Type>(){
+                { "sas", typeof(SASDecl) },
+                { "h", typeof(IHeuristic) },
+                { "b", typeof(int) }
+            }, (args) =>
+            {
+                if (args["sas"] is SASDecl sas && args["h"] is IHeuristic h && args["b"] is int beta)
+                    return new Search.Classical.BeamS(sas, h, beta);
+                throw new Exception("Invalid arguments given for planner!");
+            }),
 
             // Search (BlackBox)
             new Argument("greedy_bb", new Dictionary<string, Type>(){

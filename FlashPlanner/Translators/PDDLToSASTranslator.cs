@@ -68,6 +68,7 @@ namespace FlashPlanner.Translators
 
             if (!from.IsContextualised)
             {
+                DoLog?.Invoke($"Contextualizing...");
                 var listener = new ErrorListener();
                 var contextualiser = new PDDLContextualiser(listener);
                 contextualiser.Contexturalise(from);

@@ -24,6 +24,7 @@ dotnet run -- --domain domain.pddl --problem p01.pddl --search "greedy(hGoal())"
 ```
 
 The available search engines are:
+* [`beam`](FlashPlanner/Search/Classical/BeamS.cs): Beam Search
 * [`greedy`](FlashPlanner/Search/Classical/GreedyBFS.cs): Greedy Search
 * [`greedy_underaprox`](FlashPlanner/Search/Classical/GreedyBFSUAR.cs): Greedy Search with [Under-Approximation Refinement (UAR)](https://ojs.aaai.org/index.php/ICAPS/article/view/13678)
 * [`greedy_prefered`](FlashPlanner/Search/Classical/GreedyBFSPO.cs): Greedy Search with [Preferred Operators (PO)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf)
