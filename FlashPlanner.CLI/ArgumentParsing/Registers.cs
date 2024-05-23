@@ -12,11 +12,12 @@ namespace FlashPlanner.CLI.ArgumentParsing
         {
             new Argument("primary", new Dictionary<string, Type>()
             {
-                { "removeStatics", typeof(bool) }
+                { "removeStatics", typeof(bool) },
+                { "noEqualsParams", typeof(bool) },
             }, (args) =>
             {
-                if (args["removeStatics"] is bool remove)
-                    return new PDDLToSASTranslator(remove);
+                if (args["removeStatics"] is bool remove && args["noEqualsParams"] is bool noEquals)
+                    return new PDDLToSASTranslator(remove, noEquals);
                 throw new Exception("Invalid arguments given for translator!");
             })
         };

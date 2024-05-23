@@ -24,6 +24,10 @@ namespace FlashPlanner.Translators
         /// </summary>
         public bool RemoveStaticsFromOutput { get; set; } = false;
         /// <summary>
+        /// If a (not (= ?x ?y)) should be added to all actions.
+        /// </summary>
+        public bool AssumeNoEqualParameters { get; set; } = false;
+        /// <summary>
         /// How many facts have been created during the translation
         /// </summary>
         public int Facts { get; internal set; }
@@ -41,12 +45,14 @@ namespace FlashPlanner.Translators
         private readonly string _negatedPrefix = "$neg-";
 
         /// <summary>
-        /// Constructor that can take in a bool saying if statics should be removed from the output
+        /// Main constructor
         /// </summary>
         /// <param name="removeStaticsFromOutput"></param>
-        public PDDLToSASTranslator(bool removeStaticsFromOutput = false)
+        /// <param name="assumeNoEqualParameters"></param>
+        public PDDLToSASTranslator(bool removeStaticsFromOutput, bool assumeNoEqualParameters)
         {
             RemoveStaticsFromOutput = removeStaticsFromOutput;
+            AssumeNoEqualParameters = assumeNoEqualParameters;
         }
 
         public override void DoAbort()
@@ -65,6 +71,9 @@ namespace FlashPlanner.Translators
         public SASDecl Translate(PDDLDecl from)
         {
             Start();
+
+            if (AssumeNoEqualParameters)
+                from.Domain.Actions = InsertNonEqualsInActions(from.Domain.Actions);
 
             if (!from.IsContextualised)
             {
@@ -158,6 +167,30 @@ namespace FlashPlanner.Translators
 
             Stop();
             return result;
+        }
+
+        private List<ActionDecl> InsertNonEqualsInActions(List<ActionDecl> actions)
+        {
+            foreach(var action in actions)
+            {
+                action.EnsureAnd();
+                if (action.Preconditions is AndExp and)
+                    for (int i = 0; i < action.Parameters.Values.Count; i++)
+                        for (int j = i + 1; j < action.Parameters.Values.Count; j++)
+                            and.Add(GenerateNotPredicateEq(action.Parameters.Values[i], action.Parameters.Values[j], and));
+            }
+            return actions;
+        }
+
+        private IExp GenerateNotPredicateEq(NameExp x, NameExp y, INode parent)
+        {
+            var args = new List<NameExp>()
+            {
+                x, y
+            };
+            var notNode = new NotExp(parent);
+            notNode.Child = new PredicateExp(notNode, "=", args);
+            return notNode;
         }
 
         private List<Fact> ProcessNegativeFactsInOperators(List<Operator> operators)

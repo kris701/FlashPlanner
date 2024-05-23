@@ -35,7 +35,7 @@ namespace FlashPlanner.Search.BlackBox
         {
             LearnedMacros = LearnFocusedMacros(NumberOfMacros, SearchBudget);
             _pddlDecl.Domain.Actions.AddRange(LearnedMacros);
-            var translator = new PDDLToSASTranslator(true);
+            var translator = new PDDLToSASTranslator(true, false);
             translator.TimeLimit = TimeSpan.FromSeconds(1000);
             Declaration = translator.Translate(_pddlDecl);
 

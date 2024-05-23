@@ -11,7 +11,7 @@ namespace FlashPlanner.CLI
         [Option("search", Required = true, HelpText = "What search algorithm to use")]
         public string SearchOption { get; set; } = "";
         [Option("translator", Required = false, HelpText = "What translator to use")]
-        public string TranslatorOption { get; set; } = "primary(true)";
+        public string TranslatorOption { get; set; } = "primary(true,true)";
 
         [Option("print-plan", Required = false, HelpText = "Should the resulting plan be printed to stdout?", Default = false)]
         public bool PrintPlan { get; set; } = false;
