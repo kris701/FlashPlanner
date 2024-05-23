@@ -84,7 +84,7 @@ foreach (var domainName in targetDomains)
         if (File.Exists(Path.Combine(tmpFolder, "plan")))
             solvedA++;
 
-        var translator = new PDDLToSASTranslator(true);
+        var translator = new PDDLToSASTranslator(true, false);
         translator.TimeLimit = TimeSpan.FromSeconds(timeLimit);
         translator.MemoryLimit = memoryLimit;
         var sasDecl = translator.Translate(new PDDLSharp.Models.PDDL.PDDLDecl(domain, problem));

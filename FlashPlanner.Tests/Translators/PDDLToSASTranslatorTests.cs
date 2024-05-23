@@ -39,7 +39,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator();
+            var translator = new PDDLToSASTranslator(true, false);
             int expected = 0;
             if (decl.Domain.Constants != null)
                 expected += decl.Domain.Constants.Constants.Count;
@@ -65,7 +65,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator();
+            var translator = new PDDLToSASTranslator(true, false);
 
             // ACT
             var sas = translator.Translate(decl);
@@ -86,7 +86,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator(true);
+            var translator = new PDDLToSASTranslator(true, false);
             var statics = SimpleStaticPredicateDetector.FindStaticPredicates(decl);
 
             // ACT
@@ -126,7 +126,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator();
+            var translator = new PDDLToSASTranslator(true, false);
 
             // ACT
             var sas = translator.Translate(decl);
@@ -147,7 +147,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator();
+            var translator = new PDDLToSASTranslator(true, false);
 
             // ACT
             var sas = translator.Translate(decl);
@@ -164,7 +164,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator();
+            var translator = new PDDLToSASTranslator(true, false);
 
             // ACT
             var sas = translator.Translate(decl);
@@ -181,7 +181,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator();
+            var translator = new PDDLToSASTranslator(true, false);
 
             // ACT
             var sas = translator.Translate(decl);
@@ -212,7 +212,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator();
+            var translator = new PDDLToSASTranslator(true, false);
             translator.TimeLimit = TimeSpan.FromMilliseconds(1);
 
             // ACT
