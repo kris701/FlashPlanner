@@ -25,12 +25,12 @@ dotnet run -- --domain domain.pddl --problem p01.pddl --search "greedy(hGoal())"
 
 The available search engines are:
 * [`beam`](FlashPlanner/Search/Classical/BeamS.cs): Beam Search
-* [`greedy`](FlashPlanner/Search/Classical/GreedyBFS.cs): Greedy Search
-* [`greedy_underaprox`](FlashPlanner/Search/Classical/GreedyBFSUAR.cs): Greedy Search with [Under-Approximation Refinement (UAR)](https://ojs.aaai.org/index.php/ICAPS/article/view/13678)
-* [`greedy_prefered`](FlashPlanner/Search/Classical/GreedyBFSPO.cs): Greedy Search with [Preferred Operators (PO)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf)
-* [`greedy_defered`](FlashPlanner/Search/Classical/GreedyBFSDHE.cs): Greedy Search with [Deferred Heuristic Evaluation (DHE)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf)
-* [`greedy_bb`](FlashPlanner/Search/BlackBox/GreedyBFS.cs): Black box greedy search
-* [`greedy_bb_focused`](FlashPlanner/Search/BlackBox/GreedyBFSFocused.cs): Black box Greedy Search with [Focused Macros](https://arxiv.org/abs/2004.13242). 
+* [`greedy`](FlashPlanner/Search/Classical/GreedyBFS.cs): Greedy Best First Search
+* [`greedy_underaprox`](FlashPlanner/Search/Classical/GreedyBFSUAR.cs): Greedy Best First Search with [Under-Approximation Refinement (UAR)](https://ojs.aaai.org/index.php/ICAPS/article/view/13678)
+* [`greedy_prefered`](FlashPlanner/Search/Classical/GreedyBFSPO.cs): Greedy Best First Search with [Preferred Operators (PO)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf)
+* [`greedy_defered`](FlashPlanner/Search/Classical/GreedyBFSDHE.cs): Greedy Best First Search with [Deferred Heuristic Evaluation (DHE)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf)
+* [`greedy_bb`](FlashPlanner/Search/BlackBox/GreedyBFS.cs): Black box Greedy Best First Search
+* [`greedy_bb_focused`](FlashPlanner/Search/BlackBox/GreedyBFSFocused.cs): Black box Greedy Best First Search with [Focused Macros](https://arxiv.org/abs/2004.13242). 
 
 Do note that the black box planners only support the [hGoal](FlashPlanner/Heuristics/hGoal.cs) heuristic.
 
@@ -43,6 +43,12 @@ The available heuristics are:
 * [`hGoal()`](FlashPlanner/Heuristics/hGoal.cs): Returns the amount of goals that are achived in the given state, i.e. `h = allGoals - achivedGoals`
 * [`hPath()`](FlashPlanner/Heuristics/hPath.cs): Returns the cost of the current branch being evaluated
 * [`hWeighted(h,w)`](FlashPlanner/Heuristics/hWeighted.cs): Takes one of the previously given heuristics, and weights its result from a constant.
+* [`hColMax(h)`](FlashPlanner/HeuristicsCollections/hColMax.cs): Takes a set of other heuristics and returns the highest value from any of the heuristics.
+* [`hColSum(h)`](FlashPlanner/HeuristicsCollections/hColSum.cs): Same as the previous one, but takes the sum of all the heuristics.
+
+There is also a set of aliases, that can be used as a single value to setup both the search and the translator.
+The options are:
+* `fast()`: Normal translator configuration with Greedy Best First search and the heuristic hFF.
 
 This project is also available as a package on the [NuGet Package Manager](https://www.nuget.org/packages/FlashPlanner).
 

@@ -8,10 +8,12 @@ namespace FlashPlanner.CLI
         public string DomainPath { get; set; } = "";
         [Option("problem", Required = true, HelpText = "Path to the problem file")]
         public string ProblemPath { get; set; } = "";
-        [Option("search", Required = true, HelpText = "What search algorithm to use")]
+        [Option("search", Required = false, HelpText = "What search algorithm to use")]
         public string SearchOption { get; set; } = "";
         [Option("translator", Required = false, HelpText = "What translator to use")]
-        public string TranslatorOption { get; set; } = "primary(true,true)";
+        public string TranslatorOption { get; set; } = "primary(true,false)";
+        [Option("alias", Required = false, HelpText = "An alias that represents a configuration for the search and translation")]
+        public string AliasOption { get; set; } = "";
 
         [Option("print-plan", Required = false, HelpText = "Should the resulting plan be printed to stdout?", Default = false)]
         public bool PrintPlan { get; set; } = false;

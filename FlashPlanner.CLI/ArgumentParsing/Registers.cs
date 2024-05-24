@@ -8,6 +8,16 @@ namespace FlashPlanner.CLI.ArgumentParsing
 {
     public static class Registers
     {
+        public static List<Argument> AliasRegister = new List<Argument>()
+        {
+            new Argument("fast", new Dictionary<string, Type>(), (args) =>
+            {
+                return new AliasArgument(
+                    "greedy(hFF())",
+                    "primary(true,false)");
+            }),
+        };
+
         public static List<Argument> TranslatorRegister = new List<Argument>()
         {
             new Argument("primary", new Dictionary<string, Type>()

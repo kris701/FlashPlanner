@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using CommandLine.Text;
+using FlashPlanner.CLI.ArgumentParsing;
 using PDDLSharp.CodeGenerators.FastDownward.Plans;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.FastDownward.Plans;
@@ -24,6 +25,16 @@ namespace FlashPlanner.CLI
 
         public static void Run(Options opts)
         {
+            if (opts.AliasOption == "" && opts.SearchOption == "")
+                throw new Exception("No alias or search provided!");
+
+            if (opts.AliasOption != "")
+            {
+                var alias = InputArgumentBuilder.GetAlias(opts.AliasOption);
+                opts.TranslatorOption = alias.TranslatorOption;
+                opts.SearchOption = alias.SearchOption;
+            }
+
             WriteLineColor("Initializing", ConsoleColor.Blue);
             WriteLineColor($"\tDomain File:             {opts.DomainPath}");
             WriteLineColor($"\tProblem File:            {opts.ProblemPath}");

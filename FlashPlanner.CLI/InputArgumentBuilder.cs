@@ -30,5 +30,13 @@ namespace FlashPlanner.CLI
                 return planner;
             throw new Exception("Invalid translator argument!");
         }
+
+        public static AliasArgument GetAlias(string aliasText)
+        {
+            var target = ArgumentBuilder.Parse(aliasText, new Dictionary<string, object?>(), Registers.AliasRegister);
+            if (target is AliasArgument alias)
+                return alias;
+            throw new Exception("Invalid alias argument!");
+        }
     }
 }
