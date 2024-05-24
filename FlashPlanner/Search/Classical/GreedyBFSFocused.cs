@@ -2,34 +2,32 @@
 using FlashPlanner.HeuristicsCollections;
 using FlashPlanner.States;
 using FlashPlanner.Tools;
-using FlashPlanner.Translators;
 using PDDLSharp.Models.FastDownward.Plans;
-using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
+using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.SAS;
 using PDDLSharp.Toolkits;
+using FlashPlanner.Translators;
 
-namespace FlashPlanner.Search.BlackBox
+namespace FlashPlanner.Search.Classical
 {
     /// <summary>
     /// Greedy Best First Search with Focused Macros.
     /// (<seealso href="https://arxiv.org/abs/2004.13242">Efficient Black-Box Planning Using Macro-Actions with Focused Effects</seealso>)
-    /// Note, this only works with the <seealso cref="hGoal"/> heuristic.
+    /// Do note, this is modified to work with normal classical planning
     /// </summary>
-    public class GreedyBFSFocused : BaseBlackBoxSearch
+    public class GreedyBFSFocused : BaseClassicalSearch
     {
         public override event LogEventHandler? DoLog;
 
-        public int NumberOfMacros { get; set; }
-        public int SearchBudget { get; set; }
+        public int NumberOfMacros { get; set; } = 8;
+        public int SearchBudget { get; set; } = 1;
         public List<ActionDecl> LearnedMacros { get; set; } = new List<ActionDecl>();
 
         private readonly PDDLDecl _pddlDecl;
 
         public GreedyBFSFocused(PDDLDecl pddlDecl, SASDecl decl, IHeuristic heuristic, int numberOfMacros, int searchBudget) : base(decl, heuristic)
         {
-            if (heuristic.GetType() != typeof(hGoal))
-                throw new Exception("Heuristic must be hGoal!");
             _pddlDecl = pddlDecl.Copy();
             NumberOfMacros = numberOfMacros;
             SearchBudget = searchBudget;
@@ -50,26 +48,29 @@ namespace FlashPlanner.Search.BlackBox
             while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
-                var applicables = GetApplicables(stateMove.State);
-                foreach (var op in applicables)
+                foreach (var op in Declaration.Operators)
                 {
                     if (Abort) break;
-                    var newMove = new StateMove(Simulate(stateMove.State, op));
-                    if (newMove.State.IsInGoal())
-                        return new ActionPlan(GeneratePlanChain(stateMove.Steps, op));
-                    if (!_closedList.Contains(newMove) && !_openList.Contains(newMove))
+                    if (stateMove.State.IsApplicable(op))
                     {
-                        var value = h.GetValue(stateMove, newMove.State, new List<Operator>());
-                        newMove.Steps = new List<Operator>(stateMove.Steps) { Declaration.Operators[op] };
-                        newMove.hValue = value;
-                        _openList.Enqueue(newMove, value);
+                        var newMove = new StateMove(GenerateNewState(stateMove.State, op));
+                        if (newMove.State.IsInGoal())
+                            return new ActionPlan(GeneratePlanChain(stateMove.Steps, op));
+                        if (!_closedList.Contains(newMove) && !_openList.Contains(newMove))
+                        {
+                            var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
+                            newMove.Steps = new List<Operator>(stateMove.Steps) { op };
+                            newMove.hValue = value;
+                            _openList.Enqueue(newMove, value);
+                        }
                     }
                 }
             }
             return null;
         }
 
-        // Based on Algorithm 1 from the paper
+
+        // Based on Algorithm 1 from the paper (for black box planning)
         // Note, the repetition step is left out, since it seemed unnessesary and complicated to make with this system (have to constantly retranslate)
         private List<ActionDecl> LearnFocusedMacros(int nMacros, int budget)
         {

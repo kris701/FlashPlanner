@@ -171,7 +171,7 @@ namespace FlashPlanner.Translators
 
         private List<ActionDecl> InsertNonEqualsInActions(List<ActionDecl> actions)
         {
-            foreach(var action in actions)
+            foreach (var action in actions)
             {
                 action.EnsureAnd();
                 if (action.Preconditions is AndExp and)

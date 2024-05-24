@@ -64,7 +64,7 @@ foreach (var domainName in targetDomains)
         if (File.Exists(Path.Combine(tmpFolder, "plan")))
             File.Delete(Path.Combine(tmpFolder, "plan"));
 
-        var fdProcess = new Process() 
+        var fdProcess = new Process()
         {
             StartInfo = new ProcessStartInfo()
             {

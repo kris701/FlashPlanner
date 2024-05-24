@@ -81,6 +81,21 @@ namespace FlashPlanner.CLI.ArgumentParsing
                     return new Search.Classical.BeamS(sas, h, beta);
                 throw new Exception("Invalid arguments given for planner!");
             }),
+            new Argument("greedy_focused", new Dictionary<string, Type>(){
+                { "sas", typeof(SASDecl) },
+                { "h", typeof(IHeuristic) },
+                { "n", typeof(int) },
+                { "b", typeof(int) },
+            }, (args) =>
+            {
+                if (args["sas"] is SASDecl sas &&
+                    args["pddl"] is PDDLDecl pddl &&
+                    args["h"] is IHeuristic h &&
+                    args["n"] is int n &&
+                    args["b"] is int b)
+                    return new Search.Classical.GreedyBFSFocused(pddl, sas, h, n, b);
+                throw new Exception("Invalid arguments given for planner!");
+            }),
 
             // Search (BlackBox)
             new Argument("greedy_bb", new Dictionary<string, Type>(){
@@ -94,11 +109,17 @@ namespace FlashPlanner.CLI.ArgumentParsing
             }),
             new Argument("greedy_bb_focused", new Dictionary<string, Type>(){
                 { "sas", typeof(SASDecl) },
-                { "h", typeof(IHeuristic) }
+                { "h", typeof(IHeuristic) },
+                { "n", typeof(int) },
+                { "b", typeof(int) },
             }, (args) =>
             {
-                if (args["sas"] is SASDecl sas && args["pddl"] is PDDLDecl pddl && args["h"] is IHeuristic h)
-                    return new Search.BlackBox.GreedyBFSFocused(pddl, sas, h);
+                if (args["sas"] is SASDecl sas && 
+                    args["pddl"] is PDDLDecl pddl && 
+                    args["h"] is IHeuristic h &&
+                    args["n"] is int n &&
+                    args["b"] is int b)
+                    return new Search.BlackBox.GreedyBFSFocused(pddl, sas, h, n, b);
                 throw new Exception("Invalid arguments given for planner!");
             }),
 

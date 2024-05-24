@@ -29,8 +29,9 @@ The available search engines are:
 * [`greedy_underaprox`](FlashPlanner/Search/Classical/GreedyBFSUAR.cs): Greedy Best First Search with [Under-Approximation Refinement (UAR)](https://ojs.aaai.org/index.php/ICAPS/article/view/13678)
 * [`greedy_prefered`](FlashPlanner/Search/Classical/GreedyBFSPO.cs): Greedy Best First Search with [Preferred Operators (PO)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf)
 * [`greedy_defered`](FlashPlanner/Search/Classical/GreedyBFSDHE.cs): Greedy Best First Search with [Deferred Heuristic Evaluation (DHE)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf)
+* [`greedy_focused`](FlashPlanner/Search/Classical/GreedyBFSFocused.cs): Greedy Best First Search with [Focused Macros](https://arxiv.org/abs/2004.13242). Do note, plan validation does NOT work with this algorithm.
 * [`greedy_bb`](FlashPlanner/Search/BlackBox/GreedyBFS.cs): Black box Greedy Best First Search
-* [`greedy_bb_focused`](FlashPlanner/Search/BlackBox/GreedyBFSFocused.cs): Black box Greedy Best First Search with [Focused Macros](https://arxiv.org/abs/2004.13242). 
+* [`greedy_bb_focused`](FlashPlanner/Search/BlackBox/GreedyBFSFocused.cs): Black box Greedy Best First Search with [Focused Macros](https://arxiv.org/abs/2004.13242). Do note, plan validation does NOT work with this algorithm.
 
 Do note that the black box planners only support the [hGoal](FlashPlanner/Heuristics/hGoal.cs) heuristic.
 

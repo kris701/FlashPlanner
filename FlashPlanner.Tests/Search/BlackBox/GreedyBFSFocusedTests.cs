@@ -35,7 +35,7 @@ namespace FlashPlanner.Tests.Search.BlackBox
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var pddlDecl = GetPDDLDecl(domain, problem);
-            var planner = new GreedyBFSFocused(pddlDecl, decl, new hGoal());
+            var planner = new GreedyBFSFocused(pddlDecl, decl, new hGoal(), 8, 1);
             var validator = new PlanValidator();
 
             // ACT
