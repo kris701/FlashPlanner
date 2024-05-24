@@ -1,6 +1,5 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.States;
-using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
 
@@ -22,13 +21,12 @@ namespace FlashPlanner.Search.Classical
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
                     {
-                        var newMove = new StateMove(GenerateNewState(stateMove.State, op));
+                        var newMove = GenerateNewState(stateMove, op);
                         if (newMove.State.IsInGoal())
-                            return new ActionPlan(GeneratePlanChain(stateMove.Steps, op));
-                        if (!_closedList.Contains(newMove) && !_openList.Contains(newMove))
+                            return GeneratePlanChain(newMove);
+                        if (!IsVisited(newMove))
                         {
                             var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
-                            newMove.Steps = new List<Operator>(stateMove.Steps) { op };
                             newMove.hValue = value;
                             _openList.Enqueue(newMove, value);
                         }

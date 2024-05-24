@@ -57,7 +57,7 @@ namespace FlashPlanner.Tests.Search.Classical
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var planner = new GreedyBFSPO(decl, new hFF(decl));
+            var planner = new GreedyBFSPO(decl, new hFF());
             var validator = new PlanValidator();
 
             // ACT

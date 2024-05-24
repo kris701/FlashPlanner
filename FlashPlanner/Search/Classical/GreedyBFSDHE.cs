@@ -16,12 +16,16 @@ namespace FlashPlanner.Search.Classical
         {
         }
 
+        private readonly Dictionary<StateMove, bool> _isEvaluated = new Dictionary<StateMove, bool>();
+
         internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
         {
+            _isEvaluated.Clear();
+
             while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
-                if (!stateMove.Evaluated)
+                if (_isEvaluated.ContainsKey(stateMove) && !_isEvaluated[stateMove])
                     stateMove.hValue = h.GetValue(stateMove, stateMove.State, Declaration.Operators);
 
                 bool lowerFound = false;
@@ -30,16 +34,15 @@ namespace FlashPlanner.Search.Classical
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
                     {
-                        var newMove = new StateMove(GenerateNewState(stateMove.State, op));
+                        var newMove = GenerateNewState(stateMove, op);
                         if (newMove.State.IsInGoal())
-                            return new ActionPlan(GeneratePlanChain(stateMove.Steps, op));
-                        if (!_closedList.Contains(newMove) && !_openList.Contains(newMove))
+                            return GeneratePlanChain(newMove);
+                        if (!IsVisited(newMove))
                         {
                             if (lowerFound)
                             {
-                                newMove.Steps = new List<Operator>(stateMove.Steps) { op };
                                 newMove.hValue = stateMove.hValue;
-                                newMove.Evaluated = false;
+                                _isEvaluated.Add(newMove, false);
                                 _openList.Enqueue(newMove, stateMove.hValue);
                             }
                             else
@@ -47,8 +50,8 @@ namespace FlashPlanner.Search.Classical
                                 var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
                                 if (value < stateMove.hValue)
                                     lowerFound = true;
-                                newMove.Steps = new List<Operator>(stateMove.Steps) { op };
                                 newMove.hValue = value;
+                                _isEvaluated.Add(newMove, true);
                                 _openList.Enqueue(newMove, value);
                             }
                         }

@@ -25,7 +25,7 @@ namespace FlashPlanner.Tests.Heuristics
             IHeuristic h = new hPath();
             var parent = new StateMove();
             for (int i = 0; i < inValue; i++)
-                parent.Steps.Add(new Operator());
+                parent.PlanSteps.Add(0);
 
             // ACT
             var newValue = h.GetValue(parent, null, new List<Operator>());

@@ -8,6 +8,7 @@ using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Models.SAS;
+using PDDLSharp.Toolkits;
 using PDDLSharp.Translators.Grounders;
 
 namespace FlashPlanner.Translators
@@ -122,7 +123,7 @@ namespace FlashPlanner.Translators
 
             // Init
             if (from.Problem.Init != null)
-                inits = ExtractInitFacts(from.Problem.Init.Predicates, deconstructor);
+                inits = ExtractInitFacts(from.Problem.Init.Predicates, deconstructor, from);
             if (Abort) return new SASDecl();
 
             // Goal
@@ -287,9 +288,10 @@ namespace FlashPlanner.Translators
             return resultDict;
         }
 
-        private List<Fact> ExtractInitFacts(List<IExp> inits, NodeNormalizer deconstructor)
+        private List<Fact> ExtractInitFacts(List<IExp> inits, NodeNormalizer deconstructor, PDDLDecl decl)
         {
             var initFacts = new List<Fact>();
+            var statics = SimpleStaticPredicateDetector.FindStaticPredicates(decl);
 
             var deconstructed = new List<IExp>();
             foreach (var exp in inits)
@@ -298,6 +300,8 @@ namespace FlashPlanner.Translators
             foreach (var init in deconstructed)
                 if (init is PredicateExp pred)
                     initFacts.Add(GetFactFromPredicate(pred));
+
+            initFacts.RemoveAll(x => statics.Any(y => y.Name == x.Name));
 
             return initFacts;
         }

@@ -16,7 +16,7 @@ namespace FlashPlanner.Search.Classical
         private readonly OperatorRPG _graphGenerator;
         public GreedyBFSPO(SASDecl decl, IHeuristic heuristic) : base(decl, heuristic)
         {
-            _graphGenerator = new OperatorRPG(decl);
+            _graphGenerator = new OperatorRPG();
         }
 
         internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
@@ -39,13 +39,12 @@ namespace FlashPlanner.Search.Classical
                         if (Abort) break;
                         if (stateMove.State.IsApplicable(op))
                         {
-                            var newMove = new StateMove(GenerateNewState(stateMove.State, op));
+                            var newMove = GenerateNewState(stateMove, op);
                             if (newMove.State.IsInGoal())
-                                return new ActionPlan(GeneratePlanChain(stateMove.Steps, op));
+                                return GeneratePlanChain(newMove);
                             if (!_closedList.Contains(newMove) && !preferredQueue.Contains(newMove))
                             {
                                 var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
-                                newMove.Steps = new List<Operator>(stateMove.Steps) { op };
                                 newMove.hValue = value;
                                 _openList.Enqueue(newMove, value);
                             }
@@ -64,13 +63,12 @@ namespace FlashPlanner.Search.Classical
                         if (Abort) break;
                         if (stateMove.State.IsApplicable(op))
                         {
-                            var newMove = new StateMove(GenerateNewState(stateMove.State, op));
+                            var newMove = GenerateNewState(stateMove, op);
                             if (newMove.State.IsInGoal())
-                                return new ActionPlan(GeneratePlanChain(stateMove.Steps, op));
-                            if (!_closedList.Contains(newMove) && !_openList.Contains(newMove))
+                                return GeneratePlanChain(newMove);
+                            if (!IsVisited(newMove))
                             {
                                 var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
-                                newMove.Steps = new List<Operator>(stateMove.Steps) { op };
                                 newMove.hValue = value;
                                 _openList.Enqueue(newMove, value);
                                 preferredQueue.Enqueue(newMove, value);

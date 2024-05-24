@@ -88,7 +88,7 @@ foreach (var domainName in targetDomains)
         translator.TimeLimit = TimeSpan.FromSeconds(timeLimit);
         translator.MemoryLimit = memoryLimit;
         var sasDecl = translator.Translate(new PDDLSharp.Models.PDDL.PDDLDecl(domain, problem));
-        using (var planner = new GreedyBFS(sasDecl, new hFF(sasDecl)))
+        using (var planner = new GreedyBFS(sasDecl, new hFF()))
         {
             planner.TimeLimit = TimeSpan.FromSeconds(timeLimit);
             planner.MemoryLimit = memoryLimit;

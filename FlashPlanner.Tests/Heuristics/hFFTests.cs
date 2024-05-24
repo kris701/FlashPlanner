@@ -31,7 +31,7 @@ namespace FlashPlanner.Tests.Heuristics
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var h = new hFF(decl);
+            var h = new hFF();
             var state = new SASStateSpace(decl);
 
             // ACT
@@ -52,7 +52,7 @@ namespace FlashPlanner.Tests.Heuristics
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var h = new hFF(decl);
+            var h = new hFF();
             var state = new SASStateSpace(decl);
             foreach (var goal in decl.Goal)
                 state.Add(goal);

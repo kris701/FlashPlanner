@@ -12,7 +12,7 @@ namespace FlashPlanner.Heuristics
         public override int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
             Evaluations++;
-            return parent.Steps.Count + 1;
+            return parent.PlanSteps.Count + 1;
         }
     }
 }

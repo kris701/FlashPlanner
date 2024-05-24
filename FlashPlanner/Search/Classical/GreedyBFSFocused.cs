@@ -2,12 +2,12 @@
 using FlashPlanner.HeuristicsCollections;
 using FlashPlanner.States;
 using FlashPlanner.Tools;
+using FlashPlanner.Translators;
 using PDDLSharp.Models.FastDownward.Plans;
-using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL;
+using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.SAS;
 using PDDLSharp.Toolkits;
-using FlashPlanner.Translators;
 
 namespace FlashPlanner.Search.Classical
 {
@@ -53,13 +53,12 @@ namespace FlashPlanner.Search.Classical
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
                     {
-                        var newMove = new StateMove(GenerateNewState(stateMove.State, op));
+                        var newMove = GenerateNewState(stateMove, op);
                         if (newMove.State.IsInGoal())
-                            return new ActionPlan(GeneratePlanChain(stateMove.Steps, op));
-                        if (!_closedList.Contains(newMove) && !_openList.Contains(newMove))
+                            return GeneratePlanChain(stateMove);
+                        if (!IsVisited(newMove))
                         {
                             var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
-                            newMove.Steps = new List<Operator>(stateMove.Steps) { op };
                             newMove.hValue = value;
                             _openList.Enqueue(newMove, value);
                         }
@@ -90,9 +89,9 @@ namespace FlashPlanner.Search.Classical
                 foreach (var state in search._closedList)
                 {
                     if (Abort) return new List<ActionDecl>();
-                    if (state.Steps.Count > 0)
+                    if (state.PlanSteps.Count > 0)
                         queue.Enqueue(
-                            GenerateMacroFromOperatorSteps(state.Steps),
+                            GenerateMacroFromOperatorSteps(state.PlanSteps),
                             h.GetValue(new StateMove(), state.State, new List<Operator>()));
                 }
             }
@@ -118,14 +117,15 @@ namespace FlashPlanner.Search.Classical
 
         // This section is mostly based on Algorithm 2 from appendix
         // Its quite slow, but this search algorithm is mostly to show the possibilities of reducing generated states, not search time.
-        private ActionDecl GenerateMacroFromOperatorSteps(List<Operator> steps)
+        private ActionDecl GenerateMacroFromOperatorSteps(List<int> steps)
         {
             var actionCombiner = new ActionDeclCombiner();
 
             var actionChain = new List<ActionDecl>();
             // Convert operator steps into pddl actions
-            foreach (var step in steps)
+            foreach (var id in steps)
             {
+                var step = Declaration.GetOperatorByID(id);
                 var newAct = _pddlDecl.Domain.Actions.First(x => x.Name == step.Name).Copy();
                 for (int j = 0; j < newAct.Parameters.Values.Count; j++)
                 {

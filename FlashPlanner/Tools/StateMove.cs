@@ -6,14 +6,13 @@ namespace FlashPlanner.Tools
     public class StateMove
     {
         public SASStateSpace State { get; private set; }
-        public List<Operator> Steps { get; set; }
+        public List<int> PlanSteps { get; set; }
         public int hValue { get; set; }
-        public bool Evaluated { get; set; } = true;
 
         public StateMove(SASStateSpace state, int hvalue)
         {
             State = state;
-            Steps = new List<Operator>();
+            PlanSteps = new List<int>();
             hValue = hvalue;
         }
 
@@ -25,10 +24,7 @@ namespace FlashPlanner.Tools
         {
         }
 
-        public override int GetHashCode()
-        {
-            return State.GetHashCode();
-        }
+        public override int GetHashCode() => State.GetHashCode();
 
         public override bool Equals(object? obj)
         {
@@ -39,7 +35,7 @@ namespace FlashPlanner.Tools
 
         public override string? ToString()
         {
-            return $"Steps: {Steps.Count}, h: {hValue}, State Size: {State.Count}";
+            return $"Steps: {PlanSteps.Count}, h: {hValue}, State Size: {State.Count}";
         }
     }
 }

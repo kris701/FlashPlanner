@@ -54,13 +54,12 @@ namespace FlashPlanner.Search.BlackBox
                 foreach (var op in applicables)
                 {
                     if (Abort) break;
-                    var newMove = new StateMove(Simulate(stateMove.State, op));
+                    var newMove = Simulate(stateMove, op);
                     if (newMove.State.IsInGoal())
-                        return new ActionPlan(GeneratePlanChain(stateMove.Steps, op));
-                    if (!_closedList.Contains(newMove) && !_openList.Contains(newMove))
+                        return GeneratePlanChain(newMove);
+                    if (!IsVisited(newMove))
                     {
                         var value = h.GetValue(stateMove, newMove.State, new List<Operator>());
-                        newMove.Steps = new List<Operator>(stateMove.Steps) { Declaration.Operators[op] };
                         newMove.hValue = value;
                         _openList.Enqueue(newMove, value);
                     }
@@ -89,9 +88,9 @@ namespace FlashPlanner.Search.BlackBox
                 foreach (var state in search._closedList)
                 {
                     if (Abort) return new List<ActionDecl>();
-                    if (state.Steps.Count > 0)
+                    if (state.PlanSteps.Count > 0)
                         queue.Enqueue(
-                            GenerateMacroFromOperatorSteps(state.Steps),
+                            GenerateMacroFromOperatorSteps(state.PlanSteps),
                             h.GetValue(new StateMove(), state.State, new List<Operator>()));
                 }
             }
@@ -117,14 +116,15 @@ namespace FlashPlanner.Search.BlackBox
 
         // This section is mostly based on Algorithm 2 from appendix
         // Its quite slow, but this search algorithm is mostly to show the possibilities of reducing generated states, not search time.
-        private ActionDecl GenerateMacroFromOperatorSteps(List<Operator> steps)
+        private ActionDecl GenerateMacroFromOperatorSteps(List<int> steps)
         {
             var actionCombiner = new ActionDeclCombiner();
 
             var actionChain = new List<ActionDecl>();
             // Convert operator steps into pddl actions
-            foreach (var step in steps)
+            foreach (var id in steps)
             {
+                var step = Declaration.GetOperatorByID(id);
                 var newAct = _pddlDecl.Domain.Actions.First(x => x.Name == step.Name).Copy();
                 for (int j = 0; j < newAct.Parameters.Values.Count; j++)
                 {

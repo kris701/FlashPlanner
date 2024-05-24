@@ -14,11 +14,11 @@ namespace FlashPlanner.Search.Classical
         public int OperatorsUsed { get; set; }
 
         private readonly OperatorRPG _graphGenerator;
-        private HashSet<int> _fullyClosed = new HashSet<int>();
+        private HashSet<StateMove> _fullyClosed = new HashSet<StateMove>();
 
         public GreedyBFSUAR(SASDecl decl, IHeuristic heuristic) : base(decl, heuristic)
         {
-            _graphGenerator = new OperatorRPG(decl);
+            _graphGenerator = new OperatorRPG();
         }
 
         internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
@@ -26,7 +26,7 @@ namespace FlashPlanner.Search.Classical
             // Initial Operator Subset
             var operators = GetInitialOperators();
             _openList = InitializeQueue(Heuristic, state, operators.ToList());
-            _fullyClosed = new HashSet<int>();
+            _fullyClosed = new HashSet<StateMove>();
             bool haveOnce = false;
 
             while (!Abort)
@@ -43,15 +43,14 @@ namespace FlashPlanner.Search.Classical
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
                     {
-                        var newMove = new StateMove(GenerateNewState(stateMove.State, op));
+                        var newMove = GenerateNewState(stateMove, op);
                         if (newMove.State.IsInGoal())
-                            return new ActionPlan(GeneratePlanChain(stateMove.Steps, op));
-                        if (!_closedList.Contains(newMove) && !_fullyClosed.Contains(newMove.GetHashCode()) && !_openList.Contains(newMove))
+                            return GeneratePlanChain(newMove);
+                        if (!IsVisited(newMove) && !_fullyClosed.Contains(newMove))
                         {
                             var value = h.GetValue(stateMove, newMove.State, operators.ToList());
                             if (value < current)
                                 current = value;
-                            newMove.Steps = new List<Operator>(stateMove.Steps) { op };
                             newMove.hValue = value;
                             _openList.Enqueue(newMove, value);
                         }
@@ -98,7 +97,6 @@ namespace FlashPlanner.Search.Classical
         /// </summary>
         /// <param name="operators">Set of unrefined operators</param>
         /// <returns>A set of refined operators</returns>
-        /// <exception cref="NoSolutionFoundException">If no operators could be found with either the relaxed plans or just applicable operators, assume the problem is unsolvable.</exception>
         private List<Operator> RefineOperators(List<Operator> operators, HashSet<StateMove> newClosed)
         {
             if (newClosed.Count == 0)
@@ -149,7 +147,7 @@ namespace FlashPlanner.Search.Classical
                         foreach (var state in allTotallyClosed)
                         {
                             newClosed.Remove(state);
-                            _fullyClosed.Add(state.GetHashCode());
+                            _fullyClosed.Add(state);
                         }
                     }
                 }

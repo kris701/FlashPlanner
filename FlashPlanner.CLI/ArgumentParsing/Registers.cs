@@ -114,8 +114,8 @@ namespace FlashPlanner.CLI.ArgumentParsing
                 { "b", typeof(int) },
             }, (args) =>
             {
-                if (args["sas"] is SASDecl sas && 
-                    args["pddl"] is PDDLDecl pddl && 
+                if (args["sas"] is SASDecl sas &&
+                    args["pddl"] is PDDLDecl pddl &&
                     args["h"] is IHeuristic h &&
                     args["n"] is int n &&
                     args["b"] is int b)
@@ -134,12 +134,7 @@ namespace FlashPlanner.CLI.ArgumentParsing
                 throw new Exception("Invalid arguments given for heuristic!");
             }),
             new Argument("hDepth", new Dictionary<string, Type>(), (args) => new hDepth()),
-            new Argument("hFF", new Dictionary<string, Type>(), (args) =>
-            {
-                if (args["sas"] is SASDecl sas)
-                    return new hFF(sas);
-                throw new Exception("Invalid arguments given for heuristic!");
-            }),
+            new Argument("hFF", new Dictionary<string, Type>(), (args) => new hFF()),
             new Argument("hGoal", new Dictionary<string, Type>(), (args) => new hGoal()),
             new Argument("hMax", new Dictionary<string, Type>(), (args) => new hMax()),
             new Argument("hPath", new Dictionary<string, Type>(), (args) => new hPath()),

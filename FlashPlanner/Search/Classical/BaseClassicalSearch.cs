@@ -51,12 +51,15 @@ namespace FlashPlanner.Search.Classical
             return result;
         }
 
-        internal SASStateSpace GenerateNewState(SASStateSpace state, Operator op)
+        internal StateMove GenerateNewState(StateMove state, Operator op)
         {
             Generated++;
-            var newState = new SASStateSpace(state);
+            var newState = new SASStateSpace(state.State);
             newState.Execute(op);
-            return newState;
+            var stateMove = new StateMove(newState);
+            stateMove.PlanSteps.AddRange(state.PlanSteps);
+            stateMove.PlanSteps.Add(op.ID);
+            return stateMove;
         }
 
         internal RefPriorityQueue InitializeQueue(IHeuristic h, SASStateSpace state, List<Operator> operators)
@@ -79,29 +82,21 @@ namespace FlashPlanner.Search.Classical
             return stateMove;
         }
 
-        internal List<GroundedAction> GeneratePlanChain(List<Operator> steps, Operator newOp)
+        internal ActionPlan GeneratePlanChain(StateMove state)
         {
             var chain = new List<GroundedAction>();
 
-            chain.AddRange(GeneratePlanChain(steps));
-            chain.Add(GenerateFromOp(newOp));
+            foreach (var step in state.PlanSteps)
+                chain.Add(GenerateFromOp(Declaration.Operators.First(x => x.ID == step)));
 
-            return chain;
-        }
-
-        internal List<GroundedAction> GeneratePlanChain(List<Operator> steps)
-        {
-            var chain = new List<GroundedAction>();
-
-            foreach (var step in steps)
-                chain.Add(GenerateFromOp(step));
-
-            return chain;
+            return new ActionPlan(chain);
         }
 
         internal GroundedAction GenerateFromOp(Operator op) => new GroundedAction(op.Name, op.Arguments);
 
         internal abstract ActionPlan? Solve(IHeuristic h, SASStateSpace state);
+
+        internal bool IsVisited(StateMove state) => _closedList.Contains(state) || _openList.Contains(state);
 
         public virtual void Dispose()
         {

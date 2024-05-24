@@ -136,11 +136,11 @@ namespace FlashPlanner.Tests.Translator
         }
 
         [TestMethod]
-        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob01.pddl", 15)]
-        [DataRow("../../../../Dependencies/downward-benchmarks/logistics98/domain.pddl", "../../../../Dependencies/downward-benchmarks/logistics98/prob01.pddl", 64)]
-        [DataRow("../../../../Dependencies/downward-benchmarks/satellite/domain.pddl", "../../../../Dependencies/downward-benchmarks/satellite/p01-pfile1.pddl", 17)]
-        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p01.pddl", 36)]
-        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s1-0.pddl", 7)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob01.pddl", 7)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/logistics98/domain.pddl", "../../../../Dependencies/downward-benchmarks/logistics98/prob01.pddl", 14)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/satellite/domain.pddl", "../../../../Dependencies/downward-benchmarks/satellite/p01-pfile1.pddl", 2)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p01.pddl", 18)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s1-0.pddl", 1)]
         public void Can_Translate_ExpectedInits(string domain, string problem, int expected)
         {
             // ARRANGE
@@ -157,7 +157,7 @@ namespace FlashPlanner.Tests.Translator
         }
 
         [TestMethod]
-        [DataRow("../../../../Dependencies/downward-benchmarks/pathways/domain_p01.pddl", "../../../../Dependencies/downward-benchmarks/pathways/p01.pddl", 48)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/pathways/domain_p01.pddl", "../../../../Dependencies/downward-benchmarks/pathways/p01.pddl", 17)]
         public void Can_Translate_ExpectedInits_NegativePreconditions(string domain, string problem, int expected)
         {
             // ARRANGE

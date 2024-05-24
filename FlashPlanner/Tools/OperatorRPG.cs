@@ -12,19 +12,6 @@ namespace FlashPlanner.Tools
         /// Bool indicating if the generation failed
         /// </summary>
         public bool Failed { get; internal set; } = false;
-        /// <summary>
-        /// The current <seealso cref="SASDecl"/>
-        /// </summary>
-        public SASDecl Declaration { get; set; }
-
-        /// <summary>
-        /// Constructor with the <seealso cref="SASDecl"/>
-        /// </summary>
-        /// <param name="declaration"></param>
-        public OperatorRPG(SASDecl declaration)
-        {
-            Declaration = declaration;
-        }
 
         /// <summary>
         /// Generate a relaxed plan
@@ -44,19 +31,19 @@ namespace FlashPlanner.Tools
                 Failed = true;
                 return new List<Operator>();
             }
-            var selectedOperators = ReconstructPlan(graphLayers);
+            var selectedOperators = ReconstructPlan(graphLayers, state.Declaration);
 
             return selectedOperators;
         }
 
         // Hoffman & Nebel 2001, Figure 2
-        private List<Operator> ReconstructPlan(List<Layer> graphLayers)
+        private List<Operator> ReconstructPlan(List<Layer> graphLayers, SASDecl decl)
         {
             var selectedOperators = new List<Operator>();
             var G = new Dictionary<int, HashSet<Fact>>();
             var trues = new Dictionary<int, HashSet<Fact>>();
             var m = -1;
-            foreach (var fact in Declaration.Goal)
+            foreach (var fact in decl.Goal)
                 m = Math.Max(m, FirstLevel(fact, graphLayers));
 
             G.Add(0, new HashSet<Fact>());
@@ -65,7 +52,7 @@ namespace FlashPlanner.Tools
             {
                 G.Add(t, new HashSet<Fact>());
                 trues.Add(t, new HashSet<Fact>());
-                foreach (var fact in Declaration.Goal)
+                foreach (var fact in decl.Goal)
                     if (FirstLevel(fact, graphLayers) == t)
                         G[t].Add(fact);
             }

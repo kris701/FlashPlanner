@@ -1,7 +1,7 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.Search.Classical;
 using FlashPlanner.States;
-using PDDLSharp.Models.FastDownward.Plans;
+using FlashPlanner.Tools;
 using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Search.BlackBox
@@ -30,24 +30,15 @@ namespace FlashPlanner.Search.BlackBox
             return returnList;
         }
 
-        public SASStateSpace Simulate(SASStateSpace state, int opIndex)
+        public StateMove Simulate(StateMove state, int opIndex)
         {
             Generated++;
-            var newState = new SASStateSpace(state);
+            var newState = new SASStateSpace(state.State);
             newState.Execute(Declaration.Operators[opIndex]);
-            return newState;
+            var stateMove = new StateMove(newState);
+            stateMove.PlanSteps.AddRange(state.PlanSteps);
+            stateMove.PlanSteps.Add(Declaration.Operators[opIndex].ID);
+            return stateMove;
         }
-
-        internal List<GroundedAction> GeneratePlanChain(List<Operator> steps, int newOp)
-        {
-            var chain = new List<GroundedAction>();
-
-            chain.AddRange(GeneratePlanChain(steps));
-            chain.Add(GenerateFromOp(newOp));
-
-            return chain;
-        }
-
-        internal GroundedAction GenerateFromOp(int opIndex) => new GroundedAction(Declaration.Operators[opIndex].Name, Declaration.Operators[opIndex].Arguments);
     }
 }

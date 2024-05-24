@@ -33,7 +33,7 @@ namespace FlashPlanner.Tests.Tools
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var state = new RelaxedSASStateSpace(decl);
-            var generator = new OperatorRPG(decl);
+            var generator = new OperatorRPG();
 
             // ACT
             var result = generator.GenerateReplaxedPlan(state, decl.Operators);
@@ -58,7 +58,7 @@ namespace FlashPlanner.Tests.Tools
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var state = new RelaxedSASStateSpace(decl);
-            var generator = new OperatorRPG(decl);
+            var generator = new OperatorRPG();
 
             // ACT
             var result = generator.GenerateReplaxedPlan(state, decl.Operators);
@@ -80,7 +80,7 @@ namespace FlashPlanner.Tests.Tools
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var state = new RelaxedSASStateSpace(decl);
-            var generator = new OperatorRPG(decl);
+            var generator = new OperatorRPG();
 
             // ACT
             var graph = generator.GenerateRelaxedPlanningGraph(state, decl.Operators);
@@ -101,7 +101,7 @@ namespace FlashPlanner.Tests.Tools
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var state = new RelaxedSASStateSpace(decl);
-            var generator = new OperatorRPG(decl);
+            var generator = new OperatorRPG();
 
             // ACT
             var graph = generator.GenerateRelaxedPlanningGraph(state, decl.Operators);
@@ -124,7 +124,7 @@ namespace FlashPlanner.Tests.Tools
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var state = new RelaxedSASStateSpace(decl);
-            var generator = new OperatorRPG(decl);
+            var generator = new OperatorRPG();
 
             // ACT
             var graph = generator.GenerateRelaxedPlanningGraph(state, decl.Operators);
@@ -140,7 +140,7 @@ namespace FlashPlanner.Tests.Tools
             var decl = new SASDecl();
             decl.Goal.Add(new Fact("abc"));
             var state = new RelaxedSASStateSpace(decl);
-            var generator = new OperatorRPG(decl);
+            var generator = new OperatorRPG();
 
             // ACT
             var result = generator.GenerateRelaxedPlanningGraph(state, new List<Operator>());
@@ -166,7 +166,7 @@ namespace FlashPlanner.Tests.Tools
                     new Fact[]{ },
                     new Fact[]{ })
             };
-            var generator = new OperatorRPG(decl);
+            var generator = new OperatorRPG();
 
             // ACT
             var result = generator.GenerateRelaxedPlanningGraph(state, actions);
@@ -192,7 +192,7 @@ namespace FlashPlanner.Tests.Tools
                     new Fact[]{ },
                     new Fact[]{ })
             };
-            var generator = new OperatorRPG(decl);
+            var generator = new OperatorRPG();
 
             // ACT
             var result = generator.GenerateRelaxedPlanningGraph(state, actions);
