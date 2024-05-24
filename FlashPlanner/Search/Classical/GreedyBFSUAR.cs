@@ -9,6 +9,8 @@ namespace FlashPlanner.Search.Classical
     // Greedy Search with Under-Approximation Refinement
     public class GreedyBFSUAR : BaseClassicalSearch
     {
+        public override event LogEventHandler? DoLog;
+
         public int OperatorsUsed { get; set; }
 
         private readonly OperatorRPG _graphGenerator;
@@ -152,6 +154,9 @@ namespace FlashPlanner.Search.Classical
                     }
                 }
             }
+            if (operators.Count != OperatorsUsed)
+                DoLog?.Invoke($"Operators refined! Now has {operators.Count} operators");
+
             OperatorsUsed = operators.Count;
             return operators;
         }

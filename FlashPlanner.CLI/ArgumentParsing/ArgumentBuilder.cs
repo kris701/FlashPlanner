@@ -6,7 +6,8 @@ namespace FlashPlanner.CLI.ArgumentParsing
     {
         public static object Parse(string text, Dictionary<string, object?> args, List<Argument> register)
         {
-            var targetItem = register.FirstOrDefault(x => text.ToUpper().StartsWith(x.Name.ToUpper()));
+            var name = text.Substring(0, text.IndexOf('(')).ToUpper();
+            var targetItem = register.FirstOrDefault(x => name == x.Name.ToUpper());
             if (targetItem == null)
                 throw new Exception("Invalid parse target");
 
