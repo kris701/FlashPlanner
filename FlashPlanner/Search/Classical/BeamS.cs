@@ -43,7 +43,10 @@ namespace FlashPlanner.Search.Classical
                         }
                     }
                 }
-                for (int i = 0; i < Beta; i++)
+                var count = newItems.Count;
+                if (count > Beta)
+                    count = Beta;
+                for (int i = 0; i < count; i++)
                 {
                     var item = newItems.Dequeue();
                     _openList.Enqueue(item, item.hValue);
