@@ -11,6 +11,9 @@ namespace FlashPlanner.Search
     /// </summary>
     public class GreedyBFSUAR : BaseHeuristicPlanner
     {
+        /// <summary>
+        /// Logging event for the front end
+        /// </summary>
         public override event LogEventHandler? DoLog;
 
         private int _operatorsUsed = -1;
@@ -32,7 +35,7 @@ namespace FlashPlanner.Search
             // Initial Operator Subset
             _operatorsUsed = -1;
             var operators = GetInitialOperators();
-            _openList = InitializeQueue(Heuristic, state, operators.ToList());
+            _openList = InitializeQueue(state);
             _fullyClosed = new HashSet<StateMove>();
             bool haveOnce = false;
 
@@ -191,8 +194,8 @@ namespace FlashPlanner.Search
             {
                 if (Abort) return new List<Operator>();
                 var hash = item.GetHashCode();
-                if (_relaxedCache.ContainsKey(hash))
-                    relaxedPlanOperators.AddRange(_relaxedCache[hash].Except(operators).Except(relaxedPlanOperators));
+                if (_relaxedCache.TryGetValue(hash, out List<Operator>? value))
+                    relaxedPlanOperators.AddRange(value.Except(operators).Except(relaxedPlanOperators));
                 else
                 {
                     var newOps = _graphGenerator.GenerateReplaxedPlan(

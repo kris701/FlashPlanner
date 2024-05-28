@@ -4,17 +4,22 @@ using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Heuristics
 {
+    /// <summary>
+    /// Retuns the max of actions needed to achive every goal fact
+    /// </summary>
     public class hMax : BaseHeuristic
     {
-        private FactRPG _graphGenerator;
+        private readonly FactRPG _graphGenerator;
+        /// <summary>
+        /// Main constructor
+        /// </summary>
         public hMax()
         {
             _graphGenerator = new FactRPG();
         }
 
-        public override int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
+        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
-            Evaluations++;
             var max = 0;
             var dict = _graphGenerator.GenerateRelaxedGraph(state, operators);
             foreach (var fact in state.Declaration.Goal)
@@ -28,12 +33,6 @@ namespace FlashPlanner.Heuristics
                     max = factCost;
             }
             return max;
-        }
-
-        public override void Reset()
-        {
-            base.Reset();
-            _graphGenerator = new FactRPG();
         }
     }
 }

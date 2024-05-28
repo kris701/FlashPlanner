@@ -27,7 +27,7 @@ namespace FlashPlanner.Search
         internal override ActionPlan? Solve(SASStateSpace state)
         {
             var preferedOperators = GetPreferredOperators();
-            var preferredQueue = InitializeQueue(Heuristic, state, preferedOperators);
+            var preferredQueue = InitializeQueue(state);
 
             int iteration = 0;
             while (!Abort && (_openList.Count > 0 || preferredQueue.Count > 0))

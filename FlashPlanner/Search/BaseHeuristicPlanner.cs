@@ -34,7 +34,7 @@ namespace FlashPlanner.Search
 
         internal SASDecl _declaration;
         internal HashSet<StateMove> _closedList = new HashSet<StateMove>();
-        internal RefPriorityQueue _openList = new RefPriorityQueue();
+        internal RefPriorityQueue<StateMove> _openList = new RefPriorityQueue<StateMove>();
 
         /// <summary>
         /// Main constructor
@@ -53,6 +53,7 @@ namespace FlashPlanner.Search
         /// <returns>A plan or null if unsolvable</returns>
         public ActionPlan? Solve(SASDecl decl)
         {
+            Heuristic.Reset();
             _declaration = decl;
 
             var state = new SASStateSpace(_declaration);
@@ -62,7 +63,7 @@ namespace FlashPlanner.Search
             Start();
 
             _closedList = new HashSet<StateMove>();
-            _openList = InitializeQueue(Heuristic, state, _declaration.Operators);
+            _openList = InitializeQueue(state);
 
             Expanded = 0;
             Generated = 0;
@@ -91,15 +92,15 @@ namespace FlashPlanner.Search
             return stateMove;
         }
 
-        internal RefPriorityQueue InitializeQueue(IHeuristic h, SASStateSpace state, List<Operator> operators)
+        internal RefPriorityQueue<StateMove> InitializeQueue(SASStateSpace state)
         {
-            var queue = new RefPriorityQueue();
+            var queue = new RefPriorityQueue<StateMove>();
             var fromMove = new StateMove(state);
             queue.Enqueue(fromMove, int.MaxValue);
             return queue;
         }
 
-        internal StateMove ExpandBestState(RefPriorityQueue? from = null)
+        internal StateMove ExpandBestState(RefPriorityQueue<StateMove>? from = null)
         {
             if (from == null)
                 from = _openList;

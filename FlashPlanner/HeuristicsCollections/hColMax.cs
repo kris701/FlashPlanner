@@ -10,17 +10,16 @@ namespace FlashPlanner.HeuristicsCollections
     /// </summary>
     public class hColMax : BaseHeuristicCollection
     {
-        public hColMax() : base()
-        {
-        }
-
+        /// <summary>
+        /// Main constructor
+        /// </summary>
+        /// <param name="heuristics"></param>
         public hColMax(List<IHeuristic> heuristics) : base(heuristics)
         {
         }
 
-        public override int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
+        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
-            Evaluations++;
             int max = -1;
             foreach (var heuristic in Heuristics)
             {

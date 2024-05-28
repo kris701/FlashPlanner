@@ -30,7 +30,7 @@ namespace FlashPlanner.Search
             while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
-                var newItems = new RefPriorityQueue();
+                var newItems = new RefPriorityQueue<StateMove>();
                 foreach (var op in _declaration.Operators)
                 {
                     if (Abort) break;

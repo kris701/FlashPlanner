@@ -9,9 +9,8 @@ namespace FlashPlanner.Heuristics
     /// </summary>
     public class hGoal : BaseHeuristic
     {
-        public override int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
+        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
-            Evaluations++;
             int count = 0;
             foreach (var goal in state.Declaration.Goal)
                 if (state.Contains(goal))

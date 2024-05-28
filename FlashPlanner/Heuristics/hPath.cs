@@ -9,10 +9,6 @@ namespace FlashPlanner.Heuristics
     /// </summary>
     public class hPath : BaseHeuristic
     {
-        public override int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
-        {
-            Evaluations++;
-            return parent.PlanSteps.Count + 1;
-        }
+        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators) => parent.PlanSteps.Count + 1;
     }
 }

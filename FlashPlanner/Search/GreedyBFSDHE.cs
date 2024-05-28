@@ -28,7 +28,7 @@ namespace FlashPlanner.Search
             while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
-                if (_isEvaluated.ContainsKey(stateMove) && !_isEvaluated[stateMove])
+                if (_isEvaluated.TryGetValue(stateMove, out bool isEvaluated) && !isEvaluated)
                     stateMove.hValue = Heuristic.GetValue(stateMove, stateMove.State, _declaration.Operators);
 
                 bool lowerFound = false;

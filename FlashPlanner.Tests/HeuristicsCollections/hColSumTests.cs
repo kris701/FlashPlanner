@@ -21,7 +21,7 @@ namespace FlashPlanner.Tests.HeuristicsCollections
         public void Can_GeneratehColSumCorrectly(int expected, params int[] constants)
         {
             // ARRANGE
-            IHeuristicCollection h = new hColSum();
+            IHeuristicCollection h = new hColSum(new List<IHeuristic>());
             for (int i = 0; i < constants.Length; i++)
                 h.Heuristics.Add(new hConstant(constants[i]));
             var parent = new StateMove(new States.SASStateSpace(new SASDecl()));

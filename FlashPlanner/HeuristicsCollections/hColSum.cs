@@ -10,17 +10,16 @@ namespace FlashPlanner.HeuristicsCollections
     /// </summary>
     public class hColSum : BaseHeuristicCollection
     {
-        public hColSum() : base()
-        {
-        }
-
+        /// <summary>
+        /// Main constructor
+        /// </summary>
+        /// <param name="heuristics"></param>
         public hColSum(List<IHeuristic> heuristics) : base(heuristics)
         {
         }
 
-        public override int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
+        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
-            Evaluations++;
             int sum = 0;
             foreach (var heuristic in Heuristics)
                 if (sum < int.MaxValue)

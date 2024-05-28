@@ -4,17 +4,22 @@ using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Heuristics
 {
+    /// <summary>
+    /// Retuns the sum of actions needed to achive every goal fact
+    /// </summary>
     public class hAdd : BaseHeuristic
     {
-        private FactRPG _graphGenerator;
+        private readonly FactRPG _graphGenerator;
+        /// <summary>
+        /// Main constructor
+        /// </summary>
         public hAdd()
         {
             _graphGenerator = new FactRPG();
         }
 
-        public override int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
+        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
-            Evaluations++;
             var cost = 0;
             var dict = _graphGenerator.GenerateRelaxedGraph(state, operators);
             foreach (var fact in state.Declaration.Goal)
@@ -27,12 +32,6 @@ namespace FlashPlanner.Heuristics
                 cost += factCost;
             }
             return cost;
-        }
-
-        public override void Reset()
-        {
-            base.Reset();
-            _graphGenerator = new FactRPG();
         }
     }
 }

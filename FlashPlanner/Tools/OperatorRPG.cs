@@ -22,16 +22,15 @@ namespace FlashPlanner.Tools
         public List<Operator> GenerateReplaxedPlan(SASStateSpace state, List<Operator> operators)
         {
             Failed = false;
-            if (state is not RelaxedSASStateSpace)
-                state = new RelaxedSASStateSpace(state);
+            var relaxedState = new RelaxedSASStateSpace(state);
 
-            var graphLayers = GenerateRelaxedPlanningGraph(state as RelaxedSASStateSpace, operators);
+            var graphLayers = GenerateRelaxedPlanningGraph(relaxedState, operators);
             if (graphLayers.Count == 0)
             {
                 Failed = true;
                 return new List<Operator>();
             }
-            var selectedOperators = ReconstructPlan(graphLayers, state.Declaration);
+            var selectedOperators = ReconstructPlan(graphLayers, relaxedState.Declaration);
 
             return selectedOperators;
         }
@@ -123,7 +122,7 @@ namespace FlashPlanner.Tools
             List<Layer> layers = new List<Layer>();
             var newLayer = new Layer(
                 GetNewApplicableOperators(state, new List<Operator>(), operators, covered),
-                state._state);
+                state.GetFacts());
             layers.Add(newLayer);
             int previousLayer = 0;
             while (!state.IsInGoal())
@@ -138,7 +137,7 @@ namespace FlashPlanner.Tools
 
                 newLayer = new Layer(
                     GetNewApplicableOperators(state, layers[previousLayer].Operators, operators, covered),
-                    state._state);
+                    state.GetFacts());
 
                 // Error condition: there are no applicable actions at all (most likely means the problem is unsolvable)
                 if (newLayer.Operators.Count == 0 && !state.IsInGoal())

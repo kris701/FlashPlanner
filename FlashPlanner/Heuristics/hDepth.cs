@@ -9,9 +9,8 @@ namespace FlashPlanner.Heuristics
     /// </summary>
     public class hDepth : BaseHeuristic
     {
-        public override int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
+        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
-            Evaluations++;
             return parent.hValue - 1;
         }
     }

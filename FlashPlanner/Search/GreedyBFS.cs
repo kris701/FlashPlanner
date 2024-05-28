@@ -4,6 +4,9 @@ using PDDLSharp.Models.FastDownward.Plans;
 
 namespace FlashPlanner.Search
 {
+    /// <summary>
+    /// Greedy Best First Search
+    /// </summary>
     public class GreedyBFS : BaseHeuristicPlanner
     {
         /// <summary>

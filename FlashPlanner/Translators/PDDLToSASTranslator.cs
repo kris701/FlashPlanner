@@ -18,6 +18,9 @@ namespace FlashPlanner.Translators
     /// </summary>
     public class PDDLToSASTranslator : LimitedComponent, ITranslator
     {
+        /// <summary>
+        /// Logging event for the front end
+        /// </summary>
         public override event LogEventHandler? DoLog;
 
         /// <summary>
@@ -56,12 +59,13 @@ namespace FlashPlanner.Translators
             AssumeNoEqualParameters = assumeNoEqualParameters;
         }
 
+        /// <summary>
+        /// Optional override if anything extra needs to be aborted in the different implementation.
+        /// </summary>
         public override void DoAbort()
         {
-            if (_grounder != null)
-                _grounder.Abort();
-            if (_deconstructor != null)
-                _deconstructor.Abort();
+            _grounder?.Abort();
+            _deconstructor?.Abort();
         }
 
         /// <summary>
@@ -136,7 +140,7 @@ namespace FlashPlanner.Translators
             var normalizedActions = NormalizeActions(from.Domain.Actions, deconstructor);
             DoLog?.Invoke($"A total of {normalizedActions.Count} normalized actions to ground.");
             DoLog?.Invoke($"Grounding operators...");
-            operators = GetOperators(normalizedActions, grounder, deconstructor);
+            operators = GetOperators(normalizedActions, grounder);
             if (Abort) return new SASDecl();
 
             // Handle negative preconditions, if there where any
@@ -183,7 +187,7 @@ namespace FlashPlanner.Translators
             return actions;
         }
 
-        private IExp GenerateNotPredicateEq(NameExp x, NameExp y, INode parent)
+        private NotExp GenerateNotPredicateEq(NameExp x, NameExp y, INode parent)
         {
             var args = new List<NameExp>()
             {
@@ -226,7 +230,7 @@ namespace FlashPlanner.Translators
                         dels.Add(negated);
                     }
 
-                    if (adds.Count != operators[i].Add.Count() || dels.Count != operators[i].Del.Count())
+                    if (adds.Count != operators[i].Add.Length || dels.Count != operators[i].Del.Length)
                     {
                         var id = operators[i].ID;
                         operators[i] = new Operator(
@@ -308,13 +312,12 @@ namespace FlashPlanner.Translators
 
         private List<Fact> ExtractGoalFacts(IExp goalExp, NodeNormalizer deconstructor)
         {
-            var goal = new List<Fact>();
             var deconstructed = deconstructor.Deconstruct(EnsureAnd(goalExp));
             if (deconstructed.FindTypes<OrExp>().Count > 0)
                 throw new TranslatorException("Translator does not support or expressions in goal declaration!");
             var goals = ExtractFactsFromExp(
                 deconstructed);
-            goal = goals[true];
+            var goal = goals[true];
             foreach (var fact in goals[false])
                 goal.Add(GetNegatedOf(fact));
             return goal;
@@ -334,7 +337,7 @@ namespace FlashPlanner.Translators
             return normalizedActions;
         }
 
-        private List<Operator> GetOperators(List<ActionDecl> actions, IGrounder<IParametized> grounder, NodeNormalizer deconstructor)
+        private List<Operator> GetOperators(List<ActionDecl> actions, ParametizedGrounder grounder)
         {
             var operators = new List<Operator>();
             foreach (var action in actions)
@@ -346,7 +349,7 @@ namespace FlashPlanner.Translators
                     if (Abort) return new List<Operator>();
 
                     var preFacts = ExtractFactsFromExp(act.Preconditions);
-                    if (preFacts[true].Intersect(preFacts[false]).Count() > 0)
+                    if (preFacts[true].Intersect(preFacts[false]).Any())
                         continue;
                     var pre = preFacts[true];
 

@@ -19,6 +19,9 @@ namespace FlashPlanner.Search
     /// </summary>
     public class GreedyBFSFocused : BaseHeuristicPlanner
     {
+        /// <summary>
+        /// Logging event for the front end
+        /// </summary>
         public override event LogEventHandler? DoLog;
 
         private readonly int _numberOfMacros = 8;
@@ -26,6 +29,13 @@ namespace FlashPlanner.Search
         private List<MacroDecl> _learnedMacros;
         private readonly PDDLDecl _pddlDecl;
 
+        /// <summary>
+        /// Main constructor
+        /// </summary>
+        /// <param name="heuristic"></param>
+        /// <param name="pddlDecl"></param>
+        /// <param name="numberOfMacros"></param>
+        /// <param name="searchBudget"></param>
         public GreedyBFSFocused(IHeuristic heuristic, PDDLDecl pddlDecl, int numberOfMacros, int searchBudget) : base(heuristic)
         {
             _pddlDecl = pddlDecl.Copy();
@@ -175,14 +185,13 @@ namespace FlashPlanner.Search
                 _initial = initial;
             }
 
-            public override int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
+            internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
             {
-                Evaluations++;
                 var changed = 0;
-                foreach (var item in _initial._state)
+                foreach (var item in _initial)
                     if (!state.Contains(item))
                         changed++;
-                foreach (var item in state._state)
+                foreach (var item in state)
                     if (!_initial.Contains(item))
                         changed++;
                 if (changed > 0)

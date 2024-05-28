@@ -35,7 +35,9 @@ namespace FlashPlanner.CLI.ArgumentParsing
         public static List<Argument> SearchRegister = new List<Argument>()
         {
             // Search (Classical)
-            new Argument("greedy", new Dictionary<string, Type>(), (args) =>
+            new Argument("greedy", new Dictionary<string, Type>(){
+                { "h", typeof(IHeuristic) }
+            }, (args) =>
             {
                 if (args["h"] is IHeuristic h)
                     return new GreedyBFS(h);

@@ -9,22 +9,20 @@ namespace FlashPlanner.Heuristics
     /// </summary>
     public class hConstant : BaseHeuristic
     {
-        public int Constant { get; set; }
+        /// <summary>
+        /// What constant to return
+        /// </summary>
+        public int Constant { get; }
 
+        /// <summary>
+        /// Main constructor
+        /// </summary>
+        /// <param name="constant"></param>
         public hConstant(int constant)
         {
             Constant = constant;
         }
 
-        public hConstant()
-        {
-            Constant = 1;
-        }
-
-        public override int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
-        {
-            Evaluations++;
-            return Constant;
-        }
+        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators) => Constant;
     }
 }
