@@ -97,32 +97,6 @@ namespace FlashPlanner.CLI.ArgumentParsing
                 throw new Exception("Invalid arguments given for planner!");
             }),
 
-            // Search (BlackBox)
-            new Argument("greedy_bb", new Dictionary<string, Type>(){
-                { "sas", typeof(SASDecl) },
-                { "h", typeof(IHeuristic) }
-            }, (args) =>
-            {
-                if (args["sas"] is SASDecl sas && args["h"] is IHeuristic h)
-                    return new Search.BlackBox.GreedyBFS(sas, h);
-                throw new Exception("Invalid arguments given for planner!");
-            }),
-            new Argument("greedy_bb_focused", new Dictionary<string, Type>(){
-                { "sas", typeof(SASDecl) },
-                { "h", typeof(IHeuristic) },
-                { "n", typeof(int) },
-                { "b", typeof(int) },
-            }, (args) =>
-            {
-                if (args["sas"] is SASDecl sas &&
-                    args["pddl"] is PDDLDecl pddl &&
-                    args["h"] is IHeuristic h &&
-                    args["n"] is int n &&
-                    args["b"] is int b)
-                    return new Search.BlackBox.GreedyBFSFocused(pddl, sas, h, n, b);
-                throw new Exception("Invalid arguments given for planner!");
-            }),
-
             // Heuristics
             new Argument("hAdd", new Dictionary<string, Type>(), (args) => new hAdd()),
             new Argument("hConstant", new Dictionary<string, Type>(){

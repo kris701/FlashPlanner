@@ -26,8 +26,8 @@ namespace FlashPlanner.Tests.Heuristics
             decl.Goal.Clear();
             decl.Goal.Add(new Fact("goal-fact"));
             var h = new hGoal();
-            var parent = new StateMove();
             var state = new SASStateSpace(decl);
+            var parent = new StateMove(state);
 
             // ACT
             var newValue = h.GetValue(parent, state, new List<Operator>());
@@ -46,8 +46,8 @@ namespace FlashPlanner.Tests.Heuristics
             decl.Init.Clear();
             decl.Init.Add(new Fact("goal-fact"));
             var h = new hGoal();
-            var parent = new StateMove();
             var state = new SASStateSpace(decl);
+            var parent = new StateMove(state);
 
             // ACT
             var newValue = h.GetValue(parent, state, new List<Operator>());
@@ -74,8 +74,8 @@ namespace FlashPlanner.Tests.Heuristics
             decl.Init.Add(new Fact("goal-fact-2"));
             decl.Init.ElementAt(1).ID = 1;
             var h = new hGoal();
-            var parent = new StateMove();
             var state = new SASStateSpace(decl);
+            var parent = new StateMove(state);
 
             // ACT
             var newValue = h.GetValue(parent, state, new List<Operator>());
@@ -98,8 +98,8 @@ namespace FlashPlanner.Tests.Heuristics
             decl.Init.Add(new Fact("goal-fact-2"));
             decl.Init.Add(new Fact("goal-fact-3"));
             var h = new hGoal();
-            var parent = new StateMove();
             var state = new SASStateSpace(decl);
+            var parent = new StateMove(state);
 
             // ACT
             var newValue = h.GetValue(parent, state, new List<Operator>());

@@ -54,10 +54,8 @@ namespace FlashPlanner.Search.Classical
         internal StateMove GenerateNewState(StateMove state, Operator op)
         {
             Generated++;
-            var newState = new SASStateSpace(state.State);
-            newState.Execute(op);
-            var stateMove = new StateMove(newState);
-            stateMove.PlanSteps.AddRange(state.PlanSteps);
+            var stateMove = new StateMove(state);
+            stateMove.State.Execute(op);
             stateMove.PlanSteps.Add(op.ID);
             return stateMove;
         }
@@ -65,10 +63,8 @@ namespace FlashPlanner.Search.Classical
         internal RefPriorityQueue InitializeQueue(IHeuristic h, SASStateSpace state, List<Operator> operators)
         {
             var queue = new RefPriorityQueue();
-            var fromMove = new StateMove();
-            fromMove.hValue = int.MaxValue;
-            var hValue = h.GetValue(fromMove, state, operators);
-            queue.Enqueue(new StateMove(state, hValue), hValue);
+            var fromMove = new StateMove(state);
+            queue.Enqueue(fromMove, int.MaxValue);
             return queue;
         }
 

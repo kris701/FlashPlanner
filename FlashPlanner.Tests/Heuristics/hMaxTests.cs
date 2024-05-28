@@ -27,7 +27,7 @@ namespace FlashPlanner.Tests.Heuristics
             var state = new SASStateSpace(decl);
 
             // ACT
-            var newValue = h.GetValue(new StateMove(), state, decl.Operators);
+            var newValue = h.GetValue(new StateMove(state), state, decl.Operators);
 
             // ASSERT
             Assert.AreEqual(expected, newValue);
@@ -50,7 +50,7 @@ namespace FlashPlanner.Tests.Heuristics
                 state.Add(goal);
 
             // ACT
-            var newValue = h.GetValue(new StateMove(), state, decl.Operators);
+            var newValue = h.GetValue(new StateMove(state), state, decl.Operators);
 
             // ASSERT
             Assert.AreEqual(expected, newValue);

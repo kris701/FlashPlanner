@@ -213,10 +213,7 @@ namespace FlashPlanner.CLI
             }
         }
 
-        private static void OnLog(string text)
-        {
-            WriteLineColor($"\t\t{text}", ConsoleColor.DarkGray);
-        }
+        private static void OnLog(string text) => WriteLineColor($"\t\t{text}", ConsoleColor.DarkGray);
 
         private static double GetItemPrSecond(int amount, TimeSpan elapsed)
         {

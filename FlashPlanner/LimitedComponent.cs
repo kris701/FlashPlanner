@@ -4,8 +4,14 @@ using System.Timers;
 
 namespace FlashPlanner
 {
+    /// <summary>
+    /// A container-like abstract class, that makes sure the process dont take too much time or memory.
+    /// </summary>
     public abstract class LimitedComponent : ILimitedComponent
     {
+        /// <summary>
+        /// Logging event for the front end
+        /// </summary>
         public abstract event LogEventHandler? DoLog;
 
         /// <summary>
@@ -37,6 +43,9 @@ namespace FlashPlanner
         private readonly System.Timers.Timer _memoryTimer = new System.Timers.Timer();
         private readonly Stopwatch _executionTime = new Stopwatch();
 
+        /// <summary>
+        /// Start all limiters
+        /// </summary>
         public void Start()
         {
             Code = ILimitedComponent.ReturnCode.None;
@@ -78,6 +87,9 @@ namespace FlashPlanner
             }
         }
 
+        /// <summary>
+        /// Stop all limit timers.
+        /// </summary>
         public void Stop()
         {
             _timeoutTimer.Stop();
@@ -91,6 +103,9 @@ namespace FlashPlanner
                 Code = ILimitedComponent.ReturnCode.Success;
         }
 
+        /// <summary>
+        /// Optional override if anything extra needs to be aborted in the different implementation.
+        /// </summary>
         public virtual void DoAbort()
         {
 
