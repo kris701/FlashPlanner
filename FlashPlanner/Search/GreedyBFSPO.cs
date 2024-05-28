@@ -11,18 +11,23 @@ namespace FlashPlanner.Search.Classical
     /// (<seealso href="https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf">Helmert 2006</seealso>).
     /// The preferred operators are extracted from a relaxed plan of the problem
     /// </summary>
-    public class GreedyBFSPO : BaseClassicalSearch
+    public class GreedyBFSPO : BaseHeuristicPlanner
     {
         private readonly OperatorRPG _graphGenerator;
-        public GreedyBFSPO(SASDecl decl, IHeuristic heuristic) : base(decl, heuristic)
+
+        /// <summary>
+        /// Main constructor
+        /// </summary>
+        /// <param name="heuristic"></param>
+        public GreedyBFSPO(IHeuristic heuristic) : base(heuristic)
         {
             _graphGenerator = new OperatorRPG();
         }
 
-        internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
+        internal override ActionPlan? Solve(SASStateSpace state)
         {
             var preferedOperators = GetPreferredOperators();
-            var preferredQueue = InitializeQueue(h, state, preferedOperators);
+            var preferredQueue = InitializeQueue(Heuristic, state, preferedOperators);
 
             int iteration = 0;
             while (!Abort && (_openList.Count > 0 || preferredQueue.Count > 0))
@@ -44,7 +49,7 @@ namespace FlashPlanner.Search.Classical
                                 return GeneratePlanChain(newMove);
                             if (!_closedList.Contains(newMove) && !preferredQueue.Contains(newMove))
                             {
-                                var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
+                                var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
                                 newMove.hValue = value;
                                 _openList.Enqueue(newMove, value);
                             }
@@ -58,7 +63,7 @@ namespace FlashPlanner.Search.Classical
 
                     var stateMove = ExpandBestState();
 
-                    foreach (var op in Declaration.Operators)
+                    foreach (var op in _declaration.Operators)
                     {
                         if (Abort) break;
                         if (stateMove.State.IsApplicable(op))
@@ -68,7 +73,7 @@ namespace FlashPlanner.Search.Classical
                                 return GeneratePlanChain(newMove);
                             if (!IsVisited(newMove))
                             {
-                                var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
+                                var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
                                 newMove.hValue = value;
                                 _openList.Enqueue(newMove, value);
                                 preferredQueue.Enqueue(newMove, value);
@@ -83,8 +88,8 @@ namespace FlashPlanner.Search.Classical
         private List<Operator> GetPreferredOperators()
         {
             var operators = _graphGenerator.GenerateReplaxedPlan(
-                new SASStateSpace(Declaration),
-                Declaration.Operators
+                new SASStateSpace(_declaration),
+                _declaration.Operators
                 );
             if (_graphGenerator.Failed)
                 throw new Exception("No relaxed plan could be found from the initial state! Could indicate the problem is unsolvable.");

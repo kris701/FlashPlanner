@@ -10,15 +10,19 @@ namespace FlashPlanner.Search.Classical
     /// Greedy Best First Search with Deferred Heuristic Evaluation
     /// (<seealso href="https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf">Helmert 2006</seealso>)
     /// </summary>
-    public class GreedyBFSDHE : BaseClassicalSearch
+    public class GreedyBFSDHE : BaseHeuristicPlanner
     {
-        public GreedyBFSDHE(SASDecl decl, IHeuristic heuristic) : base(decl, heuristic)
+        private readonly Dictionary<StateMove, bool> _isEvaluated = new Dictionary<StateMove, bool>();
+
+        /// <summary>
+        /// Main constructor
+        /// </summary>
+        /// <param name="heuristic"></param>
+        public GreedyBFSDHE(IHeuristic heuristic) : base(heuristic)
         {
         }
 
-        private readonly Dictionary<StateMove, bool> _isEvaluated = new Dictionary<StateMove, bool>();
-
-        internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
+        internal override ActionPlan? Solve(SASStateSpace state)
         {
             _isEvaluated.Clear();
 
@@ -26,10 +30,10 @@ namespace FlashPlanner.Search.Classical
             {
                 var stateMove = ExpandBestState();
                 if (_isEvaluated.ContainsKey(stateMove) && !_isEvaluated[stateMove])
-                    stateMove.hValue = h.GetValue(stateMove, stateMove.State, Declaration.Operators);
+                    stateMove.hValue = Heuristic.GetValue(stateMove, stateMove.State, _declaration.Operators);
 
                 bool lowerFound = false;
-                foreach (var op in Declaration.Operators)
+                foreach (var op in _declaration.Operators)
                 {
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
@@ -47,7 +51,7 @@ namespace FlashPlanner.Search.Classical
                             }
                             else
                             {
-                                var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
+                                var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
                                 if (value < stateMove.hValue)
                                     lowerFound = true;
                                 newMove.hValue = value;

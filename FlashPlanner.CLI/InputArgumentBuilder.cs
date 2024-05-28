@@ -8,10 +8,9 @@ namespace FlashPlanner.CLI
 {
     public static class InputArgumentBuilder
     {
-        public static IPlanner GetPlanner(PDDLDecl pddlDecl, SASDecl sasDecl, string search)
+        public static IPlanner GetPlanner(PDDLDecl pddlDecl, string search)
         {
             var dict = new Dictionary<string, object?>();
-            dict.Add("sas", sasDecl);
             dict.Add("pddl", pddlDecl);
 
             var target = ArgumentBuilder.Parse(search, dict, Registers.SearchRegister);

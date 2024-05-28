@@ -6,24 +6,30 @@ using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Search.Classical
 {
-    // Greedy Search with Under-Approximation Refinement
-    public class GreedyBFSUAR : BaseClassicalSearch
+    /// <summary>
+    /// Greedy Search with <seealso href="https://ojs.aaai.org/index.php/ICAPS/article/view/13678">Under-Approximation Refinement</seealso>
+    /// </summary>
+    public class GreedyBFSUAR : BaseHeuristicPlanner
     {
         public override event LogEventHandler? DoLog;
 
-        public int OperatorsUsed { get; set; }
-
+        private int _operatorsUsed = -1;
         private readonly OperatorRPG _graphGenerator;
         private HashSet<StateMove> _fullyClosed = new HashSet<StateMove>();
+        private readonly Dictionary<int, List<Operator>> _relaxedCache = new Dictionary<int, List<Operator>>();
 
-        public GreedyBFSUAR(SASDecl decl, IHeuristic heuristic) : base(decl, heuristic)
+        /// <summary>
+        /// Main constructor
+        /// </summary>
+        /// <param name="heuristic"></param>
+        public GreedyBFSUAR(IHeuristic heuristic) : base(heuristic)
         {
-            _graphGenerator = new OperatorRPG();
         }
 
-        internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
+        internal override ActionPlan? Solve(SASStateSpace state)
         {
             // Initial Operator Subset
+            _operatorsUsed = -1;
             var operators = GetInitialOperators();
             _openList = InitializeQueue(Heuristic, state, operators.ToList());
             _fullyClosed = new HashSet<StateMove>();
@@ -48,7 +54,7 @@ namespace FlashPlanner.Search.Classical
                             return GeneratePlanChain(newMove);
                         if (!IsVisited(newMove) && !_fullyClosed.Contains(newMove))
                         {
-                            var value = h.GetValue(stateMove, newMove.State, operators.ToList());
+                            var value = Heuristic.GetValue(stateMove, newMove.State, operators.ToList());
                             if (value < current)
                                 current = value;
                             newMove.hValue = value;
@@ -74,8 +80,8 @@ namespace FlashPlanner.Search.Classical
         private List<Operator> GetInitialOperators()
         {
             var operators = _graphGenerator.GenerateReplaxedPlan(
-                new RelaxedSASStateSpace(Declaration),
-                Declaration.Operators
+                new RelaxedSASStateSpace(_declaration),
+                _declaration.Operators
                 );
             if (_graphGenerator.Failed)
                 throw new Exception("No relaxed plan could be found from the initial state! Could indicate the problem is unsolvable.");
@@ -96,6 +102,7 @@ namespace FlashPlanner.Search.Classical
         /// </list>
         /// </summary>
         /// <param name="operators">Set of unrefined operators</param>
+        /// <param name="newClosed"></param>
         /// <returns>A set of refined operators</returns>
         private List<Operator> RefineOperators(List<Operator> operators, HashSet<StateMove> newClosed)
         {
@@ -152,10 +159,10 @@ namespace FlashPlanner.Search.Classical
                     }
                 }
             }
-            if (operators.Count != OperatorsUsed)
+            if (operators.Count != _operatorsUsed)
                 DoLog?.Invoke($"Operators refined! Now has {operators.Count} operators");
 
-            OperatorsUsed = operators.Count;
+            _operatorsUsed = operators.Count;
             return operators;
         }
 
@@ -175,7 +182,6 @@ namespace FlashPlanner.Search.Classical
             }
         }
 
-        private readonly Dictionary<int, List<Operator>> _relaxedCache = new Dictionary<int, List<Operator>>();
         private List<Operator> GetNewRelaxedOperators(int smallestHValue, List<Operator> operators, HashSet<StateMove> newClosed)
         {
             var allSmallest = newClosed.Where(x => x.hValue == smallestHValue).ToList();
@@ -190,7 +196,7 @@ namespace FlashPlanner.Search.Classical
                 {
                     var newOps = _graphGenerator.GenerateReplaxedPlan(
                         item.State,
-                        Declaration.Operators
+                        _declaration.Operators
                         );
                     if (!_graphGenerator.Failed)
                     {
@@ -209,7 +215,7 @@ namespace FlashPlanner.Search.Classical
             foreach (var item in allSmallest)
             {
                 if (Abort) return new List<Operator>();
-                foreach (var op in Declaration.Operators)
+                foreach (var op in _declaration.Operators)
                 {
                     if (!operators.Contains(op))
                     {
@@ -221,15 +227,6 @@ namespace FlashPlanner.Search.Classical
                 }
             }
             return applicableOperators;
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-            _fullyClosed.Clear();
-            _fullyClosed.EnsureCapacity(0);
-
-            GC.SuppressFinalize(this);
         }
     }
 }

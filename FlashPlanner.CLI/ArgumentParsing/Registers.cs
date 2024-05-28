@@ -35,65 +35,56 @@ namespace FlashPlanner.CLI.ArgumentParsing
         public static List<Argument> SearchRegister = new List<Argument>()
         {
             // Search (Classical)
-            new Argument("greedy", new Dictionary<string, Type>(){
-                { "sas", typeof(SASDecl) },
-                { "h", typeof(IHeuristic) }
-            }, (args) =>
+            new Argument("greedy", new Dictionary<string, Type>(), (args) =>
             {
-                if (args["sas"] is SASDecl sas && args["h"] is IHeuristic h)
-                    return new Search.Classical.GreedyBFS(sas, h);
+                if (args["h"] is IHeuristic h)
+                    return new Search.Classical.GreedyBFS(h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
             new Argument("greedy_defered", new Dictionary<string, Type>(){
-                { "sas", typeof(SASDecl) },
                 { "h", typeof(IHeuristic) }
             }, (args) =>
             {
-                if (args["sas"] is SASDecl sas && args["h"] is IHeuristic h)
-                    return new Search.Classical.GreedyBFSDHE(sas, h);
+                if (args["h"] is IHeuristic h)
+                    return new Search.Classical.GreedyBFSDHE(h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
             new Argument("greedy_prefered", new Dictionary<string, Type>(){
-                { "sas", typeof(SASDecl) },
                 { "h", typeof(IHeuristic) }
             }, (args) =>
             {
-                if (args["sas"] is SASDecl sas && args["h"] is IHeuristic h)
-                    return new Search.Classical.GreedyBFSPO(sas, h);
+                if (args["h"] is IHeuristic h)
+                    return new Search.Classical.GreedyBFSPO(h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
             new Argument("greedy_underaprox", new Dictionary<string, Type>(){
-                { "sas", typeof(SASDecl) },
                 { "h", typeof(IHeuristic) }
             }, (args) =>
             {
-                if (args["sas"] is SASDecl sas && args["h"] is IHeuristic h)
-                    return new Search.Classical.GreedyBFSUAR(sas, h);
+                if (args["h"] is IHeuristic h)
+                    return new Search.Classical.GreedyBFSUAR(h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
             new Argument("beam", new Dictionary<string, Type>(){
-                { "sas", typeof(SASDecl) },
                 { "h", typeof(IHeuristic) },
                 { "b", typeof(int) }
             }, (args) =>
             {
-                if (args["sas"] is SASDecl sas && args["h"] is IHeuristic h && args["b"] is int beta)
-                    return new Search.Classical.BeamS(sas, h, beta);
+                if (args["h"] is IHeuristic h && args["b"] is int beta)
+                    return new Search.Classical.BeamS(h, beta);
                 throw new Exception("Invalid arguments given for planner!");
             }),
             new Argument("greedy_focused", new Dictionary<string, Type>(){
-                { "sas", typeof(SASDecl) },
                 { "h", typeof(IHeuristic) },
                 { "n", typeof(int) },
                 { "b", typeof(int) },
             }, (args) =>
             {
-                if (args["sas"] is SASDecl sas &&
-                    args["pddl"] is PDDLDecl pddl &&
+                if (args["pddl"] is PDDLDecl pddl &&
                     args["h"] is IHeuristic h &&
                     args["n"] is int n &&
                     args["b"] is int b)
-                    return new Search.Classical.GreedyBFSFocused(pddl, sas, h, n, b);
+                    return new Search.Classical.GreedyBFSFocused(h, pddl, n, b);
                 throw new Exception("Invalid arguments given for planner!");
             }),
 

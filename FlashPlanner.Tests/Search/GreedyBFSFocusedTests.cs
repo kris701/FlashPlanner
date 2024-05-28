@@ -1,4 +1,5 @@
-﻿using FlashPlanner.Heuristics;
+﻿using FlashPlanner;
+using FlashPlanner.Heuristics;
 using FlashPlanner.Search.Classical;
 using FlashPlanner.Tests;
 using FlashPlanner.Tests.Search;
@@ -14,7 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlashPlanner.Tests.Search.Classical
+namespace FlashPlanner.Tests.Search
 {
     [TestClass]
     public class GreedyBFSFocusedTests : BasePlannerTests

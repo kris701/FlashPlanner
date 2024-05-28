@@ -88,14 +88,12 @@ foreach (var domainName in targetDomains)
         translator.TimeLimit = TimeSpan.FromSeconds(timeLimit);
         translator.MemoryLimit = memoryLimit;
         var sasDecl = translator.Translate(new PDDLSharp.Models.PDDL.PDDLDecl(domain, problem));
-        using (var planner = new GreedyBFS(sasDecl, new hFF()))
-        {
-            planner.TimeLimit = TimeSpan.FromSeconds(timeLimit);
-            planner.MemoryLimit = memoryLimit;
-            var plan = planner.Solve();
-            if (planner.Code == FlashPlanner.ILimitedComponent.ReturnCode.Success && plan.Plan.Count > 0)
-                solvedB++;
-        }
+        var planner = new GreedyBFS(new hFF());
+        planner.TimeLimit = TimeSpan.FromSeconds(timeLimit);
+        planner.MemoryLimit = memoryLimit;
+        var plan = planner.Solve(sasDecl);
+        if (planner.Code == FlashPlanner.ILimitedComponent.ReturnCode.Success && plan != null)
+            solvedB++;
     }
 
     results.Add(new CoverageResult(domainName, files.Count, solvedA, solvedB));

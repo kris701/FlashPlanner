@@ -6,22 +6,33 @@ using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Search.Classical
 {
-    public class BeamS : BaseClassicalSearch
+    /// <summary>
+    /// Simple <seealso href="https://en.wikipedia.org/wiki/Beam_search">Beam Search</seealso> implementation 
+    /// </summary>
+    public class BeamS : BaseHeuristicPlanner
     {
+        /// <summary>
+        /// How many states should be added to the open list pr expansion
+        /// </summary>
         public int Beta { get; set; }
 
-        public BeamS(SASDecl decl, IHeuristic heuristic, int beta) : base(decl, heuristic)
+        /// <summary>
+        /// Main constructor
+        /// </summary>
+        /// <param name="heuristic"></param>
+        /// <param name="beta"></param>
+        public BeamS(IHeuristic heuristic, int beta) : base(heuristic)
         {
             Beta = beta;
         }
 
-        internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
+        internal override ActionPlan? Solve(SASStateSpace state)
         {
             while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
                 var newItems = new RefPriorityQueue();
-                foreach (var op in Declaration.Operators)
+                foreach (var op in _declaration.Operators)
                 {
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
@@ -31,7 +42,7 @@ namespace FlashPlanner.Search.Classical
                             return GeneratePlanChain(newMove);
                         if (!IsVisited(newMove) && !newItems.Contains(newMove))
                         {
-                            var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
+                            var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
                             newMove.hValue = value;
                             newItems.Enqueue(newMove, value);
                         }

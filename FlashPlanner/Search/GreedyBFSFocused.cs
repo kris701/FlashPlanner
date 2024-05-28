@@ -17,7 +17,7 @@ namespace FlashPlanner.Search.Classical
     /// (<seealso href="https://arxiv.org/abs/2004.13242">Efficient Black-Box Planning Using Macro-Actions with Focused Effects</seealso>)
     /// Do note, this is modified to work with normal classical planning
     /// </summary>
-    public class GreedyBFSFocused : BaseClassicalSearch
+    public class GreedyBFSFocused : BaseHeuristicPlanner
     {
         public override event LogEventHandler? DoLog;
 
@@ -26,7 +26,7 @@ namespace FlashPlanner.Search.Classical
         private List<MacroDecl> _learnedMacros;
         private readonly PDDLDecl _pddlDecl;
 
-        public GreedyBFSFocused(PDDLDecl pddlDecl, SASDecl decl, IHeuristic heuristic, int numberOfMacros, int searchBudget) : base(decl, heuristic)
+        public GreedyBFSFocused(IHeuristic heuristic, PDDLDecl pddlDecl, int numberOfMacros, int searchBudget) : base(heuristic)
         {
             _pddlDecl = pddlDecl.Copy();
             _numberOfMacros = numberOfMacros;
@@ -34,7 +34,7 @@ namespace FlashPlanner.Search.Classical
             _learnedMacros = new List<MacroDecl>();
         }
 
-        internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
+        internal override ActionPlan? Solve(SASStateSpace state)
         {
             DoLog?.Invoke($"Finding focused macros...");
             _learnedMacros = LearnFocusedMacros(_numberOfMacros, _searchBudget);
@@ -43,13 +43,13 @@ namespace FlashPlanner.Search.Classical
             _pddlDecl.Domain.Actions.AddRange(_learnedMacros.Select(x => x.Macro));
             var translator = new PDDLToSASTranslator(true, false);
             translator.TimeLimit = TimeSpan.FromSeconds(1000);
-            Declaration = translator.Translate(_pddlDecl);
+            _declaration = translator.Translate(_pddlDecl);
             DoLog?.Invoke($"Searching...");
 
             while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
-                foreach (var op in Declaration.Operators)
+                foreach (var op in _declaration.Operators)
                 {
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
@@ -59,7 +59,7 @@ namespace FlashPlanner.Search.Classical
                             return GeneratePlanChainWithoutMacros(newMove);
                         if (!IsVisited(newMove))
                         {
-                            var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
+                            var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
                             newMove.hValue = value;
                             _openList.Enqueue(newMove, value);
                         }
@@ -72,7 +72,7 @@ namespace FlashPlanner.Search.Classical
         private ActionPlan GeneratePlanChainWithoutMacros(StateMove state)
         {
             var chain = new List<GroundedAction>();
-            var macroOps = Declaration.Operators.Where(x => _learnedMacros.Any(y => y.Macro.Name == x.Name)).ToList();
+            var macroOps = _declaration.Operators.Where(x => _learnedMacros.Any(y => y.Macro.Name == x.Name)).ToList();
 
             foreach (var step in state.PlanSteps)
             {
@@ -92,7 +92,7 @@ namespace FlashPlanner.Search.Classical
                     }
                 }
                 else
-                    chain.Add(GenerateFromOp(Declaration.Operators.First(x => x.ID == step)));
+                    chain.Add(GenerateFromOp(_declaration.Operators.First(x => x.ID == step)));
             }
 
             return new ActionPlan(chain);
@@ -102,7 +102,7 @@ namespace FlashPlanner.Search.Classical
         // Note, the repetition step is left out, since it seemed unnessesary and complicated to make with this system (have to constantly retranslate)
         private List<MacroDecl> LearnFocusedMacros(int nMacros, int budget)
         {
-            var newDecl = Declaration.Copy();
+            var newDecl = _declaration.Copy();
             var returnMacros = new List<MacroDecl>();
 
             if (Abort) return new List<MacroDecl>();
@@ -111,18 +111,16 @@ namespace FlashPlanner.Search.Classical
             var g = new hPath();
 
             // Explore state space
-            using (var search = new GreedyBFS(newDecl, new hColSum(new List<IHeuristic>() { g, h })))
+            var planner = new GreedyBFS(new hColSum(new List<IHeuristic>() { g, h }));
+            planner.TimeLimit = TimeSpan.FromSeconds(budget);
+            planner.Solve(newDecl);
+            foreach (var state in planner._closedList)
             {
-                search.TimeLimit = TimeSpan.FromSeconds(budget);
-                search.Solve();
-                foreach (var state in search._closedList)
-                {
-                    if (Abort) return new List<MacroDecl>();
-                    if (state.PlanSteps.Count > 1)
-                        queue.Enqueue(
-                            GenerateMacroFromOperatorSteps(state.PlanSteps),
-                            h.GetValue(new StateMove(state), state.State, new List<Operator>()));
-                }
+                if (Abort) return new List<MacroDecl>();
+                if (state.PlanSteps.Count > 1)
+                    queue.Enqueue(
+                        GenerateMacroFromOperatorSteps(state.PlanSteps),
+                        h.GetValue(new StateMove(state), state.State, new List<Operator>()));
             }
 
             // Add unique macros
@@ -154,7 +152,7 @@ namespace FlashPlanner.Search.Classical
             // Convert operator steps into pddl actions
             foreach (var id in steps)
             {
-                var step = Declaration.GetOperatorByID(id);
+                var step = _declaration.GetOperatorByID(id);
                 var newAct = _pddlDecl.Domain.Actions.Single(x => x.Name == step.Name).Copy();
                 for (int j = 0; j < newAct.Parameters.Values.Count; j++)
                 {

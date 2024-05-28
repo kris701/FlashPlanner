@@ -5,18 +5,22 @@ using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Search.Classical
 {
-    public class GreedyBFS : BaseClassicalSearch
+    public class GreedyBFS : BaseHeuristicPlanner
     {
-        public GreedyBFS(SASDecl decl, IHeuristic heuristic) : base(decl, heuristic)
+        /// <summary>
+        /// Main constructor
+        /// </summary>
+        /// <param name="heuristic"></param>
+        public GreedyBFS(IHeuristic heuristic) : base(heuristic)
         {
         }
 
-        internal override ActionPlan? Solve(IHeuristic h, SASStateSpace state)
+        internal override ActionPlan? Solve(SASStateSpace state)
         {
             while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
-                foreach (var op in Declaration.Operators)
+                foreach (var op in _declaration.Operators)
                 {
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
@@ -26,7 +30,7 @@ namespace FlashPlanner.Search.Classical
                             return GeneratePlanChain(newMove);
                         if (!IsVisited(newMove))
                         {
-                            var value = h.GetValue(stateMove, newMove.State, Declaration.Operators);
+                            var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
                             newMove.hValue = value;
                             _openList.Enqueue(newMove, value);
                         }

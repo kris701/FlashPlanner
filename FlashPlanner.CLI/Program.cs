@@ -132,67 +132,65 @@ namespace FlashPlanner.CLI
             WriteColor("\tBuilding Search engine...");
             ActionPlan? solution = null;
 
-            using (var planner = InputArgumentBuilder.GetPlanner(pddlDecl, sasDecl, opts.SearchOption))
+            var planner = InputArgumentBuilder.GetPlanner(pddlDecl, opts.SearchOption);
+            planner.DoLog += OnLog;
+            WriteLineColor("Done!", ConsoleColor.Green);
+            var watch = new Stopwatch();
+
+            var logTimer = new System.Timers.Timer();
+            logTimer.Interval = 1000;
+            logTimer.AutoReset = true;
+            logTimer.Elapsed += (s, e) =>
             {
-                planner.DoLog += OnLog;
+                WriteLineColor($"\t\t[{Math.Round(watch.Elapsed.TotalSeconds, 0)}s] Expanded {planner.Expanded} ({GetItemPrSecond(planner.Expanded, watch.Elapsed)}/s). Generated {planner.Generated} ({GetItemPrSecond(planner.Generated, watch.Elapsed)}/s). Evaluations {planner.Evaluations} ({GetItemPrSecond(planner.Evaluations, watch.Elapsed)}/s)", ConsoleColor.DarkGray);
+            };
+            logTimer.Start();
+            watch.Start();
+
+            WriteLineColor("\tStarting search...");
+            if (opts.SearchTimeLimit > 0)
+                planner.TimeLimit = TimeSpan.FromSeconds(opts.SearchTimeLimit);
+            if (opts.SearchMemoryLimit > 0)
+                planner.MemoryLimit = opts.SearchMemoryLimit;
+            solution = planner.Solve(sasDecl);
+
+            switch (planner.Code)
+            {
+                case ILimitedComponent.ReturnCode.TimedOut: WriteLineColor("\tPlanner timed out...", ConsoleColor.Yellow); return null;
+                case ILimitedComponent.ReturnCode.MemoryLimitReached: WriteLineColor("\tPlanner reached memory limit...", ConsoleColor.Yellow); return null;
+            }
+
+            logTimer.Stop();
+            watch.Stop();
+
+            if (solution == null)
+            {
+                WriteLineColor("\tNo solution could be found!", ConsoleColor.Red);
+            }
+            else
+            {
+                WriteLineColor("\tSolution found!", ConsoleColor.Green);
+                WriteLineColor($"\tSearch took {planner.ExecutionTime.TotalSeconds} seconds");
+                WriteLineColor($"\tPeak memory usage: {planner.MemoryUsed}MB");
+                WriteLineColor("\tPlanner info:");
+                WriteLineColor($"\t\t{planner.Expanded} total expansions", ConsoleColor.DarkGray);
+                WriteLineColor($"\t\t{planner.Generated} total generations", ConsoleColor.DarkGray);
+                WriteLineColor($"\t\t{planner.Evaluations} total evaluations", ConsoleColor.DarkGray);
+
+                var planGenerator = new FastDownwardPlanGenerator(new ErrorListener());
+                var plan = planGenerator.Generate(solution);
+                WriteLineColor($"Plan", ConsoleColor.Blue);
+                WriteLineColor($"\tPlan has {solution.Plan.Count} steps with a cost of {solution.Cost}");
+                WriteLineColor($"\tPlan uses {solution.Plan.DistinctBy(x => x.ActionName).Count()} actions out of {pddlDecl.Domain.Actions.Count}");
+                if (opts.PrintPlan)
+                {
+                    WriteLineColor($"\tThe plan is:");
+                    WriteLineColor($"\t\t{plan.Replace(Environment.NewLine, $"{Environment.NewLine}\t\t")}", ConsoleColor.DarkGray);
+                }
+
+                WriteColor("\tOutputting plan file...");
+                File.WriteAllText(opts.PlanPath, plan);
                 WriteLineColor("Done!", ConsoleColor.Green);
-                var watch = new Stopwatch();
-
-                var logTimer = new System.Timers.Timer();
-                logTimer.Interval = 1000;
-                logTimer.AutoReset = true;
-                logTimer.Elapsed += (s, e) =>
-                {
-                    WriteLineColor($"\t\t[{Math.Round(watch.Elapsed.TotalSeconds, 0)}s] Expanded {planner.Expanded} ({GetItemPrSecond(planner.Expanded, watch.Elapsed)}/s). Generated {planner.Generated} ({GetItemPrSecond(planner.Generated, watch.Elapsed)}/s). Evaluations {planner.Evaluations} ({GetItemPrSecond(planner.Evaluations, watch.Elapsed)}/s)", ConsoleColor.DarkGray);
-                };
-                logTimer.Start();
-                watch.Start();
-
-                WriteLineColor("\tStarting search...");
-                if (opts.SearchTimeLimit > 0)
-                    planner.TimeLimit = TimeSpan.FromSeconds(opts.SearchTimeLimit);
-                if (opts.SearchMemoryLimit > 0)
-                    planner.MemoryLimit = opts.SearchMemoryLimit;
-                solution = planner.Solve();
-
-                switch (planner.Code)
-                {
-                    case ILimitedComponent.ReturnCode.TimedOut: WriteLineColor("\tPlanner timed out...", ConsoleColor.Yellow); return null;
-                    case ILimitedComponent.ReturnCode.MemoryLimitReached: WriteLineColor("\tPlanner reached memory limit...", ConsoleColor.Yellow); return null;
-                }
-
-                logTimer.Stop();
-                watch.Stop();
-
-                if (solution.Plan.Count == 0)
-                {
-                    WriteLineColor("\tNo solution could be found!", ConsoleColor.Red);
-                }
-                else
-                {
-                    WriteLineColor("\tSolution found!", ConsoleColor.Green);
-                    WriteLineColor($"\tSearch took {planner.ExecutionTime.TotalSeconds} seconds");
-                    WriteLineColor($"\tPeak memory usage: {planner.MemoryUsed}MB");
-                    WriteLineColor("\tPlanner info:");
-                    WriteLineColor($"\t\t{planner.Expanded} total expansions", ConsoleColor.DarkGray);
-                    WriteLineColor($"\t\t{planner.Generated} total generations", ConsoleColor.DarkGray);
-                    WriteLineColor($"\t\t{planner.Evaluations} total evaluations", ConsoleColor.DarkGray);
-
-                    var planGenerator = new FastDownwardPlanGenerator(new ErrorListener());
-                    var plan = planGenerator.Generate(solution);
-                    WriteLineColor($"Plan", ConsoleColor.Blue);
-                    WriteLineColor($"\tPlan has {solution.Plan.Count} steps with a cost of {solution.Cost}");
-                    WriteLineColor($"\tPlan uses {solution.Plan.DistinctBy(x => x.ActionName).Count()} actions out of {pddlDecl.Domain.Actions.Count}");
-                    if (opts.PrintPlan)
-                    {
-                        WriteLineColor($"\tThe plan is:");
-                        WriteLineColor($"\t\t{plan.Replace(Environment.NewLine, $"{Environment.NewLine}\t\t")}", ConsoleColor.DarkGray);
-                    }
-
-                    WriteColor("\tOutputting plan file...");
-                    File.WriteAllText(opts.PlanPath, plan);
-                    WriteLineColor("Done!", ConsoleColor.Green);
-                }
             }
 
             return solution;

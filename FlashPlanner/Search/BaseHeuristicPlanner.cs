@@ -6,50 +6,81 @@ using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Search.Classical
 {
-    public abstract class BaseClassicalSearch : LimitedComponent, IPlanner
+    /// <summary>
+    /// Base implementation for heuristic planner engines
+    /// </summary>
+    public abstract class BaseHeuristicPlanner : LimitedComponent, IPlanner
     {
+        /// <summary>
+        /// Logging event for the front end
+        /// </summary>
         public override event LogEventHandler? DoLog;
-
-        public SASDecl Declaration { get; internal set; }
-        public int Generated { get; internal set; }
-        public int Expanded { get; internal set; }
+        /// <summary>
+        /// What heuristic to use
+        /// </summary>
+        public IHeuristic Heuristic { get; }
+        /// <summary>
+        /// Amount of generated states
+        /// </summary>
+        public int Generated { get; private set; }
+        /// <summary>
+        /// Amount of expanded states
+        /// </summary>
+        public int Expanded { get; private set; }
+        /// <summary>
+        /// Amount of heuristic evaluations
+        /// </summary>
         public int Evaluations => Heuristic.Evaluations;
 
-        public IHeuristic Heuristic { get; }
-
+        internal SASDecl _declaration;
         internal HashSet<StateMove> _closedList = new HashSet<StateMove>();
         internal RefPriorityQueue _openList = new RefPriorityQueue();
 
-        public BaseClassicalSearch(SASDecl decl, IHeuristic heuristic)
+        /// <summary>
+        /// Main constructor
+        /// </summary>
+        /// <param name="heuristic"></param>
+        public BaseHeuristicPlanner(IHeuristic heuristic)
         {
-            Declaration = decl;
             Heuristic = heuristic;
+            _declaration = new SASDecl();
         }
 
-        public ActionPlan Solve()
+        /// <summary>
+        /// Get a plan for some <seealso cref="SASDecl"/> on the <seealso cref="IHeuristic"/> provided
+        /// </summary>
+        /// <param name="decl"></param>
+        /// <returns>A plan or null if unsolvable</returns>
+        public ActionPlan? Solve(SASDecl decl)
         {
-            var state = new SASStateSpace(Declaration);
+            _declaration = decl;
+
+            var state = new SASStateSpace(_declaration);
             if (state.IsInGoal())
                 return new ActionPlan(new List<GroundedAction>());
 
             Start();
 
             _closedList = new HashSet<StateMove>();
-            _openList = InitializeQueue(Heuristic, state, Declaration.Operators);
+            _openList = InitializeQueue(Heuristic, state, _declaration.Operators);
 
             Expanded = 0;
             Generated = 0;
             Heuristic.Reset();
 
-            var result = Solve(Heuristic, state);
+            var result = Solve(state);
 
             Stop();
 
-            if (result == null)
-                return new ActionPlan();
+#if RELEASE
+            _closedList.Clear();
+            _openList.Clear();
+#endif
 
             return result;
         }
+
+        internal abstract ActionPlan? Solve(SASStateSpace state);
 
         internal StateMove GenerateNewState(StateMove state, Operator op)
         {
@@ -83,25 +114,13 @@ namespace FlashPlanner.Search.Classical
             var chain = new List<GroundedAction>();
 
             foreach (var step in state.PlanSteps)
-                chain.Add(GenerateFromOp(Declaration.Operators.First(x => x.ID == step)));
+                chain.Add(GenerateFromOp(_declaration.Operators.First(x => x.ID == step)));
 
             return new ActionPlan(chain);
         }
 
         internal GroundedAction GenerateFromOp(Operator op) => new GroundedAction(op.Name, op.Arguments);
 
-        internal abstract ActionPlan? Solve(IHeuristic h, SASStateSpace state);
-
         internal bool IsVisited(StateMove state) => _closedList.Contains(state) || _openList.Contains(state);
-
-        public virtual void Dispose()
-        {
-            _closedList.Clear();
-            _closedList.EnsureCapacity(0);
-            _openList.Clear();
-            _openList.EnsureCapacity(0);
-
-            GC.SuppressFinalize(this);
-        }
     }
 }
