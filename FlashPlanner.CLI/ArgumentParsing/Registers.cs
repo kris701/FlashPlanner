@@ -1,8 +1,8 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.HeuristicsCollections;
+using FlashPlanner.Search;
 using FlashPlanner.Translators;
 using PDDLSharp.Models.PDDL;
-using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.CLI.ArgumentParsing
 {
@@ -38,7 +38,7 @@ namespace FlashPlanner.CLI.ArgumentParsing
             new Argument("greedy", new Dictionary<string, Type>(), (args) =>
             {
                 if (args["h"] is IHeuristic h)
-                    return new Search.Classical.GreedyBFS(h);
+                    return new GreedyBFS(h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
             new Argument("greedy_defered", new Dictionary<string, Type>(){
@@ -46,7 +46,7 @@ namespace FlashPlanner.CLI.ArgumentParsing
             }, (args) =>
             {
                 if (args["h"] is IHeuristic h)
-                    return new Search.Classical.GreedyBFSDHE(h);
+                    return new GreedyBFSDHE(h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
             new Argument("greedy_prefered", new Dictionary<string, Type>(){
@@ -54,7 +54,7 @@ namespace FlashPlanner.CLI.ArgumentParsing
             }, (args) =>
             {
                 if (args["h"] is IHeuristic h)
-                    return new Search.Classical.GreedyBFSPO(h);
+                    return new GreedyBFSPO(h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
             new Argument("greedy_underaprox", new Dictionary<string, Type>(){
@@ -62,7 +62,7 @@ namespace FlashPlanner.CLI.ArgumentParsing
             }, (args) =>
             {
                 if (args["h"] is IHeuristic h)
-                    return new Search.Classical.GreedyBFSUAR(h);
+                    return new GreedyBFSUAR(h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
             new Argument("beam", new Dictionary<string, Type>(){
@@ -71,7 +71,7 @@ namespace FlashPlanner.CLI.ArgumentParsing
             }, (args) =>
             {
                 if (args["h"] is IHeuristic h && args["b"] is int beta)
-                    return new Search.Classical.BeamS(h, beta);
+                    return new BeamS(h, beta);
                 throw new Exception("Invalid arguments given for planner!");
             }),
             new Argument("greedy_focused", new Dictionary<string, Type>(){
@@ -84,7 +84,7 @@ namespace FlashPlanner.CLI.ArgumentParsing
                     args["h"] is IHeuristic h &&
                     args["n"] is int n &&
                     args["b"] is int b)
-                    return new Search.Classical.GreedyBFSFocused(h, pddl, n, b);
+                    return new GreedyBFSFocused(h, pddl, n, b);
                 throw new Exception("Invalid arguments given for planner!");
             }),
 

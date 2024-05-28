@@ -2,9 +2,8 @@
 using FlashPlanner.States;
 using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
-using PDDLSharp.Models.SAS;
 
-namespace FlashPlanner.Search.Classical
+namespace FlashPlanner.Search
 {
     /// <summary>
     /// Greedy Best First Search with Deferred Heuristic Evaluation

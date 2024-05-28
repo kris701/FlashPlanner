@@ -2,7 +2,6 @@
 using FlashPlanner.Search;
 using FlashPlanner.Translators;
 using PDDLSharp.Models.PDDL;
-using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.CLI
 {

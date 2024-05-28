@@ -4,7 +4,7 @@ using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
 
-namespace FlashPlanner.Search.Classical
+namespace FlashPlanner.Search
 {
     /// <summary>
     /// Base implementation for heuristic planner engines

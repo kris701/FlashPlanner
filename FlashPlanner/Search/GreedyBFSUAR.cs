@@ -4,7 +4,7 @@ using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
 
-namespace FlashPlanner.Search.Classical
+namespace FlashPlanner.Search
 {
     /// <summary>
     /// Greedy Search with <seealso href="https://ojs.aaai.org/index.php/ICAPS/article/view/13678">Under-Approximation Refinement</seealso>
@@ -24,6 +24,7 @@ namespace FlashPlanner.Search.Classical
         /// <param name="heuristic"></param>
         public GreedyBFSUAR(IHeuristic heuristic) : base(heuristic)
         {
+            _graphGenerator = new OperatorRPG();
         }
 
         internal override ActionPlan? Solve(SASStateSpace state)

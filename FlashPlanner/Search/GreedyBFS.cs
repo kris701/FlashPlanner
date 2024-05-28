@@ -1,9 +1,8 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.States;
 using PDDLSharp.Models.FastDownward.Plans;
-using PDDLSharp.Models.SAS;
 
-namespace FlashPlanner.Search.Classical
+namespace FlashPlanner.Search
 {
     public class GreedyBFS : BaseHeuristicPlanner
     {

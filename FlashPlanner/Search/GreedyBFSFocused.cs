@@ -10,7 +10,7 @@ using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.SAS;
 using PDDLSharp.Toolkits;
 
-namespace FlashPlanner.Search.Classical
+namespace FlashPlanner.Search
 {
     /// <summary>
     /// Greedy Best First Search with Focused Macros.
@@ -21,8 +21,8 @@ namespace FlashPlanner.Search.Classical
     {
         public override event LogEventHandler? DoLog;
 
-        private int _numberOfMacros = 8;
-        private int _searchBudget = 1;
+        private readonly int _numberOfMacros = 8;
+        private readonly int _searchBudget = 1;
         private List<MacroDecl> _learnedMacros;
         private readonly PDDLDecl _pddlDecl;
 
@@ -83,10 +83,10 @@ namespace FlashPlanner.Search.Classical
                     var nameDict = new Dictionary<string, string>();
                     for (int i = 0; i < macroOp.Arguments.Length; i++)
                         nameDict.Add(macro.Macro.Parameters.Values[i].Name, macroOp.Arguments[i]);
-                    foreach(var macroStep in macro.Replacements)
+                    foreach (var macroStep in macro.Replacements)
                     {
                         var newAct = new GroundedAction(macroStep.Name);
-                        foreach(var arg in macroStep.Parameters.Values)
+                        foreach (var arg in macroStep.Parameters.Values)
                             newAct.Arguments.Add(new NameExp(nameDict[arg.Name]));
                         chain.Add(newAct);
                     }

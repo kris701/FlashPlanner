@@ -1,11 +1,8 @@
 ﻿using FlashPlanner;
 using FlashPlanner.Heuristics;
-using FlashPlanner.Search.Classical;
-using FlashPlanner.Search.Classical;
-using FlashPlanner.Search.Classical;
+using FlashPlanner.Search;
 using FlashPlanner.Tests;
 using FlashPlanner.Tests.Search;
-using FlashPlanner.Tests.Search.Classical;
 using PDDLSharp;
 using PDDLSharp.Models.PDDL.Expressions;
 using PlanVal;
@@ -35,11 +32,11 @@ namespace FlashPlanner.Tests.Search
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var planner = new GreedyBFSUAR(decl, new hDepth());
+            var planner = new GreedyBFSUAR(new hDepth());
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve();
+            var result = planner.Solve(decl);
 
             // ASSERT
             Assert.IsTrue(validator.Validate(result, GetPDDLDecl(domain, problem)));
@@ -60,11 +57,11 @@ namespace FlashPlanner.Tests.Search
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var planner = new GreedyBFSUAR(decl, new hFF());
+            var planner = new GreedyBFSUAR(new hFF());
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve();
+            var result = planner.Solve(decl);
 
             // ASSERT
             Assert.IsTrue(validator.Validate(result, GetPDDLDecl(domain, problem)));
@@ -85,11 +82,11 @@ namespace FlashPlanner.Tests.Search
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var planner = new GreedyBFSUAR(decl, new hAdd());
+            var planner = new GreedyBFSUAR(new hAdd());
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve();
+            var result = planner.Solve(decl);
 
             // ASSERT
             Assert.IsTrue(validator.Validate(result, GetPDDLDecl(domain, problem)));
@@ -110,11 +107,11 @@ namespace FlashPlanner.Tests.Search
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var planner = new GreedyBFSUAR(decl, new hGoal());
+            var planner = new GreedyBFSUAR(new hGoal());
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve();
+            var result = planner.Solve(decl);
 
             // ASSERT
             Assert.IsTrue(validator.Validate(result, GetPDDLDecl(domain, problem)));
@@ -135,11 +132,11 @@ namespace FlashPlanner.Tests.Search
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var planner = new GreedyBFSUAR(decl, new hMax());
+            var planner = new GreedyBFSUAR(new hMax());
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve();
+            var result = planner.Solve(decl);
 
             // ASSERT
             Assert.IsTrue(validator.Validate(result, GetPDDLDecl(domain, problem)));

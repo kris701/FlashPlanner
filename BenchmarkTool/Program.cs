@@ -1,6 +1,6 @@
 ﻿using BenchmarkTool;
 using FlashPlanner.Heuristics;
-using FlashPlanner.Search.Classical;
+using FlashPlanner.Search;
 using FlashPlanner.Translators;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;

@@ -24,12 +24,12 @@ dotnet run -- --domain domain.pddl --problem p01.pddl --search "greedy(hGoal())"
 ```
 
 The available search engines are:
-* [`beam`](FlashPlanner/Search/Classical/BeamS.cs): Beam Search
-* [`greedy`](FlashPlanner/Search/Classical/GreedyBFS.cs): Greedy Best First Search
-* [`greedy_underaprox`](FlashPlanner/Search/Classical/GreedyBFSUAR.cs): Greedy Best First Search with [Under-Approximation Refinement (UAR)](https://ojs.aaai.org/index.php/ICAPS/article/view/13678)
-* [`greedy_prefered`](FlashPlanner/Search/Classical/GreedyBFSPO.cs): Greedy Best First Search with [Preferred Operators (PO)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf)
-* [`greedy_defered`](FlashPlanner/Search/Classical/GreedyBFSDHE.cs): Greedy Best First Search with [Deferred Heuristic Evaluation (DHE)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf)
-* [`greedy_focused`](FlashPlanner/Search/Classical/GreedyBFSFocused.cs): Greedy Best First Search with [Focused Macros](https://arxiv.org/abs/2004.13242). Do note, plan validation does NOT work with this algorithm.
+* [`beam`](FlashPlanner/Search/BeamS.cs): Beam Search
+* [`greedy`](FlashPlanner/Search/GreedyBFS.cs): Greedy Best First Search
+* [`greedy_underaprox`](FlashPlanner/Search/GreedyBFSUAR.cs): Greedy Best First Search with [Under-Approximation Refinement (UAR)](https://ojs.aaai.org/index.php/ICAPS/article/view/13678)
+* [`greedy_prefered`](FlashPlanner/Search/GreedyBFSPO.cs): Greedy Best First Search with [Preferred Operators (PO)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf)
+* [`greedy_defered`](FlashPlanner/Search/GreedyBFSDHE.cs): Greedy Best First Search with [Deferred Heuristic Evaluation (DHE)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf)
+* [`greedy_focused`](FlashPlanner/Search/GreedyBFSFocused.cs): Greedy Best First Search with [Focused Macros](https://arxiv.org/abs/2004.13242). Do note, plan validation does NOT work with this algorithm.
 
 The available heuristics are:
 * [`hConstant(n)`](FlashPlanner/Heuristics/hConstant.cs): Returns a given constant all the time
@@ -55,10 +55,8 @@ To find a plan using the Greedy Best First Search engine:
 var decl = new PDDLDecl(...);
 var translator = new PDDLToSASTranslator(true);
 var sas = translator.Translate(decl);
-using (var greedyBFS = new GreedyBFS(sas, new hFF(decl)))
-{
-   var plan = greedyBFS.Solve();
-}
+var greedyBFS = new GreedyBFS(new hFF());
+ar plan = greedyBFS.Solve(sas);
 ```
 
 ## Supported PDDL Requirements

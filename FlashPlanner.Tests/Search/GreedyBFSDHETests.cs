@@ -1,8 +1,8 @@
-﻿using FlashPlanner.Heuristics;
-using FlashPlanner.Search.Classical;
+﻿using FlashPlanner;
+using FlashPlanner.Heuristics;
+using FlashPlanner.Search;
 using FlashPlanner.Tests;
 using FlashPlanner.Tests.Search;
-using FlashPlanner.Tests.Search.Classical;
 using PDDLSharp;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL;
@@ -14,7 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlashPlanner.Tests.Search.Classical
+namespace FlashPlanner.Tests.Search
 {
     [TestClass]
     public class GreedyBFSDHETests : BasePlannerTests
@@ -34,11 +34,11 @@ namespace FlashPlanner.Tests.Search.Classical
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var planner = new GreedyBFSDHE(decl, new hDepth());
+            var planner = new GreedyBFSDHE(new hDepth());
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve();
+            var result = planner.Solve(decl);
 
             // ASSERT
             Assert.IsTrue(validator.Validate(result, GetPDDLDecl(domain, problem)));
@@ -59,11 +59,11 @@ namespace FlashPlanner.Tests.Search.Classical
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var planner = new GreedyBFSDHE(decl, new hFF());
+            var planner = new GreedyBFSDHE(new hFF());
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve();
+            var result = planner.Solve(decl);
 
             // ASSERT
             Assert.IsTrue(validator.Validate(result, GetPDDLDecl(domain, problem)));
@@ -84,11 +84,11 @@ namespace FlashPlanner.Tests.Search.Classical
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var planner = new GreedyBFSDHE(decl, new hAdd());
+            var planner = new GreedyBFSDHE(new hAdd());
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve();
+            var result = planner.Solve(decl);
 
             // ASSERT
             Assert.IsTrue(validator.Validate(result, GetPDDLDecl(domain, problem)));
@@ -109,11 +109,11 @@ namespace FlashPlanner.Tests.Search.Classical
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var planner = new GreedyBFSDHE(decl, new hGoal());
+            var planner = new GreedyBFSDHE(new hGoal());
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve();
+            var result = planner.Solve(decl);
 
             // ASSERT
             Assert.IsTrue(validator.Validate(result, GetPDDLDecl(domain, problem)));
@@ -134,11 +134,11 @@ namespace FlashPlanner.Tests.Search.Classical
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var planner = new GreedyBFSDHE(decl, new hMax());
+            var planner = new GreedyBFSDHE(new hMax());
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve();
+            var result = planner.Solve(decl);
 
             // ASSERT
             Assert.IsTrue(validator.Validate(result, GetPDDLDecl(domain, problem)));
