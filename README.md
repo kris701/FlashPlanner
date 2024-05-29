@@ -105,7 +105,7 @@ The planners have a time limit of 60 seconds and a memory limit of 4GB.
 | depot | 20 | 15 | 9 |
 | gripper | 20 | 20 | 20 |
 | logistics00 | 20 | 20 | 20 |
-| satellite | 20 | 20 | 16 |
+| satellite | 20 | 20 | 17 |
 | miconic | 20 | 20 | 20 |
 | mystery | 20 | 12 | 4 |
 | rovers | 20 | 20 | 14 |

@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PDDLSharp" Version="1.6.5" />
+    <PackageReference Include="PDDLSharp" Version="1.6.6" />
     <PackageReference Include="ToMarkdown" Version="1.1.3" />
   </ItemGroup>
 

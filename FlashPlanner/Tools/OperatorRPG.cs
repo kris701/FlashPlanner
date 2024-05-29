@@ -1,4 +1,5 @@
 ﻿using FlashPlanner.States;
+using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Tools
@@ -13,6 +14,9 @@ namespace FlashPlanner.Tools
         /// </summary>
         public bool Failed { get; internal set; } = false;
 
+        private SASDecl _currentDecl = new SASDecl();
+        private Dictionary<int, HashSet<Operator>> _addOps = new Dictionary<int, HashSet<Operator>>();
+
         /// <summary>
         /// Generate a relaxed plan
         /// </summary>
@@ -21,6 +25,12 @@ namespace FlashPlanner.Tools
         /// <returns></returns>
         public List<Operator> GenerateReplaxedPlan(SASStateSpace state, List<Operator> operators)
         {
+            if (state.Declaration != _currentDecl)
+            {
+                _currentDecl = state.Declaration;
+                GenerateAddCache();
+            }
+
             Failed = false;
             var relaxedState = new RelaxedSASStateSpace(state);
 
@@ -35,37 +45,55 @@ namespace FlashPlanner.Tools
             return selectedOperators;
         }
 
+        /// <summary>
+        /// Generate a cache of what add facts each operator has.
+        /// This is useful when it comes to reconstructing plans.
+        /// </summary>
+        private void GenerateAddCache()
+        {
+            _addOps = new Dictionary<int, HashSet<Operator>>();
+            foreach (var op in _currentDecl.Operators)
+            {
+                foreach (var add in op.AddRef)
+                {
+                    if (!_addOps.ContainsKey(add))
+                        _addOps.Add(add, new HashSet<Operator>());
+                    _addOps[add].Add(op);
+                }
+            }
+        }
+
         // Hoffman & Nebel 2001, Figure 2
         private List<Operator> ReconstructPlan(List<Layer> graphLayers, SASDecl decl)
         {
             var selectedOperators = new List<Operator>();
-            var G = new Dictionary<int, HashSet<Fact>>();
-            var trues = new Dictionary<int, HashSet<Fact>>();
+            var G = new Dictionary<int, HashSet<int>>();
+            var trues = new Dictionary<int, HashSet<int>>();
             var m = -1;
             foreach (var fact in decl.Goal)
                 m = Math.Max(m, FirstLevel(fact, graphLayers));
 
-            G.Add(0, new HashSet<Fact>());
-            trues.Add(0, new HashSet<Fact>());
+            G.Add(0, new HashSet<int>());
+            trues.Add(0, new HashSet<int>());
             for (int t = 1; t <= m; t++)
             {
-                G.Add(t, new HashSet<Fact>());
-                trues.Add(t, new HashSet<Fact>());
+                G.Add(t, new HashSet<int>());
+                trues.Add(t, new HashSet<int>());
                 foreach (var fact in decl.Goal)
                     if (FirstLevel(fact, graphLayers) == t)
-                        G[t].Add(fact);
+                        G[t].Add(fact.ID);
             }
 
             for (int i = m; i > 0; i--)
             {
-                foreach (var fact in G[i])
+                foreach (var factID in G[i])
                 {
-                    if (trues[i].Contains(fact))
+                    if (trues[i].Contains(factID))
                         continue;
 
                     var options = new PriorityQueue<Operator, int>();
-                    foreach (var op in graphLayers[i - 1].Operators)
-                        if (op.AddRef.Contains(fact.ID))
+                    foreach (var op in _addOps[factID])
+                        if (graphLayers[i - 1].Operators.Contains(op))
                             options.Enqueue(op, Difficulty(op, graphLayers));
 
                     if (options.Count > 0)
@@ -75,15 +103,15 @@ namespace FlashPlanner.Tools
                         foreach (var pre in best.Pre)
                         {
                             var targetLayer = FirstLevel(pre, graphLayers);
-                            if (targetLayer == i || trues[i - 1].Contains(pre))
+                            if (targetLayer == i || trues[i - 1].Contains(pre.ID))
                                 continue;
-                            G[targetLayer].Add(pre);
+                            G[targetLayer].Add(pre.ID);
                         }
 
                         foreach (var add in best.Add)
                         {
-                            trues[i - 1].Add(add);
-                            trues[i].Add(add);
+                            trues[i - 1].Add(add.ID);
+                            trues[i].Add(add.ID);
                         }
                     }
                 }
@@ -121,7 +149,7 @@ namespace FlashPlanner.Tools
             bool[] covered = new bool[operators.Count];
             List<Layer> layers = new List<Layer>();
             var newLayer = new Layer(
-                GetNewApplicableOperators(state, new List<Operator>(), operators, covered),
+                GetNewApplicableOperators(state, operators, covered),
                 state.GetFacts());
             layers.Add(newLayer);
             int previousLayer = 0;
@@ -136,7 +164,7 @@ namespace FlashPlanner.Tools
                     return new List<Layer>();
 
                 newLayer = new Layer(
-                    GetNewApplicableOperators(state, layers[previousLayer].Operators, operators, covered),
+                    GetNewApplicableOperators(state, operators, covered),
                     state.GetFacts());
 
                 // Error condition: there are no applicable actions at all (most likely means the problem is unsolvable)

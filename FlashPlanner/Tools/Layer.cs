@@ -10,18 +10,18 @@ namespace FlashPlanner.Tools
         /// <summary>
         /// What operators have been executed
         /// </summary>
-        public List<Operator> Operators { get; set; }
+        public HashSet<Operator> Operators;
         /// <summary>
         /// What propositions (facts) are true
         /// </summary>
-        public HashSet<int> Propositions { get; set; }
+        public HashSet<int> Propositions;
 
         /// <summary>
         /// Main constuctor
         /// </summary>
         /// <param name="actions"></param>
         /// <param name="propositions"></param>
-        public Layer(List<Operator> actions, HashSet<int> propositions)
+        public Layer(HashSet<Operator> actions, HashSet<int> propositions)
         {
             Operators = actions;
             Propositions = propositions;
