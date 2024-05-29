@@ -24,12 +24,13 @@ var targetDomains = new List<string>() {
     "tpp",
     "zenotravel",
 };
-
-if (!Directory.Exists(tmpFolder))
-    Directory.CreateDirectory(tmpFolder);
-
+var problemsToUse = 20;
 var timeLimit = 60;
 var memoryLimit = 4096;
+
+if (Directory.Exists(tmpFolder))
+    Directory.Delete(tmpFolder, true);
+Directory.CreateDirectory(tmpFolder);
 
 var results = new List<CoverageResult>();
 
@@ -44,7 +45,7 @@ foreach (var domainName in targetDomains)
     var domain = parser.ParseAs<DomainDecl>(new FileInfo(domainFile));
     var files = new DirectoryInfo(Path.Combine(targetBenchmarkFolder, domainName)).GetFiles().ToList();
     files.RemoveAll(x => x.Name == "domain.pddl" || x.Extension != ".pddl");
-    files = files.Take(20).ToList();
+    files = files.Take(problemsToUse).ToList();
 
     var solvedA = 0;
     var solvedB = 0;
