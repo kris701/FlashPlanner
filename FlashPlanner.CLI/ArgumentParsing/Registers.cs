@@ -80,13 +80,15 @@ namespace FlashPlanner.CLI.ArgumentParsing
                 { "h", typeof(IHeuristic) },
                 { "n", typeof(int) },
                 { "b", typeof(int) },
+                { "p", typeof(int) },
             }, (args) =>
             {
                 if (args["pddl"] is PDDLDecl pddl &&
                     args["h"] is IHeuristic h &&
                     args["n"] is int n &&
-                    args["b"] is int b)
-                    return new GreedyBFSFocused(h, pddl, n, b);
+                    args["b"] is int b &&
+                    args["p"] is int p)
+                    return new GreedyBFSFocused(h, pddl, n, b, p);
                 throw new Exception("Invalid arguments given for planner!");
             }),
 

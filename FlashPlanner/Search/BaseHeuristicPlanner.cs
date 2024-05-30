@@ -86,9 +86,7 @@ namespace FlashPlanner.Search
         internal StateMove GenerateNewState(StateMove state, Operator op)
         {
             Generated++;
-            var stateMove = new StateMove(state);
-            stateMove.State.Execute(op);
-            stateMove.PlanSteps.Add(op.ID);
+            var stateMove = new StateMove(state, op);
             return stateMove;
         }
 

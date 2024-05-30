@@ -10,7 +10,7 @@ namespace FlashPlanner.Tools
         /// <summary>
         /// What operators have been executed
         /// </summary>
-        public HashSet<Operator> Operators;
+        public Dictionary<int, Operator> Operators;
         /// <summary>
         /// What propositions (facts) are true
         /// </summary>
@@ -19,11 +19,13 @@ namespace FlashPlanner.Tools
         /// <summary>
         /// Main constuctor
         /// </summary>
-        /// <param name="actions"></param>
+        /// <param name="operators"></param>
         /// <param name="propositions"></param>
-        public Layer(HashSet<Operator> actions, HashSet<int> propositions)
+        public Layer(List<Operator> operators, HashSet<int> propositions)
         {
-            Operators = actions;
+            Operators = new Dictionary<int, Operator>(operators.Count);
+            foreach(var op in operators)
+                Operators.Add(op.ID, op);
             Propositions = propositions;
         }
 

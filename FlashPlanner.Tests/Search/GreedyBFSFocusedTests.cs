@@ -20,6 +20,7 @@ namespace FlashPlanner.Tests.Search
     public class GreedyBFSFocusedTests : BasePlannerTests
     {
         [TestMethod]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob02.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s2-4.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/rovers/domain.pddl", "../../../../Dependencies/downward-benchmarks/rovers/p01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/zenotravel/domain.pddl", "../../../../Dependencies/downward-benchmarks/zenotravel/p01.pddl")]
@@ -33,7 +34,7 @@ namespace FlashPlanner.Tests.Search
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var pddlDecl = GetPDDLDecl(domain, problem);
-            var planner = new GreedyBFSFocused(new hDepth(), pddlDecl, 8, 1);
+            var planner = new GreedyBFSFocused(new hDepth(), pddlDecl, 2, 1, 3);
             var validator = new PlanValidator();
 
             // ACT
@@ -44,6 +45,7 @@ namespace FlashPlanner.Tests.Search
         }
 
         [TestMethod]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob02.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s2-4.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/rovers/domain.pddl", "../../../../Dependencies/downward-benchmarks/rovers/p01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/zenotravel/domain.pddl", "../../../../Dependencies/downward-benchmarks/zenotravel/p01.pddl")]
@@ -57,7 +59,7 @@ namespace FlashPlanner.Tests.Search
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var pddlDecl = GetPDDLDecl(domain, problem);
-            var planner = new GreedyBFSFocused(new hFF(), pddlDecl, 8, 1);
+            var planner = new GreedyBFSFocused(new hFF(), pddlDecl, 2, 1, 3);
             var validator = new PlanValidator();
 
             // ACT
@@ -68,6 +70,7 @@ namespace FlashPlanner.Tests.Search
         }
 
         [TestMethod]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob02.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s2-4.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/rovers/domain.pddl", "../../../../Dependencies/downward-benchmarks/rovers/p01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/zenotravel/domain.pddl", "../../../../Dependencies/downward-benchmarks/zenotravel/p01.pddl")]
@@ -81,7 +84,7 @@ namespace FlashPlanner.Tests.Search
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var pddlDecl = GetPDDLDecl(domain, problem);
-            var planner = new GreedyBFSFocused(new hAdd(), pddlDecl, 8, 1);
+            var planner = new GreedyBFSFocused(new hAdd(), pddlDecl, 2, 1, 3);
             var validator = new PlanValidator();
 
             // ACT
@@ -92,6 +95,7 @@ namespace FlashPlanner.Tests.Search
         }
 
         [TestMethod]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob02.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s2-4.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/rovers/domain.pddl", "../../../../Dependencies/downward-benchmarks/rovers/p01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/zenotravel/domain.pddl", "../../../../Dependencies/downward-benchmarks/zenotravel/p01.pddl")]
@@ -105,7 +109,7 @@ namespace FlashPlanner.Tests.Search
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var pddlDecl = GetPDDLDecl(domain, problem);
-            var planner = new GreedyBFSFocused(new hGoal(), pddlDecl, 8, 1);
+            var planner = new GreedyBFSFocused(new hGoal(), pddlDecl, 2, 1, 3);
             var validator = new PlanValidator();
 
             // ACT
@@ -116,6 +120,7 @@ namespace FlashPlanner.Tests.Search
         }
 
         [TestMethod]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob02.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s2-4.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/rovers/domain.pddl", "../../../../Dependencies/downward-benchmarks/rovers/p01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/zenotravel/domain.pddl", "../../../../Dependencies/downward-benchmarks/zenotravel/p01.pddl")]
@@ -129,7 +134,7 @@ namespace FlashPlanner.Tests.Search
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var pddlDecl = GetPDDLDecl(domain, problem);
-            var planner = new GreedyBFSFocused(new hMax(), pddlDecl, 8, 1);
+            var planner = new GreedyBFSFocused(new hMax(), pddlDecl, 2, 1, 3);
             var validator = new PlanValidator();
 
             // ACT

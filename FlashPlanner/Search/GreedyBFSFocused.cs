@@ -26,6 +26,7 @@ namespace FlashPlanner.Search
 
         private readonly int _numberOfMacros = 8;
         private readonly int _searchBudget = 1;
+        private readonly int _parameterLimit = 5;
         private List<MacroDecl> _learnedMacros;
         private readonly PDDLDecl _pddlDecl;
 
@@ -36,12 +37,14 @@ namespace FlashPlanner.Search
         /// <param name="pddlDecl"></param>
         /// <param name="numberOfMacros"></param>
         /// <param name="searchBudget"></param>
-        public GreedyBFSFocused(IHeuristic heuristic, PDDLDecl pddlDecl, int numberOfMacros, int searchBudget) : base(heuristic)
+        /// <param name="parameterLimit"></param>
+        public GreedyBFSFocused(IHeuristic heuristic, PDDLDecl pddlDecl, int numberOfMacros, int searchBudget, int parameterLimit) : base(heuristic)
         {
             _pddlDecl = pddlDecl.Copy();
             _numberOfMacros = numberOfMacros;
             _searchBudget = searchBudget;
             _learnedMacros = new List<MacroDecl>();
+            _parameterLimit = parameterLimit;
         }
 
         internal override ActionPlan? Solve(SASStateSpace state)
@@ -130,7 +133,7 @@ namespace FlashPlanner.Search
                 if (state.PlanSteps.Count > 1)
                     queue.Enqueue(
                         GenerateMacroFromOperatorSteps(state.PlanSteps),
-                        h.GetValue(new StateMove(state), state.State, new List<Operator>()));
+                        h.GetValue(new StateMove(new SASStateSpace(new SASDecl())), state.State, new List<Operator>()));
             }
 
             // Add unique macros
@@ -139,6 +142,8 @@ namespace FlashPlanner.Search
             {
                 if (Abort) return new List<MacroDecl>();
                 var newMacro = queue.Dequeue();
+                if (newMacro.Macro.Parameters.Values.Count > _parameterLimit)
+                    continue;
                 if (!returnMacros.Contains(newMacro))
                 {
                     returnMacros.Add(newMacro);

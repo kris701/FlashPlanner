@@ -1,6 +1,9 @@
 ﻿using PDDLSharp.Models.SAS;
+using PDDLSharp.Tools;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("FlashPlanner.Tests")]
 namespace FlashPlanner.States
 {
     /// <summary>
@@ -11,13 +14,13 @@ namespace FlashPlanner.States
         /// <summary>
         /// A reference <seealso cref="SASDecl"/> that this state space if for
         /// </summary>
-        public SASDecl Declaration { get; }
+        public SASDecl Declaration { get; internal set; }
         /// <summary>
         /// Amount of facts in the state space.
         /// </summary>
-        public int Count => _state.Count;
+        public int Count;
 
-        private readonly HashSet<int> _state;
+        internal HashSet<int> _state;
         private int _hashCache = -1;
 
         /// <summary>
@@ -29,7 +32,8 @@ namespace FlashPlanner.States
             Declaration = declaration;
             _state = new HashSet<int>();
             foreach (var fact in declaration.Init)
-                Add(fact);
+                _state.Add(fact.ID);
+            Count = _state.Count;
         }
 
         /// <summary>
@@ -40,8 +44,41 @@ namespace FlashPlanner.States
         {
             Declaration = other.Declaration;
             var newState = new int[other._state.Count];
-            other._state.CopyTo(newState);
+            Buffer.BlockCopy(other._state.ToArray(), 0, newState, 0, other._state.Count * sizeof(int));
+            //other._state.CopyTo(newState);
             _state = newState.ToHashSet();
+            Count = _state.Count;
+        }
+
+        /// <summary>
+        /// Copy and execute constructor
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="op"></param>
+        public SASStateSpace(SASStateSpace other, Operator op) : this(other)
+        {
+            foreach(var del in op.Del)
+                _state.Remove(del.ID);
+            foreach (var add in op.Add)
+                _state.Add(add.ID);
+            Count = _state.Count;
+        }
+
+        /// <summary>
+        /// Copy and execute constructor
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="ops"></param>
+        public SASStateSpace(SASStateSpace other, List<Operator> ops) : this(other)
+        {
+            foreach (var op in ops)
+            {
+                foreach (var del in op.Del)
+                    _state.Remove(del.ID);
+                foreach (var add in op.Add)
+                    _state.Add(add.ID);
+                Count = _state.Count;
+            }
         }
 
         /// <summary>
@@ -50,36 +87,6 @@ namespace FlashPlanner.States
         /// <returns></returns>
         public HashSet<int> GetFacts() => new HashSet<int>(_state);
 
-        /// <summary>
-        /// Add a fact
-        /// </summary>
-        /// <param name="pred"></param>
-        /// <returns></returns>
-        public bool Add(Fact pred)
-        {
-            var changed = _state.Add(pred.ID);
-            if (changed)
-                _hashCache = -1;
-            return changed;
-        }
-        /// <summary>
-        /// Remove a fact
-        /// </summary>
-        /// <param name="pred"></param>
-        /// <returns></returns>
-        public bool Del(Fact pred)
-        {
-            var changed = _state.Remove(pred.ID);
-            if (changed)
-                _hashCache = -1;
-            return changed;
-        }
-        /// <summary>
-        /// If the state contains a given fact
-        /// </summary>
-        /// <param name="pred"></param>
-        /// <returns></returns>
-        public bool Contains(Fact pred) => Contains(pred.ID);
         /// <summary>
         /// If the state contains a given fact, by its SAS ID
         /// </summary>
@@ -97,7 +104,7 @@ namespace FlashPlanner.States
             if (obj is SASStateSpace other)
             {
                 if (GetHashCode() != other.GetHashCode()) return false;
-                if (other._state.Count != _state.Count) return false;
+                if (other.Count != Count) return false;
                 foreach (var item in other._state)
                     if (!_state.Contains(item))
                         return false;
@@ -118,7 +125,7 @@ namespace FlashPlanner.States
         {
             if (_hashCache != -1)
                 return _hashCache;
-            int hash = _state.Count;
+            int hash = Count;
             foreach (var item in _state)
                 hash ^= item;
             _hashCache = hash;
@@ -126,27 +133,15 @@ namespace FlashPlanner.States
         }
 
         /// <summary>
-        /// Execute a given operator on this state space.
-        /// It first deletes, then adds.
-        /// </summary>
-        /// <param name="node"></param>
-        public virtual void Execute(Operator node)
-        {
-            foreach (var fact in node.Del)
-                Del(fact);
-            foreach (var fact in node.Add)
-                Add(fact);
-        }
-
-        /// <summary>
         /// Checks if an operators preconditions are all valid
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="op"></param>
         /// <returns></returns>
-        public bool IsApplicable(Operator node)
+        public bool IsApplicable(Operator op)
         {
-            foreach (var fact in node.Pre)
-                if (!Contains(fact))
+            if (Count < op.PreCount) return false;
+            foreach(var pre in op.Pre)
+                if (!_state.Contains(pre.ID))
                     return false;
             return true;
         }
@@ -157,8 +152,9 @@ namespace FlashPlanner.States
         /// <returns></returns>
         public bool IsInGoal()
         {
+            if (Count < Declaration.Goal.Count) return false;
             foreach (var fact in Declaration.Goal)
-                if (!Contains(fact))
+                if (!Contains(fact.ID))
                     return false;
             return true;
         }

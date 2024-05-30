@@ -88,6 +88,9 @@ namespace FlashPlanner.Translators
                 contextualiser.Contexturalise(from);
             }
 
+            DoLog?.Invoke($"Ensureing that action effects and preconditions contains no duplicates...");
+            EnsureNoDuplicatesInActions(from);
+
             DoLog?.Invoke($"Checking if task can be translated...");
             CheckIfValid(from);
 
@@ -170,8 +173,30 @@ namespace FlashPlanner.Translators
                 }
             }
 
+            RecountOperators(result.Operators);
+
             Stop();
             return result;
+        }
+
+        private void EnsureNoDuplicatesInActions(PDDLDecl decl)
+        {
+            foreach(var act in decl.Domain.Actions)
+            {
+                act.EnsureAnd();
+                if (act.Preconditions is AndExp pres)
+                    pres.Children = pres.Children.Distinct().ToList();
+                if (act.Effects is AndExp effs)
+                    effs.Children = effs.Children.Distinct().ToList();
+            }
+        }
+
+        private void RecountOperators(List<Operator> ops)
+        {
+            int count = 0;
+            foreach (var op in ops)
+                op.ID = count++;
+            Operators = ops.Count;
         }
 
         private List<ActionDecl> InsertNonEqualsInActions(List<ActionDecl> actions)
@@ -385,7 +410,7 @@ namespace FlashPlanner.Translators
                     foreach (var arg in act.Parameters.Values)
                         args.Add(arg.Name);
 
-                    var newOp = new Operator(act.Name, args.ToArray(), pre.ToArray(), add.ToArray(), del.ToArray());
+                    var newOp = new Operator(act.Name, args.ToArray(), pre.Distinct().ToArray(), add.Distinct().ToArray(), del.Distinct().ToArray());
                     newOp.ID = _opID++;
                     Operators++;
                     operators.Add(newOp);

@@ -47,7 +47,7 @@ namespace FlashPlanner.Tests.Heuristics
             var h = new hAdd();
             var state = new SASStateSpace(decl);
             foreach (var goal in decl.Goal)
-                state.Add(goal);
+                state._state.Add(goal.ID);
 
             // ACT
             var newValue = h.GetValue(new StateMove(state), state, decl.Operators);

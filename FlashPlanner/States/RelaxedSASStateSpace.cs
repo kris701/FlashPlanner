@@ -19,7 +19,7 @@ namespace FlashPlanner.States
         /// Copy constructor
         /// </summary>
         /// <param name="other"></param>
-        public RelaxedSASStateSpace(RelaxedSASStateSpace other) : base(other)
+        public RelaxedSASStateSpace(SASStateSpace other) : base(other)
         {
         }
 
@@ -27,19 +27,58 @@ namespace FlashPlanner.States
         /// Copy constructor
         /// </summary>
         /// <param name="other"></param>
-        public RelaxedSASStateSpace(SASStateSpace other) : base(other)
+        public RelaxedSASStateSpace(RelaxedSASStateSpace other) : base(other)
         {
         }
 
         /// <summary>
-        /// Execute a given operator on this state space.
-        /// Facts are only added here, not deleted.
+        /// Copy and execute constructor
         /// </summary>
-        /// <param name="node"></param>
-        public override void Execute(Operator node)
+        /// <param name="other"></param>
+        /// <param name="op"></param>
+        public RelaxedSASStateSpace(RelaxedSASStateSpace other, Operator op) : base(other)
         {
-            foreach (var fact in node.Add)
-                Add(fact);
+            foreach (var add in op.Add)
+                _state.Add(add.ID);
+            Count = _state.Count;
+        }
+
+        /// <summary>
+        /// Copy and execute constructor
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="op"></param>
+        public RelaxedSASStateSpace(SASStateSpace other, Operator op) : base(other)
+        {
+            foreach (var add in op.Add)
+                _state.Add(add.ID);
+            Count = _state.Count;
+        }
+
+        /// <summary>
+        /// Copy and execute constructor
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="ops"></param>
+        public RelaxedSASStateSpace(SASStateSpace other, List<Operator> ops) : this(other)
+        {
+            foreach (var op in ops)
+                foreach (var add in op.Add)
+                    _state.Add(add.ID);
+            Count = _state.Count;
+        }
+
+        /// <summary>
+        /// Copy and execute constructor
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="ops"></param>
+        public RelaxedSASStateSpace(RelaxedSASStateSpace other, List<Operator> ops) : this(other)
+        {
+            foreach (var op in ops)
+                foreach (var add in op.Add)
+                    _state.Add(add.ID);
+            Count = _state.Count;
         }
     }
 }

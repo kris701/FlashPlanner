@@ -35,7 +35,7 @@ namespace FlashPlanner.Translators
                 }
 
                 foreach (var op in applicableNow)
-                    state.Execute(op);
+                    state = new RelaxedSASStateSpace(state, op);
             }
 
             return applicables;

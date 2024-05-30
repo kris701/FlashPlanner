@@ -1,4 +1,5 @@
 ﻿using FlashPlanner.States;
+using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Tools
 {
@@ -35,10 +36,11 @@ namespace FlashPlanner.Tools
         /// Copy constructor
         /// </summary>
         /// <param name="move"></param>
-        public StateMove(StateMove move)
+        public StateMove(StateMove move, Operator op)
         {
-            State = new SASStateSpace(move.State);
+            State = new SASStateSpace(move.State, op);
             PlanSteps = new List<int>(move.PlanSteps);
+            PlanSteps.Add(op.ID);
             hValue = -1;
         }
 

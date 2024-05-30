@@ -24,6 +24,20 @@ var targetDomains = new List<string>() {
     "tpp",
     "zenotravel",
 };
+// Cached fast downward times
+var fdTimes = new Dictionary<string, int>()
+{
+    { "blocks", 20 },
+    { "depot", 15 },
+    { "gripper", 20 },
+    { "logistics00", 20 },
+    { "satellite", 20 },
+    { "miconic", 20 },
+    { "mystery", 12 },
+    { "rovers", 20 },
+    { "tpp", 20 },
+    { "zenotravel", 20 },
+};
 var problemsToUse = 20;
 var timeLimit = 60;
 var memoryLimit = 4096;
@@ -47,7 +61,7 @@ foreach (var domainName in targetDomains)
     files.RemoveAll(x => x.Name == "domain.pddl" || x.Extension != ".pddl");
     files = files.Take(problemsToUse).ToList();
 
-    var solvedA = 0;
+    //var solvedA = 0;
     var solvedB = 0;
 
     int count = 1;
@@ -59,31 +73,31 @@ foreach (var domainName in targetDomains)
 
         var problem = parser.ParseAs<ProblemDecl>(file);
 
-        codeGenerator.Generate(domain, Path.Combine(tmpFolder, "domain.pddl"));
-        codeGenerator.Generate(problem, Path.Combine(tmpFolder, "problem.pddl"));
+        //codeGenerator.Generate(domain, Path.Combine(tmpFolder, "domain.pddl"));
+        //codeGenerator.Generate(problem, Path.Combine(tmpFolder, "problem.pddl"));
 
-        if (File.Exists(Path.Combine(tmpFolder, "plan")))
-            File.Delete(Path.Combine(tmpFolder, "plan"));
+        //if (File.Exists(Path.Combine(tmpFolder, "plan")))
+        //    File.Delete(Path.Combine(tmpFolder, "plan"));
 
-        var fdProcess = new Process()
-        {
-            StartInfo = new ProcessStartInfo()
-            {
-                FileName = "python3",
-                Arguments = $"../../../../../Dependencies/downward/fast-downward.py --translate-time-limit {timeLimit} --search-time-limit {timeLimit} --plan-file plan domain.pddl problem.pddl --evaluator \"hff=ff()\" --search \"lazy_greedy([hff], preferred=[hff])\"",
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                WorkingDirectory = tmpFolder,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true
-            }
-        };
+        //var fdProcess = new Process()
+        //{
+        //    StartInfo = new ProcessStartInfo()
+        //    {
+        //        FileName = "python3",
+        //        Arguments = $"../../../../../Dependencies/downward/fast-downward.py --translate-time-limit {timeLimit} --search-time-limit {timeLimit} --plan-file plan domain.pddl problem.pddl --evaluator \"hff=ff()\" --search \"lazy_greedy([hff], preferred=[hff])\"",
+        //        CreateNoWindow = true,
+        //        UseShellExecute = false,
+        //        WorkingDirectory = tmpFolder,
+        //        RedirectStandardError = true,
+        //        RedirectStandardOutput = true
+        //    }
+        //};
 
-        fdProcess.Start();
-        fdProcess.WaitForExit();
+        //fdProcess.Start();
+        //fdProcess.WaitForExit();
 
-        if (File.Exists(Path.Combine(tmpFolder, "plan")))
-            solvedA++;
+        //if (File.Exists(Path.Combine(tmpFolder, "plan")))
+        //    solvedA++;
 
         var translator = new PDDLToSASTranslator(true, false);
         translator.TimeLimit = TimeSpan.FromSeconds(timeLimit);
@@ -97,7 +111,7 @@ foreach (var domainName in targetDomains)
             solvedB++;
     }
 
-    results.Add(new CoverageResult(domainName, files.Count, solvedA, solvedB));
+    results.Add(new CoverageResult(domainName, files.Count, fdTimes[domainName], solvedB));
 }
 
 var targetReadme = "../../../../readme.md";

@@ -15,7 +15,7 @@ namespace FlashPlanner.Tools
         public bool Failed { get; internal set; } = false;
 
         private SASDecl _currentDecl = new SASDecl();
-        private Dictionary<int, HashSet<Operator>> _addOps = new Dictionary<int, HashSet<Operator>>();
+        private Dictionary<int, List<Operator>> _addOps = new Dictionary<int, List<Operator>>();
 
         /// <summary>
         /// Generate a relaxed plan
@@ -51,14 +51,14 @@ namespace FlashPlanner.Tools
         /// </summary>
         private void GenerateAddCache()
         {
-            _addOps = new Dictionary<int, HashSet<Operator>>();
+            _addOps = new Dictionary<int, List<Operator>>();
             foreach (var op in _currentDecl.Operators)
             {
-                foreach (var add in op.AddRef)
+                foreach (var add in op.Add)
                 {
-                    if (!_addOps.ContainsKey(add))
-                        _addOps.Add(add, new HashSet<Operator>());
-                    _addOps[add].Add(op);
+                    if (!_addOps.ContainsKey(add.ID))
+                        _addOps.Add(add.ID, new List<Operator>());
+                    _addOps[add.ID].Add(op);
                 }
             }
         }
@@ -93,8 +93,14 @@ namespace FlashPlanner.Tools
 
                     var options = new PriorityQueue<Operator, int>();
                     foreach (var op in _addOps[factID])
-                        if (graphLayers[i - 1].Operators.Contains(op))
-                            options.Enqueue(op, Difficulty(op, graphLayers));
+                    {
+                        if (!graphLayers[i - 1].Operators.ContainsKey(op.ID))
+                            continue;
+                        var diff = Difficulty(op, graphLayers);
+                        options.Enqueue(op, diff);
+                        if (diff == 0)
+                            break;
+                    }
 
                     if (options.Count > 0)
                     {
@@ -156,9 +162,7 @@ namespace FlashPlanner.Tools
             while (!state.IsInGoal())
             {
                 // Apply applicable actions to state
-                state = new RelaxedSASStateSpace(state);
-                foreach (var op in layers[previousLayer].Operators)
-                    state.Execute(op);
+                state = new RelaxedSASStateSpace(state, layers[previousLayer].Operators.Values.ToList());
 
                 if (state.Count == layers[previousLayer].Propositions.Count)
                     return new List<Layer>();

@@ -41,8 +41,7 @@ namespace FlashPlanner.Tests.Tools
             // ASSERT
             Assert.IsFalse(generator.Failed);
             Assert.IsFalse(state.IsInGoal());
-            foreach (var item in result)
-                state.Execute(item);
+            state = new RelaxedSASStateSpace(state, result);
             Assert.IsTrue(state.IsInGoal());
         }
 

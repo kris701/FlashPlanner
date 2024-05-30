@@ -8,9 +8,9 @@ namespace FlashPlanner.Tools
     /// </summary>
     public abstract class BaseRPG
     {
-        internal HashSet<Operator> GetNewApplicableOperators(SASStateSpace state, List<Operator> operators, bool[] covered)
+        internal List<Operator> GetNewApplicableOperators(SASStateSpace state, List<Operator> operators, bool[] covered)
         {
-            var result = new HashSet<Operator>();
+            var result = new List<Operator>();
             for (int i = 0; i < covered.Length; i++)
             {
                 if (!covered[i] && state.IsApplicable(operators[i]))
