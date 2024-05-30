@@ -127,7 +127,7 @@ The planners have a time limit of 60 seconds and a memory limit of 4GB.
 | logistics00 | 20 | 20 | 20 |
 | satellite | 20 | 20 | 17 |
 | miconic | 20 | 20 | 20 |
-| mystery | 20 | 12 | 4 |
-| rovers | 20 | 20 | 14 |
+| mystery | 20 | 12 | 5 |
+| rovers | 20 | 20 | 15 |
 | tpp | 20 | 20 | 13 |
 | zenotravel | 20 | 20 | 16 |
