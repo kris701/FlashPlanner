@@ -157,7 +157,7 @@ namespace FlashPlanner.Tests.Translator
         }
 
         [TestMethod]
-        [DataRow("../../../../Dependencies/downward-benchmarks/pathways/domain_p01.pddl", "../../../../Dependencies/downward-benchmarks/pathways/p01.pddl", 17)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/pathways/domain_p01.pddl", "../../../../Dependencies/downward-benchmarks/pathways/p01.pddl", 33)]
         public void Can_Translate_ExpectedInits_NegativePreconditions(string domain, string problem, int expected)
         {
             // ARRANGE

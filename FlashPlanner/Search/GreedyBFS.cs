@@ -28,13 +28,13 @@ namespace FlashPlanner.Search
                     if (stateMove.State.IsApplicable(op))
                     {
                         var newMove = GenerateNewState(stateMove, op);
-                        if (newMove.State.IsInGoal())
-                            return GeneratePlanChain(newMove);
                         if (!IsVisited(newMove))
                         {
                             var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
                             newMove.hValue = value;
-                            _openList.Enqueue(newMove, value);
+                            QueueOpenList(stateMove, newMove, op);
+                            if (newMove.State.IsInGoal())
+                                return GeneratePlanChain(newMove);
                         }
                     }
                 }

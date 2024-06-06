@@ -35,6 +35,9 @@ namespace FlashPlanner.Search
         internal SASDecl _declaration;
         internal HashSet<StateMove> _closedList = new HashSet<StateMove>();
         internal RefPriorityQueue<StateMove> _openList = new RefPriorityQueue<StateMove>();
+        internal Dictionary<int, int> _factHashes = new Dictionary<int, int>();
+        // This is a map from a given State -> operatorID -> resulting state.
+        internal Dictionary<StateMove, Tuple<int, StateMove>> _planMap = new Dictionary<StateMove, Tuple<int, StateMove>>();
 
         /// <summary>
         /// Main constructor
@@ -55,8 +58,10 @@ namespace FlashPlanner.Search
         {
             Heuristic.Reset();
             _declaration = decl;
+            _planMap = new Dictionary<StateMove, Tuple<int, StateMove>>();
 
-            var state = new SASStateSpace(_declaration);
+            GenerateFactHashes(_declaration);
+            var state = new SASStateSpace(_declaration, _factHashes);
             if (state.IsInGoal())
                 return new ActionPlan(new List<GroundedAction>());
 
@@ -90,6 +95,12 @@ namespace FlashPlanner.Search
             return stateMove;
         }
 
+        internal void QueueOpenList(StateMove from, StateMove to, Operator op)
+        {
+            _planMap.Add(to, new Tuple<int, StateMove>(op.ID, from));
+            _openList.Enqueue(to, to.hValue);
+        }
+
         internal RefPriorityQueue<StateMove> InitializeQueue(SASStateSpace state)
         {
             var queue = new RefPriorityQueue<StateMove>();
@@ -112,8 +123,13 @@ namespace FlashPlanner.Search
         {
             var chain = new List<GroundedAction>();
 
-            foreach (var step in state.PlanSteps)
-                chain.Add(GenerateFromOp(_declaration.Operators.First(x => x.ID == step)));
+            while (_planMap.ContainsKey(state))
+            {
+                var planStep = _planMap[state];
+                chain.Add(GenerateFromOp(_declaration.Operators.First(x => x.ID == planStep.Item1)));
+                state = planStep.Item2;
+            }
+            chain.Reverse();
 
             return new ActionPlan(chain);
         }
@@ -121,5 +137,37 @@ namespace FlashPlanner.Search
         internal GroundedAction GenerateFromOp(Operator op) => new GroundedAction(op.Name, op.Arguments);
 
         internal bool IsVisited(StateMove state) => _closedList.Contains(state) || _openList.Contains(state);
+
+
+        internal void GenerateFactHashes(SASDecl decl)
+        {
+            foreach (var fact in decl.Init)
+                if (!_factHashes.ContainsKey(fact.ID))
+                    _factHashes.Add(fact.ID, Hash32shiftmult(fact.ID));
+            foreach (var fact in decl.Goal)
+                if (!_factHashes.ContainsKey(fact.ID))
+                    _factHashes.Add(fact.ID, Hash32shiftmult(fact.ID));
+            foreach (var op in decl.Operators)
+            {
+                var all = new List<Fact>(op.Pre);
+                all.AddRange(op.Add);
+                all.AddRange(op.Del);
+                foreach (var fact in all)
+                    if (!_factHashes.ContainsKey(fact.ID))
+                        _factHashes.Add(fact.ID, Hash32shiftmult(fact.ID));
+            }
+        }
+
+        // https://gist.github.com/badboy/6267743
+        private int Hash32shiftmult(int key)
+        {
+            int c2 = 0x27d4eb2d; // a prime or an odd constant
+            key = (key ^ 61) ^ (key >>> 16);
+            key = key + (key << 3);
+            key = key ^ (key >>> 4);
+            key = key * c2;
+            key = key ^ (key >>> 15);
+            return key;
+        }
     }
 }

@@ -45,13 +45,13 @@ namespace FlashPlanner.Search
                         if (stateMove.State.IsApplicable(op))
                         {
                             var newMove = GenerateNewState(stateMove, op);
-                            if (newMove.State.IsInGoal())
-                                return GeneratePlanChain(newMove);
-                            if (!_closedList.Contains(newMove) && !preferredQueue.Contains(newMove))
+                            if (!IsVisited(newMove) && !preferredQueue.Contains(newMove))
                             {
                                 var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
                                 newMove.hValue = value;
-                                _openList.Enqueue(newMove, value);
+                                QueueOpenList(stateMove, newMove, op);
+                                if (newMove.State.IsInGoal())
+                                    return GeneratePlanChain(newMove);
                             }
                         }
                     }
@@ -69,13 +69,13 @@ namespace FlashPlanner.Search
                         if (stateMove.State.IsApplicable(op))
                         {
                             var newMove = GenerateNewState(stateMove, op);
-                            if (newMove.State.IsInGoal())
-                                return GeneratePlanChain(newMove);
-                            if (!IsVisited(newMove))
+                            if (!IsVisited(newMove) && !preferredQueue.Contains(newMove))
                             {
                                 var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
                                 newMove.hValue = value;
-                                _openList.Enqueue(newMove, value);
+                                QueueOpenList(stateMove, newMove, op);
+                                if (newMove.State.IsInGoal())
+                                    return GeneratePlanChain(newMove);
                                 preferredQueue.Enqueue(newMove, value);
                             }
                         }
@@ -88,7 +88,7 @@ namespace FlashPlanner.Search
         private List<Operator> GetPreferredOperators()
         {
             var operators = _graphGenerator.GenerateReplaxedPlan(
-                new SASStateSpace(_declaration),
+                new SASStateSpace(_declaration, _factHashes),
                 _declaration.Operators
                 );
             if (_graphGenerator.Failed)

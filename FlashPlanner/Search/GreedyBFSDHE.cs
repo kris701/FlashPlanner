@@ -38,15 +38,15 @@ namespace FlashPlanner.Search
                     if (stateMove.State.IsApplicable(op))
                     {
                         var newMove = GenerateNewState(stateMove, op);
-                        if (newMove.State.IsInGoal())
-                            return GeneratePlanChain(newMove);
                         if (!IsVisited(newMove))
                         {
                             if (lowerFound)
                             {
                                 newMove.hValue = stateMove.hValue;
                                 _isEvaluated.Add(newMove, false);
-                                _openList.Enqueue(newMove, stateMove.hValue);
+                                QueueOpenList(stateMove, newMove, op);
+                                if (newMove.State.IsInGoal())
+                                    return GeneratePlanChain(newMove);
                             }
                             else
                             {
@@ -55,7 +55,9 @@ namespace FlashPlanner.Search
                                     lowerFound = true;
                                 newMove.hValue = value;
                                 _isEvaluated.Add(newMove, true);
-                                _openList.Enqueue(newMove, value);
+                                QueueOpenList(stateMove, newMove, op);
+                                if (newMove.State.IsInGoal())
+                                    return GeneratePlanChain(newMove);
                             }
                         }
                     }

@@ -11,7 +11,8 @@ namespace FlashPlanner.States
         /// Main initializer constructor
         /// </summary>
         /// <param name="declaration"></param>
-        public RelaxedSASStateSpace(SASDecl declaration) : base(declaration)
+        /// <param name="factHashes"></param>
+        public RelaxedSASStateSpace(SASDecl declaration, Dictionary<int, int> factHashes) : base(declaration, factHashes)
         {
         }
 
@@ -39,8 +40,8 @@ namespace FlashPlanner.States
         public RelaxedSASStateSpace(RelaxedSASStateSpace other, Operator op) : base(other)
         {
             foreach (var add in op.Add)
-                _state.Add(add.ID);
-            Count = _state.Count;
+                _state[add.ID] = true;
+            SetCount();
         }
 
         /// <summary>
@@ -51,8 +52,8 @@ namespace FlashPlanner.States
         public RelaxedSASStateSpace(SASStateSpace other, Operator op) : base(other)
         {
             foreach (var add in op.Add)
-                _state.Add(add.ID);
-            Count = _state.Count;
+                _state[add.ID] = true;
+            SetCount();
         }
 
         /// <summary>
@@ -64,8 +65,8 @@ namespace FlashPlanner.States
         {
             foreach (var op in ops)
                 foreach (var add in op.Add)
-                    _state.Add(add.ID);
-            Count = _state.Count;
+                    _state[add.ID] = true;
+            SetCount();
         }
 
         /// <summary>
@@ -77,8 +78,8 @@ namespace FlashPlanner.States
         {
             foreach (var op in ops)
                 foreach (var add in op.Add)
-                    _state.Add(add.ID);
-            Count = _state.Count;
+                    _state[add.ID] = true;
+            SetCount();
         }
     }
 }

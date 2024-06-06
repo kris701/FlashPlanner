@@ -25,7 +25,7 @@ namespace FlashPlanner.Tests.HeuristicsCollections
             IHeuristicCollection h = new hColMax(new List<IHeuristic>());
             for (int i = 0; i < constants.Length; i++)
                 h.Heuristics.Add(new hConstant(constants[i]));
-            var parent = new StateMove(new States.SASStateSpace(new SASDecl()));
+            var parent = new StateMove(new States.SASStateSpace(new SASDecl(), new Dictionary<int, int>()));
 
             // ACT
             var newValue = h.GetValue(parent, null, new List<Operator>());

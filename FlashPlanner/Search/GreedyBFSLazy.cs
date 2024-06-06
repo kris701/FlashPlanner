@@ -32,12 +32,12 @@ namespace FlashPlanner.Search
                     if (stateMove.State.IsApplicable(op))
                     {
                         var newMove = GenerateNewState(stateMove, op);
-                        if (newMove.State.IsInGoal())
-                            return GeneratePlanChain(newMove);
                         if (!IsVisited(newMove))
                         {
                             newMove.hValue = stateMove.hValue;
-                            _openList.Enqueue(newMove, stateMove.hValue);
+                            QueueOpenList(stateMove, newMove, op);
+                            if (newMove.State.IsInGoal())
+                                return GeneratePlanChain(newMove);
                         }
                     }
                 }

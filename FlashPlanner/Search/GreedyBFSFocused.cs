@@ -57,6 +57,7 @@ namespace FlashPlanner.Search
             var translator = new PDDLToSASTranslator(true, false);
             translator.TimeLimit = TimeSpan.FromSeconds(1000);
             _declaration = translator.Translate(_pddlDecl);
+            GenerateFactHashes(_declaration);
             DoLog?.Invoke($"Searching...");
 
             while (!Abort && _openList.Count > 0)
@@ -68,13 +69,13 @@ namespace FlashPlanner.Search
                     if (stateMove.State.IsApplicable(op))
                     {
                         var newMove = GenerateNewState(stateMove, op);
-                        if (newMove.State.IsInGoal())
-                            return GeneratePlanChainWithoutMacros(newMove);
                         if (!IsVisited(newMove))
                         {
                             var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
                             newMove.hValue = value;
-                            _openList.Enqueue(newMove, value);
+                            QueueOpenList(stateMove, newMove, op);
+                            if (newMove.State.IsInGoal())
+                                return GeneratePlanChainWithoutMacros(newMove);
                         }
                     }
                 }
@@ -84,12 +85,13 @@ namespace FlashPlanner.Search
 
         private ActionPlan GeneratePlanChainWithoutMacros(StateMove state)
         {
-            var chain = new List<GroundedAction>();
             var macroOps = _declaration.Operators.Where(x => _learnedMacros.Any(y => y.Macro.Name == x.Name)).ToList();
+            var chain = new List<GroundedAction>();
 
-            foreach (var step in state.PlanSteps)
+            while (_planMap.ContainsKey(state))
             {
-                var macroOp = macroOps.FirstOrDefault(x => x.ID == step);
+                var planStep = _planMap[state];
+                var macroOp = macroOps.FirstOrDefault(x => x.ID == planStep.Item1);
                 if (macroOp != null)
                 {
                     var macro = _learnedMacros.First(x => x.Macro.Name == macroOp.Name);
@@ -105,10 +107,27 @@ namespace FlashPlanner.Search
                     }
                 }
                 else
-                    chain.Add(GenerateFromOp(_declaration.Operators.First(x => x.ID == step)));
+                    chain.Add(GenerateFromOp(_declaration.Operators.First(x => x.ID == planStep.Item1)));
+                state = planStep.Item2;
             }
+            chain.Reverse();
 
             return new ActionPlan(chain);
+        }
+
+        private List<int> GeneratePlanOperatorChain(StateMove state)
+        {
+            var chain = new List<int>();
+
+            while (_planMap.ContainsKey(state))
+            {
+                var planStep = _planMap[state];
+                chain.Add(planStep.Item1);
+                state = planStep.Item2;
+            }
+            chain.Reverse();
+
+            return chain;
         }
 
         // Based on Algorithm 1 from the paper (for black box planning)
@@ -120,7 +139,7 @@ namespace FlashPlanner.Search
 
             if (Abort) return new List<MacroDecl>();
             var queue = new FixedMaxPriorityQueue<MacroDecl>(nMacros);
-            var h = new EffectHeuristic(new SASStateSpace(newDecl));
+            var h = new EffectHeuristic(new SASStateSpace(newDecl, _factHashes));
             var g = new hPath();
 
             // Explore state space
@@ -130,10 +149,11 @@ namespace FlashPlanner.Search
             foreach (var state in planner._closedList)
             {
                 if (Abort) return new List<MacroDecl>();
-                if (state.PlanSteps.Count > 1)
+                var plan = GeneratePlanOperatorChain(state);
+                if (plan.Count > 1)
                     queue.Enqueue(
-                        GenerateMacroFromOperatorSteps(state.PlanSteps),
-                        h.GetValue(new StateMove(new SASStateSpace(new SASDecl())), state.State, new List<Operator>()));
+                        GenerateMacroFromOperatorSteps(plan),
+                        h.GetValue(new StateMove(new SASStateSpace(new SASDecl(), _factHashes)), state.State, new List<Operator>()));
             }
 
             // Add unique macros

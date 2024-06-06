@@ -114,6 +114,8 @@ foreach (var domainName in targetDomains)
     results.Add(new CoverageResult(domainName, files.Count, fdTimes[domainName], solvedB));
 }
 
+results.Add(new CoverageResult("Total", results.Sum(x => x.Problems), results.Sum(x => x.SolvedA), results.Sum(x => x.SolvedB)));
+
 var targetReadme = "../../../../readme.md";
 var allText = File.ReadAllText(targetReadme);
 allText = allText.Substring(0, allText.IndexOf("<!-- This section is auto generated. -->") + "<!-- This section is auto generated. -->".Length);

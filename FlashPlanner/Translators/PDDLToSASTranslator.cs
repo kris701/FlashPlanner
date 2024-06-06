@@ -9,7 +9,9 @@ using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Models.SAS;
 using PDDLSharp.Toolkits;
+using PDDLSharp.Tools;
 using PDDLSharp.Translators.Grounders;
+using System;
 
 namespace FlashPlanner.Translators
 {
@@ -155,25 +157,36 @@ namespace FlashPlanner.Translators
             }
 
             var result = new SASDecl(domainVariables, operators, goals.ToHashSet(), inits.ToHashSet());
+            RecountFacts(result);
 
             // Only use operators that is reachable in a relaxed planning graph
             var reachability = new ReachabilityChecker();
             DoLog?.Invoke($"Checking if all {result.Operators.Count} operators are reachable.");
             var opsNow = reachability.GetPotentiallyReachableOperators(result);
             DoLog?.Invoke($"{result.Operators.Count - opsNow.Count} operators removed by not being reachable.");
-            result.Operators = opsNow;
+            result = new SASDecl(domainVariables, opsNow, goals.ToHashSet(), inits.ToHashSet());
 
             // Check if operators can satisfy goal condition
             foreach (var goal in goals)
             {
                 if (!result.Operators.Any(x => x.Add.Contains(goal)))
                 {
-                    result.Operators.Clear();
+                    result = new SASDecl(domainVariables, new List<Operator>(), goals.ToHashSet(), inits.ToHashSet());
                     DoLog?.Invoke($"Goal fact '{goal}' cannot be reached! Removing all operators");
                 }
             }
 
             RecountOperators(result.Operators);
+            RecountFacts(result);
+            var resetOps = new List<Operator>();
+            foreach (var op in result.Operators)
+            {
+                var reset = new Operator(op.Name, op.Arguments, op.Pre, op.Add, op.Del);
+                reset.ID = op.ID;
+                resetOps.Add(reset);
+            }
+            result = new SASDecl(domainVariables, resetOps, goals.ToHashSet(), inits.ToHashSet());
+            result.Facts = Facts;
 
             Stop();
             return result;
@@ -197,6 +210,36 @@ namespace FlashPlanner.Translators
             foreach (var op in ops)
                 op.ID = count++;
             Operators = ops.Count;
+        }
+
+        private void RecountFacts(SASDecl decl)
+        {
+            int count = 0;
+            var check = new List<Fact>();
+            foreach (var op in decl.Operators)
+            {
+                check.AddRange(op.Pre);
+                check.AddRange(op.Add);
+                check.AddRange(op.Del);
+            }
+            check.AddRange(decl.Init);
+            check.AddRange(decl.Goal);
+            foreach (var fact in check)
+                fact.ID = -1;
+            foreach(var fact in check)
+            {
+                if (fact.ID != -1)
+                    continue;
+                fact.ID = count;
+                foreach (var fact2 in check)
+                {
+                    if (fact2.ContentEquals(fact))
+                        fact2.ID = count;
+                }
+                count++;
+            }
+            decl.Facts = count;
+            Facts = count;
         }
 
         private List<ActionDecl> InsertNonEqualsInActions(List<ActionDecl> actions)

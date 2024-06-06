@@ -32,7 +32,7 @@ namespace FlashPlanner.Tests.Tools
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var state = new RelaxedSASStateSpace(decl);
+            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
             var generator = new OperatorRPG();
 
             // ACT
@@ -56,7 +56,7 @@ namespace FlashPlanner.Tests.Tools
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var state = new RelaxedSASStateSpace(decl);
+            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
             var generator = new OperatorRPG();
 
             // ACT
@@ -78,7 +78,7 @@ namespace FlashPlanner.Tests.Tools
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var state = new RelaxedSASStateSpace(decl);
+            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
             var generator = new OperatorRPG();
 
             // ACT
@@ -99,7 +99,7 @@ namespace FlashPlanner.Tests.Tools
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var state = new RelaxedSASStateSpace(decl);
+            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
             var generator = new OperatorRPG();
 
             // ACT
@@ -122,7 +122,7 @@ namespace FlashPlanner.Tests.Tools
         {
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
-            var state = new RelaxedSASStateSpace(decl);
+            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
             var generator = new OperatorRPG();
 
             // ACT
@@ -138,7 +138,7 @@ namespace FlashPlanner.Tests.Tools
             // ARRANGE
             var decl = new SASDecl();
             decl.Goal.Add(new Fact("abc"));
-            var state = new RelaxedSASStateSpace(decl);
+            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
             var generator = new OperatorRPG();
 
             // ACT
@@ -154,7 +154,7 @@ namespace FlashPlanner.Tests.Tools
             // ARRANGE
             var decl = new SASDecl();
             decl.Goal.Add(new Fact("abc"));
-            var state = new RelaxedSASStateSpace(decl);
+            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
 
             var actions = new List<Operator>()
             {
@@ -180,7 +180,7 @@ namespace FlashPlanner.Tests.Tools
             // ARRANGE
             var decl = new SASDecl();
             decl.Goal.Add(new Fact("abc"));
-            var state = new RelaxedSASStateSpace(decl);
+            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
 
             var actions = new List<Operator>()
             {

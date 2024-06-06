@@ -24,7 +24,7 @@ namespace FlashPlanner.Tests.Heuristics
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var h = new hMax();
-            var state = new SASStateSpace(decl);
+            var state = new SASStateSpace(decl, new Dictionary<int, int>());
 
             // ACT
             var newValue = h.GetValue(new StateMove(state), state, decl.Operators);
@@ -45,9 +45,9 @@ namespace FlashPlanner.Tests.Heuristics
             // ARRANGE
             var decl = GetSASDecl(domain, problem);
             var h = new hMax();
-            var state = new SASStateSpace(decl);
+            var state = new SASStateSpace(decl, new Dictionary<int, int>());
             foreach (var goal in decl.Goal)
-                state._state.Add(goal.ID);
+                state._state[goal.ID] = true;
 
             // ACT
             var newValue = h.GetValue(new StateMove(state), state, decl.Operators);

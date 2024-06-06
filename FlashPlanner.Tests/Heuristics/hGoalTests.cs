@@ -25,8 +25,10 @@ namespace FlashPlanner.Tests.Heuristics
             var decl = new SASDecl();
             decl.Goal.Clear();
             decl.Goal.Add(new Fact("goal-fact"));
+            decl.Goal.ElementAt(0).ID = 0;
+            decl.Facts = 1;
             var h = new hGoal();
-            var state = new SASStateSpace(decl);
+            var state = new SASStateSpace(decl, new Dictionary<int, int>());
             var parent = new StateMove(state);
 
             // ACT
@@ -43,10 +45,13 @@ namespace FlashPlanner.Tests.Heuristics
             var decl = new SASDecl();
             decl.Goal.Clear();
             decl.Goal.Add(new Fact("goal-fact"));
+            decl.Goal.ElementAt(0).ID = 0;
             decl.Init.Clear();
             decl.Init.Add(new Fact("goal-fact"));
+            decl.Init.ElementAt(0).ID = 0;
+            decl.Facts = 1;
             var h = new hGoal();
-            var state = new SASStateSpace(decl);
+            var state = new SASStateSpace(decl, new Dictionary<int, int>());
             var parent = new StateMove(state);
 
             // ACT
@@ -73,8 +78,9 @@ namespace FlashPlanner.Tests.Heuristics
             decl.Init.ElementAt(0).ID = 0;
             decl.Init.Add(new Fact("goal-fact-2"));
             decl.Init.ElementAt(1).ID = 1;
+            decl.Facts = 3;
             var h = new hGoal();
-            var state = new SASStateSpace(decl);
+            var state = new SASStateSpace(decl, new Dictionary<int, int>());
             var parent = new StateMove(state);
 
             // ACT
@@ -91,14 +97,21 @@ namespace FlashPlanner.Tests.Heuristics
             var decl = new SASDecl();
             decl.Goal.Clear();
             decl.Goal.Add(new Fact("goal-fact-1"));
+            decl.Goal.ElementAt(0).ID = 0;
             decl.Goal.Add(new Fact("goal-fact-2"));
+            decl.Goal.ElementAt(1).ID = 1;
             decl.Goal.Add(new Fact("goal-fact-3"));
+            decl.Goal.ElementAt(2).ID = 2;
             decl.Init.Clear();
             decl.Init.Add(new Fact("goal-fact-1"));
+            decl.Init.ElementAt(0).ID = 0;
             decl.Init.Add(new Fact("goal-fact-2"));
+            decl.Init.ElementAt(1).ID = 1;
             decl.Init.Add(new Fact("goal-fact-3"));
+            decl.Init.ElementAt(2).ID = 2;
+            decl.Facts = 3;
             var h = new hGoal();
-            var state = new SASStateSpace(decl);
+            var state = new SASStateSpace(decl, new Dictionary<int, int>());
             var parent = new StateMove(state);
 
             // ACT

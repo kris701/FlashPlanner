@@ -54,15 +54,15 @@ namespace FlashPlanner.Search
                     if (stateMove.State.IsApplicable(op))
                     {
                         var newMove = GenerateNewState(stateMove, op);
-                        if (newMove.State.IsInGoal())
-                            return GeneratePlanChain(newMove);
                         if (!IsVisited(newMove) && !_fullyClosed.Contains(newMove))
                         {
                             var value = Heuristic.GetValue(stateMove, newMove.State, operators.ToList());
                             if (value < current)
                                 current = value;
                             newMove.hValue = value;
-                            _openList.Enqueue(newMove, value);
+                            QueueOpenList(stateMove, newMove, op);
+                            if (newMove.State.IsInGoal())
+                                return GeneratePlanChain(newMove);
                         }
                     }
                 }
@@ -84,7 +84,7 @@ namespace FlashPlanner.Search
         private List<Operator> GetInitialOperators()
         {
             var operators = _graphGenerator.GenerateReplaxedPlan(
-                new RelaxedSASStateSpace(_declaration),
+                new RelaxedSASStateSpace(_declaration, _factHashes),
                 _declaration.Operators
                 );
             if (_graphGenerator.Failed)

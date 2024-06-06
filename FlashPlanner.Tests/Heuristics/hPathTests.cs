@@ -23,9 +23,8 @@ namespace FlashPlanner.Tests.Heuristics
         {
             // ARRANGE
             IHeuristic h = new hPath();
-            var parent = new StateMove(new States.SASStateSpace(new SASDecl()));
-            for (int i = 0; i < inValue; i++)
-                parent.PlanSteps.Add(0);
+            var parent = new StateMove(new States.SASStateSpace(new SASDecl(), new Dictionary<int, int>()));
+            parent.Steps = inValue;
 
             // ACT
             var newValue = h.GetValue(parent, null, new List<Operator>());

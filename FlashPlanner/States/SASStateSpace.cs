@@ -1,4 +1,5 @@
-﻿using PDDLSharp.Models.SAS;
+﻿using FlashPlanner.Translators;
+using PDDLSharp.Models.SAS;
 using PDDLSharp.Tools;
 using System.Collections;
 using System.Runtime.CompilerServices;
@@ -16,24 +17,34 @@ namespace FlashPlanner.States
         /// </summary>
         public SASDecl Declaration { get; internal set; }
         /// <summary>
+        /// A dictionary of hash values for facts
+        /// </summary>
+        public Dictionary<int, int> FactHashes = new Dictionary<int, int>();
+        /// <summary>
         /// Amount of facts in the state space.
         /// </summary>
         public int Count;
 
-        internal HashSet<int> _state;
-        private int _hashCache = -1;
+        internal BitArray _state;
+        internal int _hashCache = -1;
 
         /// <summary>
         /// Main initializer constructor
         /// </summary>
         /// <param name="declaration"></param>
-        public SASStateSpace(SASDecl declaration)
+        /// <param name="factHashes"></param>
+        public SASStateSpace(SASDecl declaration, Dictionary<int, int> factHashes)
         {
             Declaration = declaration;
-            _state = new HashSet<int>();
+            _state = new BitArray(declaration.Facts);
+            var count = 0;
             foreach (var fact in declaration.Init)
-                _state.Add(fact.ID);
-            Count = _state.Count;
+            {
+                _state.Set(fact.ID, true);
+                count++;
+            }
+            Count = count;
+            FactHashes = factHashes;
         }
 
         /// <summary>
@@ -43,11 +54,9 @@ namespace FlashPlanner.States
         public SASStateSpace(SASStateSpace other)
         {
             Declaration = other.Declaration;
-            var newState = new int[other._state.Count];
-            Buffer.BlockCopy(other._state.ToArray(), 0, newState, 0, other._state.Count * sizeof(int));
-            //other._state.CopyTo(newState);
-            _state = newState.ToHashSet();
-            Count = _state.Count;
+            _state = new BitArray(other._state);
+            SetCount();
+            FactHashes = other.FactHashes;
         }
 
         /// <summary>
@@ -57,11 +66,11 @@ namespace FlashPlanner.States
         /// <param name="op"></param>
         public SASStateSpace(SASStateSpace other, Operator op) : this(other)
         {
-            foreach(var del in op.Del)
-                _state.Remove(del.ID);
+            foreach (var del in op.Del)
+                _state[del.ID] = false;
             foreach (var add in op.Add)
-                _state.Add(add.ID);
-            Count = _state.Count;
+                _state[add.ID] = true;
+            SetCount();
         }
 
         /// <summary>
@@ -74,25 +83,58 @@ namespace FlashPlanner.States
             foreach (var op in ops)
             {
                 foreach (var del in op.Del)
-                    _state.Remove(del.ID);
+                    _state[del.ID] = false;
                 foreach (var add in op.Add)
-                    _state.Add(add.ID);
-                Count = _state.Count;
+                    _state[add.ID] = true;
             }
+            SetCount();
+        }
+
+        //https://stackoverflow.com/a/14354311
+        internal void SetCount()
+        {
+            var ints = new int[(_state.Count >> 5) + 1];
+            _state.CopyTo(ints, 0);
+            var count = 0;
+
+            // fix for not truncated bits in last integer that may have been set to true with SetAll()
+            ints[ints.Length - 1] &= ~(-1 << (_state.Count % 32));
+
+            for (int i = 0; i < ints.Length; i++)
+            {
+                int c = ints[i];
+                // magic (http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel)
+                unchecked
+                {
+                    c = c - ((c >> 1) & 0x55555555);
+                    c = (c & 0x33333333) + ((c >> 2) & 0x33333333);
+                    c = ((c + (c >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
+                }
+                count += c;
+            }
+            Count = count;
         }
 
         /// <summary>
         /// Get all the facts in the state space.
         /// </summary>
         /// <returns></returns>
-        public HashSet<int> GetFacts() => new HashSet<int>(_state);
+        public HashSet<int> GetFacts()
+        {
+            var set = new HashSet<int>();
+            for (int i = 0; i < _state.Length; i++)
+                if (_state[i])
+                    set.Add(i);
+
+            return set;
+        }
 
         /// <summary>
         /// If the state contains a given fact, by its SAS ID
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool Contains(int id) => _state.Contains(id);
+        public bool Contains(int id) => _state[id];
 
         /// <summary>
         /// Equals override for the state
@@ -104,11 +146,8 @@ namespace FlashPlanner.States
             if (obj is SASStateSpace other)
             {
                 if (other.Count != Count) return false;
-                foreach (var item in other._state)
-                    if (!_state.Contains(item))
-                        return false;
-                foreach (var item in _state)
-                    if (!other._state.Contains(item))
+                for(int i = 0; i < Count; i++)
+                    if (other._state[i] != _state[i]) 
                         return false;
                 return true;
             }
@@ -124,9 +163,10 @@ namespace FlashPlanner.States
         {
             if (_hashCache != -1)
                 return _hashCache;
-            int hash = Count;
-            foreach (var item in _state)
-                hash ^= item;
+            int hash = 359412394;
+            for (int i = 0; i < _state.Count; i++)
+                if (_state[i])
+                    hash ^= FactHashes[i];
             _hashCache = hash;
             return hash;
         }
@@ -140,7 +180,7 @@ namespace FlashPlanner.States
         {
             if (Count < op.PreCount) return false;
             foreach(var pre in op.Pre)
-                if (!_state.Contains(pre.ID))
+                if (!_state[pre.ID])
                     return false;
             return true;
         }
@@ -153,7 +193,7 @@ namespace FlashPlanner.States
         {
             if (Count < Declaration.Goal.Count) return false;
             foreach (var fact in Declaration.Goal)
-                if (!Contains(fact.ID))
+                if (!_state[fact.ID])
                     return false;
             return true;
         }
@@ -162,7 +202,7 @@ namespace FlashPlanner.States
         /// Iterator to iterate through the facts in the state space.
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<int> GetEnumerator() => _state.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => _state.GetEnumerator();
+        public IEnumerator<int> GetEnumerator() => GetFacts().GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetFacts().GetEnumerator();
     }
 }

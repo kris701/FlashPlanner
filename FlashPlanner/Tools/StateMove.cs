@@ -1,5 +1,6 @@
 ﻿using FlashPlanner.States;
 using PDDLSharp.Models.SAS;
+using System;
 
 namespace FlashPlanner.Tools
 {
@@ -13,9 +14,9 @@ namespace FlashPlanner.Tools
         /// </summary>
         public SASStateSpace State { get; private set; }
         /// <summary>
-        /// Steps that have been taken so far
+        /// How many steps that it took to get to this staet
         /// </summary>
-        public List<int> PlanSteps { get; set; }
+        public int Steps { get; set; }
         /// <summary>
         /// Heuristic value of this state
         /// </summary>
@@ -28,19 +29,19 @@ namespace FlashPlanner.Tools
         public StateMove(SASStateSpace state)
         {
             State = state;
-            PlanSteps = new List<int>();
             hValue = int.MaxValue;
+            Steps = 0;
         }
 
         /// <summary>
         /// Copy constructor
         /// </summary>
         /// <param name="move"></param>
+        /// <param name="op"></param>
         public StateMove(StateMove move, Operator op)
         {
             State = new SASStateSpace(move.State, op);
-            PlanSteps = new List<int>(move.PlanSteps);
-            PlanSteps.Add(op.ID);
+            Steps = move.Steps + 1;
             hValue = -1;
         }
 
@@ -68,7 +69,7 @@ namespace FlashPlanner.Tools
         /// <returns></returns>
         public override string? ToString()
         {
-            return $"Steps: {PlanSteps.Count}, h: {hValue}, State Size: {State.Count}";
+            return $"h: {hValue}, State Size: {State.Count}";
         }
     }
 }

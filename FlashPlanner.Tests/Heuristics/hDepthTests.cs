@@ -24,7 +24,7 @@ namespace FlashPlanner.Tests.Heuristics
         {
             // ARRANGE
             IHeuristic h = new hDepth();
-            var parent = new StateMove(new States.SASStateSpace(new SASDecl()));
+            var parent = new StateMove(new States.SASStateSpace(new SASDecl(), new Dictionary<int, int>()));
             parent.hValue = inValue;
 
             // ACT
