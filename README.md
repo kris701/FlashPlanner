@@ -45,6 +45,7 @@ The available search engines are:
 * [`greedy_underaprox(h)`](FlashPlanner/Search/GreedyBFSUAR.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Under-Approximation Refinement (UAR)](https://ojs.aaai.org/index.php/ICAPS/article/view/13678). H is the heuristic.
 * [`greedy_prefered(h)`](FlashPlanner/Search/GreedyBFSPO.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Preferred Operators (PO)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf). H is the heuristic.
 * [`greedy_defered(h)`](FlashPlanner/Search/GreedyBFSDHE.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Deferred Heuristic Evaluation (DHE)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf). H is the heuristic.
+* [`greedy_lazy(h)`](FlashPlanner/Search/GreedyBFSLazy.cs): [Lazy Greedy Best First Search](https://www.fast-downward.org/Doc/SearchAlgorithm#Lazy_best-first_search). H is the heuristic.
 * [`greedy_focused(h, n, b, p)`](FlashPlanner/Search/GreedyBFSFocused.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Focused Macros](https://arxiv.org/abs/2004.13242). 
 H is the heuristic, N is the maximum number of macros, B is the search budget in seconds and P is the parameter limit for added macros (too many parameters kills the translator).
 Do note, this implementation of the macro generation is not very good, and does NOT work for all domains.
