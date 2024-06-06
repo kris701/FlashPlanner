@@ -32,11 +32,9 @@ namespace FlashPlanner.Tools
                 int changed = state.Count;
                 state = new RelaxedSASStateSpace(state, apply);
                 foreach (var op in apply)
-                {
                     foreach (var add in op.Add)
                         if (!dict.ContainsKey(add.ID))
                             dict.Add(add.ID, layer);
-                }
                 if (changed == state.Count)
                     return dict;
 

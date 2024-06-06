@@ -103,7 +103,6 @@ namespace FlashPlanner.States
         {
             if (obj is SASStateSpace other)
             {
-                if (GetHashCode() != other.GetHashCode()) return false;
                 if (other.Count != Count) return false;
                 foreach (var item in other._state)
                     if (!_state.Contains(item))

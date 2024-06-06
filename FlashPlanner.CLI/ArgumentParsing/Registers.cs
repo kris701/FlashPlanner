@@ -91,6 +91,14 @@ namespace FlashPlanner.CLI.ArgumentParsing
                     return new GreedyBFSFocused(h, pddl, n, b, p);
                 throw new Exception("Invalid arguments given for planner!");
             }),
+            new Argument("greedy_lazy", new Dictionary<string, Type>(){
+                { "h", typeof(IHeuristic) }
+            }, (args) =>
+            {
+                if (args["h"] is IHeuristic h)
+                    return new GreedyBFSLazy(h);
+                throw new Exception("Invalid arguments given for planner!");
+            }),
 
             // Heuristics
             new Argument("hAdd", new Dictionary<string, Type>(), (args) => new hAdd()),
