@@ -32,7 +32,7 @@ namespace FlashPlanner.States
             Context = context;
             _state = new BitMask(Context.SAS.Facts);
             foreach (var fact in Context.SAS.Init)
-                _state.Set(fact.ID, true);
+                _state[fact.ID] = true;
             Count = Context.SAS.Init.Count;
         }
 
@@ -54,10 +54,19 @@ namespace FlashPlanner.States
         /// <param name="op"></param>
         public SASStateSpace(SASStateSpace other, Operator op) : this(other)
         {
+            _hashCache = other._hashCache;
             foreach (var del in op.Del)
+            {
+                if (_state[del.ID])
+                    _hashCache ^= Context.FactHashes[del.ID];
                 _state[del.ID] = false;
+            }
             foreach (var add in op.Add)
+            {
+                if (!_state[add.ID])
+                    _hashCache ^= Context.FactHashes[add.ID];
                 _state[add.ID] = true;
+            }
             Count = _state.GetTrueBits();
         }
 
@@ -68,12 +77,21 @@ namespace FlashPlanner.States
         /// <param name="ops"></param>
         public SASStateSpace(SASStateSpace other, List<Operator> ops) : this(other)
         {
+            _hashCache = other._hashCache;
             foreach (var op in ops)
             {
                 foreach (var del in op.Del)
+                {
+                    if (_state[del.ID])
+                        _hashCache ^= Context.FactHashes[del.ID];
                     _state[del.ID] = false;
+                }
                 foreach (var add in op.Add)
+                {
+                    if (!_state[add.ID])
+                        _hashCache ^= Context.FactHashes[add.ID];
                     _state[add.ID] = true;
+                }
             }
             Count = _state.GetTrueBits();
         }

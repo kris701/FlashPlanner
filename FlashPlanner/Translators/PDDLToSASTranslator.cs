@@ -175,8 +175,11 @@ namespace FlashPlanner.Translators
                 }
             }
 
+            DoLog?.Invoke($"Normalizing remaining operator IDs...");
             RecountOperators(result.Operators);
+            DoLog?.Invoke($"Normalizing remaining fact IDs...");
             RecountFacts(result);
+            DoLog?.Invoke($"Recreating SAS declaration...");
             var resetOps = new List<Operator>();
             foreach (var op in result.Operators)
             {

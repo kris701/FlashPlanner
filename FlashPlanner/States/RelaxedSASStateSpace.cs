@@ -39,8 +39,13 @@ namespace FlashPlanner.States
         /// <param name="op"></param>
         public RelaxedSASStateSpace(RelaxedSASStateSpace other, Operator op) : base(other)
         {
+            _hashCache = other._hashCache;
             foreach (var add in op.Add)
+            {
+                if (!_state[add.ID])
+                    _hashCache ^= Context.FactHashes[add.ID];
                 _state[add.ID] = true;
+            }
             Count = _state.GetTrueBits();
         }
 
@@ -51,8 +56,13 @@ namespace FlashPlanner.States
         /// <param name="op"></param>
         public RelaxedSASStateSpace(SASStateSpace other, Operator op) : base(other)
         {
+            _hashCache = other._hashCache;
             foreach (var add in op.Add)
+            {
+                if (!_state[add.ID])
+                    _hashCache ^= Context.FactHashes[add.ID];
                 _state[add.ID] = true;
+            }
             Count = _state.GetTrueBits();
         }
 
@@ -63,9 +73,16 @@ namespace FlashPlanner.States
         /// <param name="ops"></param>
         public RelaxedSASStateSpace(SASStateSpace other, List<Operator> ops) : this(other)
         {
+            _hashCache = other._hashCache;
             foreach (var op in ops)
+            {
                 foreach (var add in op.Add)
+                {
+                    if (!_state[add.ID])
+                        _hashCache ^= Context.FactHashes[add.ID];
                     _state[add.ID] = true;
+                }
+            }
             Count = _state.GetTrueBits();
         }
 
@@ -76,9 +93,16 @@ namespace FlashPlanner.States
         /// <param name="ops"></param>
         public RelaxedSASStateSpace(RelaxedSASStateSpace other, List<Operator> ops) : this(other)
         {
+            _hashCache = other._hashCache;
             foreach (var op in ops)
+            {
                 foreach (var add in op.Add)
+                {
+                    if (!_state[add.ID])
+                        _hashCache ^= Context.FactHashes[add.ID];
                     _state[add.ID] = true;
+                }
+            }
             Count = _state.GetTrueBits();
         }
     }

@@ -85,7 +85,6 @@ namespace FlashPlanner.Models
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Get(int index) => (_data[index >> 5] & 1 << index) != 0;
 
         /// <summary>
@@ -93,7 +92,6 @@ namespace FlashPlanner.Models
         /// </summary>
         /// <param name="index"></param>
         /// <param name="value"></param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Set(int index, bool value)
         {
             int bitMask = 1 << index;
@@ -131,10 +129,7 @@ namespace FlashPlanner.Models
         /// Simple hashcode override
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(_data);
-        }
+        public override int GetHashCode() => HashCode.Combine(_data);
 
         /// <summary>
         /// Returns true, if the current bitmask is a subset of another.
