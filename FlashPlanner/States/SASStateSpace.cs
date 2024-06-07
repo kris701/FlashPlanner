@@ -1,7 +1,5 @@
 ﻿using FlashPlanner.Models;
-using FlashPlanner.Translators;
 using PDDLSharp.Models.SAS;
-using PDDLSharp.Tools;
 using System.Collections;
 using System.Runtime.CompilerServices;
 
@@ -142,7 +140,7 @@ namespace FlashPlanner.States
         public bool IsApplicable(Operator op)
         {
             if (Count < op.PreCount) return false;
-            foreach(var pre in op.Pre)
+            foreach (var pre in op.Pre)
                 if (!_state[pre.ID])
                     return false;
             return true;

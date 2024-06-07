@@ -10,9 +10,7 @@ using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Models.SAS;
 using PDDLSharp.Toolkits;
-using PDDLSharp.Tools;
 using PDDLSharp.Translators.Grounders;
-using System;
 
 namespace FlashPlanner.Translators
 {
@@ -228,7 +226,7 @@ namespace FlashPlanner.Translators
 
         private void EnsureNoDuplicatesInActions(PDDLDecl decl)
         {
-            foreach(var act in decl.Domain.Actions)
+            foreach (var act in decl.Domain.Actions)
             {
                 act.EnsureAnd();
                 if (act.Preconditions is AndExp pres)
@@ -260,7 +258,7 @@ namespace FlashPlanner.Translators
             check.AddRange(decl.Goal);
             foreach (var fact in check)
                 fact.ID = -1;
-            foreach(var fact in check)
+            foreach (var fact in check)
             {
                 if (fact.ID != -1)
                     continue;

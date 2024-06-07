@@ -1,6 +1,6 @@
 ﻿using FlashPlanner.Heuristics;
-using FlashPlanner.States;
 using FlashPlanner.Models;
+using FlashPlanner.States;
 using PDDLSharp.Models;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;

@@ -1,6 +1,6 @@
 ﻿using PDDLSharp.Models.SAS;
 
-namespace FlashPlanner.Tools
+namespace FlashPlanner.RelaexPlanningGraphs
 {
     /// <summary>
     /// A layer in a relaxed planning graph
@@ -24,7 +24,7 @@ namespace FlashPlanner.Tools
         public Layer(List<Operator> operators, HashSet<int> propositions)
         {
             Operators = new Dictionary<int, Operator>(operators.Count);
-            foreach(var op in operators)
+            foreach (var op in operators)
                 Operators.Add(op.ID, op);
             Propositions = propositions;
         }

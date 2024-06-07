@@ -7,7 +7,6 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
-using System.Diagnostics;
 using ToMarkdown;
 
 var tmpFolder = "tmp";

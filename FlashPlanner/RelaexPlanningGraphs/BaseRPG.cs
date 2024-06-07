@@ -1,7 +1,7 @@
 ﻿using FlashPlanner.States;
 using PDDLSharp.Models.SAS;
 
-namespace FlashPlanner.Tools
+namespace FlashPlanner.RelaexPlanningGraphs
 {
     /// <summary>
     /// Base class for generating relaxed planning graphs

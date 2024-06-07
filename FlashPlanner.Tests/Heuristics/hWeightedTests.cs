@@ -1,8 +1,8 @@
 ﻿using FlashPlanner;
 using FlashPlanner.Heuristics;
+using FlashPlanner.Models;
 using FlashPlanner.Tests;
 using FlashPlanner.Tests.Heuristics;
-using FlashPlanner.Models;
 using PDDLSharp;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.SAS;

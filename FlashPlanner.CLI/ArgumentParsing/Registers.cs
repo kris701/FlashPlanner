@@ -2,7 +2,6 @@
 using FlashPlanner.HeuristicsCollections;
 using FlashPlanner.Search;
 using FlashPlanner.Translators;
-using PDDLSharp.Models.PDDL;
 
 namespace FlashPlanner.CLI.ArgumentParsing
 {

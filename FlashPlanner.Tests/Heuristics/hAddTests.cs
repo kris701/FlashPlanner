@@ -1,6 +1,6 @@
 ﻿using FlashPlanner.Heuristics;
-using FlashPlanner.States;
 using FlashPlanner.Models;
+using FlashPlanner.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;

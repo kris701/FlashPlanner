@@ -2,7 +2,7 @@
 using FlashPlanner.Heuristics;
 using FlashPlanner.HeuristicsCollections;
 using FlashPlanner.Models;
-using FlashPlanner.Tools;
+using FlashPlanner.RelaxedPlanningGraphs;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.SAS;
 using System;

@@ -4,7 +4,6 @@ using FlashPlanner.Models;
 using FlashPlanner.States;
 using FlashPlanner.Translators;
 using PDDLSharp.Models.FastDownward.Plans;
-using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.SAS;

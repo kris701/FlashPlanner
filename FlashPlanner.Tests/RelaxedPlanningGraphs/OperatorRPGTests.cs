@@ -1,6 +1,6 @@
 ﻿using FlashPlanner.Models;
+using FlashPlanner.RelaxedPlanningGraphs;
 using FlashPlanner.States;
-using FlashPlanner.Tools;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models;
 using PDDLSharp.Models.PDDL;

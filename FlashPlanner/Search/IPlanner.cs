@@ -1,7 +1,6 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.Models;
 using PDDLSharp.Models.FastDownward.Plans;
-using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Search
 {
