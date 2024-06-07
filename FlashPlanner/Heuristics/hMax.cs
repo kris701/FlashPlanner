@@ -1,6 +1,6 @@
 ﻿using FlashPlanner.Models;
 using FlashPlanner.Models.SAS;
-using FlashPlanner.RelaexPlanningGraphs;
+using FlashPlanner.RelaxedPlanningGraphs;
 using FlashPlanner.States;
 
 namespace FlashPlanner.Heuristics

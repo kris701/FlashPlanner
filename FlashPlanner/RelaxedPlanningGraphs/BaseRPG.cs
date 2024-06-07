@@ -1,7 +1,7 @@
 ﻿using FlashPlanner.Models.SAS;
 using FlashPlanner.States;
 
-namespace FlashPlanner.RelaexPlanningGraphs
+namespace FlashPlanner.RelaxedPlanningGraphs
 {
     /// <summary>
     /// Base class for generating relaxed planning graphs

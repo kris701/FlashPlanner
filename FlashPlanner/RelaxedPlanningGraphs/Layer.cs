@@ -1,6 +1,6 @@
 ﻿using FlashPlanner.Models.SAS;
 
-namespace FlashPlanner.RelaexPlanningGraphs
+namespace FlashPlanner.RelaxedPlanningGraphs
 {
     /// <summary>
     /// A layer in a relaxed planning graph
