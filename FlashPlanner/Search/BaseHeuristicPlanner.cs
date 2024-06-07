@@ -1,8 +1,8 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.Models;
+using FlashPlanner.Models.SAS;
 using FlashPlanner.States;
 using PDDLSharp.Models.FastDownward.Plans;
-using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Search
 {

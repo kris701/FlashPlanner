@@ -1,5 +1,5 @@
 ﻿using FlashPlanner.Models;
-using PDDLSharp.Models.SAS;
+using FlashPlanner.Models.SAS;
 using System.Collections;
 using System.Runtime.CompilerServices;
 
@@ -30,10 +30,8 @@ namespace FlashPlanner.States
         public SASStateSpace(TranslatorContext context)
         {
             Context = context;
-            _state = new BitMask(Context.SAS.Facts);
-            foreach (var fact in Context.SAS.Init)
-                _state[fact.ID] = true;
-            Count = Context.SAS.Init.Count;
+            _state = new BitMask(Context.SAS.InitMask);
+            Count = _state.GetTrueBits();
         }
 
         /// <summary>
@@ -158,24 +156,18 @@ namespace FlashPlanner.States
         public bool IsApplicable(Operator op)
         {
             if (Count < op.PreCount) return false;
-            foreach (var pre in op.Pre)
-                if (!_state[pre.ID])
-                    return false;
-            return true;
+            return op.PreMask.IsSubsetOf(_state);
+            //foreach (var pre in op.Pre)
+            //    if (!_state[pre.ID])
+            //        return false;
+            //return true;
         }
 
         /// <summary>
         /// Checks if we are in the goal.
         /// </summary>
         /// <returns></returns>
-        public bool IsInGoal()
-        {
-            if (Count < Context.SAS.Goal.Count) return false;
-            foreach (var fact in Context.SAS.Goal)
-                if (!_state[fact.ID])
-                    return false;
-            return true;
-        }
+        public bool IsInGoal() => Context.SAS.GoalMask.IsSubsetOf(_state);
 
         /// <summary>
         /// Iterator to iterate through the facts in the state space.

@@ -1,6 +1,6 @@
 ﻿using FlashPlanner.Models;
+using FlashPlanner.Models.SAS;
 using FlashPlanner.States;
-using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Heuristics
 {

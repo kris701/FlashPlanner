@@ -1,9 +1,9 @@
 ﻿using FlashPlanner;
 using FlashPlanner.Heuristics;
 using FlashPlanner.Models;
+using FlashPlanner.Models.SAS;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL.Domain;
-using PDDLSharp.Models.SAS;
 using System;
 using System.Collections.Generic;
 using System.Linq;

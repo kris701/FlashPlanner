@@ -118,7 +118,6 @@ namespace FlashPlanner.CLI
             WriteLineColor($"\tTranslation took {translator.ExecutionTime.TotalSeconds} seconds");
             WriteLineColor($"\tPeak memory usage: {translator.MemoryUsed}MB");
             WriteLineColor("\tTranslator info:");
-            WriteLineColor($"\t\t{context.SAS.DomainVariables.Count} domain variables", ConsoleColor.DarkGray);
             WriteLineColor($"\t\t{context.SAS.Facts} total facts", ConsoleColor.DarkGray);
             WriteLineColor($"\t\t{context.SAS.Operators.Count} operators", ConsoleColor.DarkGray);
             WriteLineColor($"\t\t{context.SAS.Init.Count} initial facts", ConsoleColor.DarkGray);

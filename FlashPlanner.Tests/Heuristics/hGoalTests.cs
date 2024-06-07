@@ -1,12 +1,12 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.Models;
+using FlashPlanner.Models.SAS;
 using FlashPlanner.States;
 using PDDLSharp.Models;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Problem;
-using PDDLSharp.Models.SAS;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,14 +42,14 @@ namespace FlashPlanner.Tests.Heuristics
         public void Can_GeneratehGoalCorrectly_OneGoal()
         {
             // ARRANGE
-            var decl = new SASDecl();
-            decl.Goal.Clear();
-            decl.Goal.Add(new Fact("goal-fact"));
-            decl.Goal.ElementAt(0).ID = 0;
-            decl.Init.Clear();
-            decl.Init.Add(new Fact("goal-fact"));
-            decl.Init.ElementAt(0).ID = 0;
-            decl.Facts = 1;
+            var goals = new HashSet<Fact>();
+            goals.Add(new Fact("goal-fact-1"));
+            goals.ElementAt(0).ID = 0;
+            var inits = new HashSet<Fact>();
+            inits.Add(new Fact("goal-fact-1"));
+            inits.ElementAt(0).ID = 0;
+
+            var decl = new SASDecl(new List<Operator>(), goals, inits, 1);
             var h = new hGoal();
             var state = new SASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[0]));
             var parent = new StateMove(state);
@@ -65,22 +65,22 @@ namespace FlashPlanner.Tests.Heuristics
         public void Can_GeneratehGoalCorrectly_MultipleGoals_1()
         {
             // ARRANGE
-            var decl = new SASDecl();
-            decl.Goal.Clear();
-            decl.Goal.Add(new Fact("goal-fact-1"));
-            decl.Goal.ElementAt(0).ID = 0;
-            decl.Goal.Add(new Fact("goal-fact-2"));
-            decl.Goal.ElementAt(1).ID = 1;
-            decl.Goal.Add(new Fact("goal-fact-3"));
-            decl.Goal.ElementAt(2).ID = 2;
-            decl.Init.Clear();
-            decl.Init.Add(new Fact("goal-fact-1"));
-            decl.Init.ElementAt(0).ID = 0;
-            decl.Init.Add(new Fact("goal-fact-2"));
-            decl.Init.ElementAt(1).ID = 1;
-            decl.Facts = 3;
+            var goals = new HashSet<Fact>();
+            goals.Add(new Fact("goal-fact-1"));
+            goals.ElementAt(0).ID = 0;
+            goals.Add(new Fact("goal-fact-2"));
+            goals.ElementAt(1).ID = 1;
+            goals.Add(new Fact("goal-fact-3"));
+            goals.ElementAt(2).ID = 2;
+            var inits = new HashSet<Fact>();
+            inits.Add(new Fact("goal-fact-1"));
+            inits.ElementAt(0).ID = 0;
+            inits.Add(new Fact("goal-fact-2"));
+            inits.ElementAt(1).ID = 1;
+
+            var decl = new SASDecl(new List<Operator>(), goals, inits, 3);
             var h = new hGoal();
-            var state = new SASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[0]));
+            var state = new SASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[3]));
             var parent = new StateMove(state);
 
             // ACT
@@ -94,22 +94,23 @@ namespace FlashPlanner.Tests.Heuristics
         public void Can_GeneratehGoalCorrectly_MultipleGoals_2()
         {
             // ARRANGE
-            var decl = new SASDecl();
-            decl.Goal.Clear();
-            decl.Goal.Add(new Fact("goal-fact-1"));
-            decl.Goal.ElementAt(0).ID = 0;
-            decl.Goal.Add(new Fact("goal-fact-2"));
-            decl.Goal.ElementAt(1).ID = 1;
-            decl.Goal.Add(new Fact("goal-fact-3"));
-            decl.Goal.ElementAt(2).ID = 2;
-            decl.Init.Clear();
-            decl.Init.Add(new Fact("goal-fact-1"));
-            decl.Init.ElementAt(0).ID = 0;
-            decl.Init.Add(new Fact("goal-fact-2"));
-            decl.Init.ElementAt(1).ID = 1;
-            decl.Init.Add(new Fact("goal-fact-3"));
-            decl.Init.ElementAt(2).ID = 2;
-            decl.Facts = 3;
+            var goals = new HashSet<Fact>();
+            goals.Add(new Fact("goal-fact-1"));
+            goals.ElementAt(0).ID = 0;
+            goals.Add(new Fact("goal-fact-2"));
+            goals.ElementAt(1).ID = 1;
+            goals.Add(new Fact("goal-fact-3"));
+            goals.ElementAt(2).ID = 2;
+            var inits = new HashSet<Fact>();
+            inits.Add(new Fact("goal-fact-1"));
+            inits.ElementAt(0).ID = 0;
+            inits.Add(new Fact("goal-fact-2"));
+            inits.ElementAt(1).ID = 1;
+            inits.Add(new Fact("goal-fact-3"));
+            inits.ElementAt(2).ID = 2;
+
+            var decl = new SASDecl(new List<Operator>(), goals, inits, 3);
+
             var h = new hGoal();
             var state = new SASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[0]));
             var parent = new StateMove(state);

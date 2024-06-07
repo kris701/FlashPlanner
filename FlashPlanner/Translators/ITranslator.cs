@@ -1,11 +1,10 @@
 ﻿using FlashPlanner.Models;
 using PDDLSharp.Models.PDDL;
-using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Translators
 {
     /// <summary>
-    /// Main interface to convert a <seealso cref="PDDLDecl"/> into a <seealso cref="SASDecl"/>
+    /// Main interface to convert a <seealso cref="PDDLDecl"/> into a <seealso cref="TranslatorContext"/>
     /// </summary>
     public interface ITranslator : ILimitedComponent
     {
@@ -19,7 +18,7 @@ namespace FlashPlanner.Translators
         public int Operators { get; }
 
         /// <summary>
-        /// Convert a <seealso cref="PDDLDecl"/> into a <seealso cref="SASDecl"/>
+        /// Convert a <seealso cref="PDDLDecl"/> into a <seealso cref="TranslatorContext"/>
         /// </summary>
         /// <param name="from"></param>
         /// <returns></returns>

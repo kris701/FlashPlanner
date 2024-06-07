@@ -1,4 +1,5 @@
 ﻿using FlashPlanner.Models;
+using FlashPlanner.Models.SAS;
 using FlashPlanner.RelaxedPlanningGraphs;
 using FlashPlanner.States;
 using PDDLSharp.ErrorListeners;
@@ -7,7 +8,6 @@ using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Problem;
-using PDDLSharp.Models.SAS;
 using PDDLSharp.Parsers;
 using PDDLSharp.Parsers.PDDL;
 using PDDLSharp.Tools;
@@ -137,9 +137,11 @@ namespace FlashPlanner.Tests.RelaxedPlanningGraphs
         public void Cant_GenerateGraph_IfNoApplicableActions_1()
         {
             // ARRANGE
-            var decl = new SASDecl();
-            decl.Goal.Add(new Fact("abc"));
-            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[0]));
+            var goal = new HashSet<Fact>();
+            goal.Add(new Fact("abc"));
+            goal.ElementAt(0).ID = 0;
+            var decl = new SASDecl(new List<Operator>(), goal, new HashSet<Fact>(), 1);
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[1]));
             var generator = new OperatorRPG();
 
             // ACT
@@ -153,18 +155,21 @@ namespace FlashPlanner.Tests.RelaxedPlanningGraphs
         public void Cant_GenerateGraph_IfNoApplicableActions_2()
         {
             // ARRANGE
-            var decl = new SASDecl();
-            decl.Goal.Add(new Fact("abc"));
-            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[0]));
+            var goal = new HashSet<Fact>();
+            goal.Add(new Fact("abc"));
+            goal.ElementAt(0).ID = 0;
+            var decl = new SASDecl(new List<Operator>(), goal, new HashSet<Fact>(), 2);
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[2]));
 
             var actions = new List<Operator>()
             {
                 new Operator(
                     "non-applicable",
                     new string[]{ "?a" },
-                    new Fact[]{ new Fact("wew", "?a") },
+                    new Fact[]{ new Fact(1, "wew", "?a") },
                     new Fact[]{ },
-                    new Fact[]{ })
+                    new Fact[]{ },
+                    1)
             };
             var generator = new OperatorRPG();
 
@@ -179,23 +184,26 @@ namespace FlashPlanner.Tests.RelaxedPlanningGraphs
         public void Cant_GenerateGraph_IfActionDoesNothing()
         {
             // ARRANGE
-            var decl = new SASDecl();
-            decl.Goal.Add(new Fact("abc"));
-            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[0]));
+            var goal = new HashSet<Fact>();
+            goal.Add(new Fact("abc"));
+            goal.ElementAt(0).ID = 0;
+            var decl = new SASDecl(new List<Operator>(), goal, new HashSet<Fact>(), 1);
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[1]));
 
-            var actions = new List<Operator>()
+            var operators = new List<Operator>()
             {
                 new Operator(
                     "non-applicable",
                     new string[]{ "?a" },
                     new Fact[]{ },
                     new Fact[]{ },
-                    new Fact[]{ })
+                    new Fact[]{ },
+                    1)
             };
             var generator = new OperatorRPG();
 
             // ACT
-            var result = generator.GenerateRelaxedPlanningGraph(state, actions);
+            var result = generator.GenerateRelaxedPlanningGraph(state, operators);
 
             // ASSERT
             Assert.AreEqual(0, result.Count);

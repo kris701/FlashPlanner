@@ -1,8 +1,8 @@
 ﻿using FlashPlanner.Heuristics;
-using FlashPlanner.RelaxedPlanningGraphs;
+using FlashPlanner.Models.SAS;
+using FlashPlanner.RelaexPlanningGraphs;
 using FlashPlanner.States;
 using PDDLSharp.Models.FastDownward.Plans;
-using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Search
 {

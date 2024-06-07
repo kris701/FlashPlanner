@@ -1,6 +1,6 @@
-﻿using PDDLSharp.Models.SAS;
+﻿using FlashPlanner.Models.SAS;
 
-namespace FlashPlanner.RelaxedPlanningGraphs
+namespace FlashPlanner.RelaexPlanningGraphs
 {
     /// <summary>
     /// A layer in a relaxed planning graph

@@ -1,10 +1,10 @@
-﻿using FlashPlanner.Translators;
+﻿using FlashPlanner.Models.SAS;
+using FlashPlanner.Translators;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Problem;
-using PDDLSharp.Models.SAS;
 using PDDLSharp.Parsers.PDDL;
 using PDDLSharp.Toolkits;
 using PDDLSharp.Tools;
@@ -25,32 +25,6 @@ namespace FlashPlanner.Tests.Translator
             var targetPath = "../../../../Dependencies/downward-benchmarks";
             if (!Directory.Exists(targetPath))
                 throw new DirectoryNotFoundException("Benchmarks not found! Please read the readme in the Dependencies folder!");
-        }
-
-        [TestMethod]
-        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob01.pddl")]
-        [DataRow("../../../../Dependencies/downward-benchmarks/logistics98/domain.pddl", "../../../../Dependencies/downward-benchmarks/logistics98/prob01.pddl")]
-        [DataRow("../../../../Dependencies/downward-benchmarks/satellite/domain.pddl", "../../../../Dependencies/downward-benchmarks/satellite/p01-pfile1.pddl")]
-        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p01.pddl")]
-        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s1-0.pddl")]
-        public void Can_Translate_ExpectedDomainVars(string domain, string problem)
-        {
-            // ARRANGE
-            var listener = new ErrorListener();
-            var parser = new PDDLParser(listener);
-            var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator(true, false);
-            int expected = 0;
-            if (decl.Domain.Constants != null)
-                expected += decl.Domain.Constants.Constants.Count;
-            if (decl.Problem.Objects != null)
-                expected += decl.Problem.Objects.Objs.Count;
-
-            // ACT
-            var context = translator.Translate(decl);
-
-            // ASSERT
-            Assert.AreEqual(expected, context.SAS.DomainVariables.Count);
         }
 
         [TestMethod]

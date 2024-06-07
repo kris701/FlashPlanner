@@ -18,7 +18,6 @@ var targetDomains = new List<string>() {
     "logistics00",
     "satellite",
     "miconic",
-    "mystery",
     "rovers",
     "tpp",
     "zenotravel",
@@ -32,7 +31,6 @@ var fdTimes = new Dictionary<string, int>()
     { "logistics00", 20 },
     { "satellite", 20 },
     { "miconic", 20 },
-    { "mystery", 12 },
     { "rovers", 20 },
     { "tpp", 20 },
     { "zenotravel", 20 },
@@ -102,7 +100,7 @@ foreach (var domainName in targetDomains)
         translator.TimeLimit = TimeSpan.FromSeconds(timeLimit);
         translator.MemoryLimit = memoryLimit;
         var sasDecl = translator.Translate(new PDDLSharp.Models.PDDL.PDDLDecl(domain, problem));
-        var planner = new GreedyBFS(new hFF());
+        var planner = new GreedyBFSLazy(new hFF());
         planner.TimeLimit = TimeSpan.FromSeconds(timeLimit);
         planner.MemoryLimit = memoryLimit;
         var plan = planner.Solve(sasDecl);

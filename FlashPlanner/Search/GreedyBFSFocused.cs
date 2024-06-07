@@ -1,12 +1,12 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.HeuristicsCollections;
 using FlashPlanner.Models;
+using FlashPlanner.Models.SAS;
 using FlashPlanner.States;
 using FlashPlanner.Translators;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Models.SAS;
 using PDDLSharp.Toolkits;
 
 namespace FlashPlanner.Search
@@ -148,7 +148,7 @@ namespace FlashPlanner.Search
                 if (plan.Count > 1)
                     queue.Enqueue(
                         GenerateMacroFromOperatorSteps(plan),
-                        h.GetValue(new StateMove(new SASStateSpace(new Models.TranslatorContext(new SASDecl(), _context.PDDL, _context.FactHashes))), state.State, new List<Operator>()));
+                        h.GetValue(new StateMove(new SASStateSpace(new TranslatorContext(new SASDecl(), _context.PDDL, _context.FactHashes))), state.State, new List<Operator>()));
             }
 
             // Add unique macros

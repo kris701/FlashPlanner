@@ -1,7 +1,7 @@
 ﻿using FlashPlanner.Models;
-using FlashPlanner.RelaxedPlanningGraphs;
+using FlashPlanner.Models.SAS;
+using FlashPlanner.RelaexPlanningGraphs;
 using FlashPlanner.States;
-using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Heuristics
 {

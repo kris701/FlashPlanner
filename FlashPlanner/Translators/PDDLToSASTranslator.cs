@@ -1,4 +1,5 @@
 ﻿using FlashPlanner.Models;
+using FlashPlanner.Models.SAS;
 using FlashPlanner.Translators.Exceptions;
 using FlashPlanner.Translators.Normalizers;
 using PDDLSharp.Contextualisers.PDDL;
@@ -8,7 +9,6 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
-using PDDLSharp.Models.SAS;
 using PDDLSharp.Toolkits;
 using PDDLSharp.Translators.Grounders;
 
@@ -95,7 +95,6 @@ namespace FlashPlanner.Translators
             DoLog?.Invoke($"Checking if task can be translated...");
             CheckIfValid(from);
 
-            var domainVariables = new HashSet<string>();
             var operators = new List<Operator>();
             var goals = new List<Fact>();
             var inits = new List<Fact>();
@@ -120,14 +119,6 @@ namespace FlashPlanner.Translators
             DoLog?.Invoke($"Fact translation dictionary contains {_factSet.Count} keys");
 
             _opID = 0;
-
-            // Domain variables
-            if (from.Problem.Objects != null)
-                foreach (var obj in from.Problem.Objects.Objs)
-                    domainVariables.Add(obj.Name);
-            if (from.Domain.Constants != null)
-                foreach (var cons in from.Domain.Constants.Constants)
-                    domainVariables.Add(cons.Name);
 
             // Init
             if (from.Problem.Init != null)
@@ -155,23 +146,23 @@ namespace FlashPlanner.Translators
                 inits = ProcessNegativeFactsInInit(negInits, inits);
             }
 
-            var result = new SASDecl(domainVariables, operators, goals.ToHashSet(), inits.ToHashSet());
-            RecountFacts(result);
+            var result = new SASDecl(operators, goals.ToHashSet(), inits.ToHashSet(), Facts);
 
             // Only use operators that is reachable in a relaxed planning graph
             var reachability = new ReachabilityChecker();
             DoLog?.Invoke($"Checking if all {result.Operators.Count} operators are reachable.");
             var opsNow = reachability.GetPotentiallyReachableOperators(result);
             DoLog?.Invoke($"{result.Operators.Count - opsNow.Count} operators removed by not being reachable.");
-            result = new SASDecl(domainVariables, opsNow, goals.ToHashSet(), inits.ToHashSet());
+            result = new SASDecl(opsNow, goals.ToHashSet(), inits.ToHashSet(), Facts);
 
             // Check if operators can satisfy goal condition
             foreach (var goal in goals)
             {
                 if (!result.Operators.Any(x => x.Add.Contains(goal)))
                 {
-                    result = new SASDecl(domainVariables, new List<Operator>(), goals.ToHashSet(), inits.ToHashSet());
+                    result = new SASDecl(new List<Operator>(), goals.ToHashSet(), inits.ToHashSet(), Facts);
                     DoLog?.Invoke($"Goal fact '{goal}' cannot be reached! Removing all operators");
+                    break;
                 }
             }
 
@@ -183,12 +174,11 @@ namespace FlashPlanner.Translators
             var resetOps = new List<Operator>();
             foreach (var op in result.Operators)
             {
-                var reset = new Operator(op.Name, op.Arguments, op.Pre, op.Add, op.Del);
+                var reset = new Operator(op.Name, op.Arguments, op.Pre, op.Add, op.Del, Facts);
                 reset.ID = op.ID;
                 resetOps.Add(reset);
             }
-            result = new SASDecl(domainVariables, resetOps, goals.ToHashSet(), inits.ToHashSet());
-            result.Facts = Facts;
+            result = new SASDecl(resetOps, goals.ToHashSet(), inits.ToHashSet(), Facts);
 
             Stop();
             return new TranslatorContext(result, from, GenerateFactHashes(result));
@@ -341,7 +331,8 @@ namespace FlashPlanner.Translators
                             operators[i].Arguments,
                             operators[i].Pre,
                             adds.ToArray(),
-                            dels.ToArray());
+                            dels.ToArray(),
+                            Facts);
                         operators[i].ID = id;
                     }
                 }
@@ -488,7 +479,7 @@ namespace FlashPlanner.Translators
                     foreach (var arg in act.Parameters.Values)
                         args.Add(arg.Name);
 
-                    var newOp = new Operator(act.Name, args.ToArray(), pre.Distinct().ToArray(), add.Distinct().ToArray(), del.Distinct().ToArray());
+                    var newOp = new Operator(act.Name, args.ToArray(), pre.Distinct().ToArray(), add.Distinct().ToArray(), del.Distinct().ToArray(), Facts);
                     newOp.ID = _opID++;
                     Operators++;
                     operators.Add(newOp);

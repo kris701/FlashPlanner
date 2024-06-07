@@ -1,5 +1,5 @@
-﻿using FlashPlanner.States;
-using PDDLSharp.Models.SAS;
+﻿using FlashPlanner.Models.SAS;
+using FlashPlanner.States;
 
 namespace FlashPlanner.Translators
 {
@@ -34,8 +34,7 @@ namespace FlashPlanner.Translators
                     }
                 }
 
-                foreach (var op in applicableNow)
-                    state = new RelaxedSASStateSpace(state, op);
+                state = new RelaxedSASStateSpace(state, applicableNow);
             }
 
             return applicables;

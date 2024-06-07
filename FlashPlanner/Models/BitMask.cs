@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace FlashPlanner.Models
+﻿namespace FlashPlanner.Models
 {
 
     /// <summary>
@@ -15,6 +13,7 @@ namespace FlashPlanner.Models
         public int Length { get; set; }
 
         internal int[] _data;
+        private readonly int _dataLength;
 
         /// <summary>
         /// Indexer to get and set a boolean value for a given index in the bitmask
@@ -35,6 +34,7 @@ namespace FlashPlanner.Models
         {
             Length = length;
             _data = new int[Length / 32 + 1];
+            _dataLength = _data.Length;
         }
 
         /// <summary>
@@ -45,6 +45,7 @@ namespace FlashPlanner.Models
         {
             Length = other.Length;
             _data = new int[Length / 32 + 1];
+            _dataLength = _data.Length;
             Array.Copy(other._data, _data, _data.Length);
         }
 
@@ -98,13 +99,9 @@ namespace FlashPlanner.Models
             ref int segment = ref _data[index >> 5];
 
             if (value)
-            {
                 segment |= bitMask;
-            }
             else
-            {
                 segment &= ~bitMask;
-            }
         }
 
         /// <summary>
@@ -139,7 +136,7 @@ namespace FlashPlanner.Models
         public bool IsSubsetOf(BitMask other)
         {
             for (int i = 0; i < _data.Length; i++)
-                if ((_data[i] & other._data[i]) != other._data[i])
+                if ((_data[i] & other._data[i]) != _data[i])
                     return false;
             return true;
         }
