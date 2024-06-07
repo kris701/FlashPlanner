@@ -22,7 +22,7 @@ namespace FlashPlanner.Search
             while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
-                foreach (var op in _declaration.Operators)
+                foreach (var op in _context.SAS.Operators)
                 {
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
@@ -30,7 +30,7 @@ namespace FlashPlanner.Search
                         var newMove = GenerateNewState(stateMove, op);
                         if (!IsVisited(newMove))
                         {
-                            var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
+                            var value = Heuristic.GetValue(stateMove, newMove.State, _context.SAS.Operators);
                             newMove.hValue = value;
                             QueueOpenList(stateMove, newMove, op);
                             if (newMove.State.IsInGoal())

@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using CommandLine.Text;
+using FlashPlanner.Models;
 using PDDLSharp.CodeGenerators.FastDownward.Plans;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.FastDownward.Plans;
@@ -78,7 +79,7 @@ namespace FlashPlanner.CLI
                 Validate(plan, pddlDecl);
         }
 
-        private static SASDecl? Translate(Options opts, PDDLDecl pddlDecl)
+        private static TranslatorContext? Translate(Options opts, PDDLDecl pddlDecl)
         {
             WriteLineColor("Translation", ConsoleColor.Blue);
 
@@ -104,7 +105,7 @@ namespace FlashPlanner.CLI
             watch.Start();
 
             WriteLineColor("\tTranslating...");
-            var sasDecl = translator.Translate(pddlDecl);
+            var context = translator.Translate(pddlDecl);
             logTimer.Stop();
             watch.Stop();
 
@@ -118,15 +119,15 @@ namespace FlashPlanner.CLI
             WriteLineColor($"\tTranslation took {translator.ExecutionTime.TotalSeconds} seconds");
             WriteLineColor($"\tPeak memory usage: {translator.MemoryUsed}MB");
             WriteLineColor("\tTranslator info:");
-            WriteLineColor($"\t\t{sasDecl.DomainVariables.Count} domain variables", ConsoleColor.DarkGray);
-            WriteLineColor($"\t\t{translator.Facts} total facts", ConsoleColor.DarkGray);
-            WriteLineColor($"\t\t{sasDecl.Operators.Count} operators", ConsoleColor.DarkGray);
-            WriteLineColor($"\t\t{sasDecl.Init.Count} initial facts", ConsoleColor.DarkGray);
-            WriteLineColor($"\t\t{sasDecl.Goal.Count} goal facts", ConsoleColor.DarkGray);
-            return sasDecl;
+            WriteLineColor($"\t\t{context.SAS.DomainVariables.Count} domain variables", ConsoleColor.DarkGray);
+            WriteLineColor($"\t\t{context.SAS.Facts} total facts", ConsoleColor.DarkGray);
+            WriteLineColor($"\t\t{context.SAS.Operators.Count} operators", ConsoleColor.DarkGray);
+            WriteLineColor($"\t\t{context.SAS.Init.Count} initial facts", ConsoleColor.DarkGray);
+            WriteLineColor($"\t\t{context.SAS.Goal.Count} goal facts", ConsoleColor.DarkGray);
+            return context;
         }
 
-        private static ActionPlan? Search(Options opts, PDDLDecl pddlDecl, SASDecl sasDecl)
+        private static ActionPlan? Search(Options opts, PDDLDecl pddlDecl, TranslatorContext context)
         {
             WriteLineColor("Search", ConsoleColor.Blue);
             WriteColor("\tBuilding Search engine...");
@@ -152,7 +153,7 @@ namespace FlashPlanner.CLI
                 planner.TimeLimit = TimeSpan.FromSeconds(opts.SearchTimeLimit);
             if (opts.SearchMemoryLimit > 0)
                 planner.MemoryLimit = opts.SearchMemoryLimit;
-            solution = planner.Solve(sasDecl);
+            solution = planner.Solve(context);
 
             switch (planner.Code)
             {

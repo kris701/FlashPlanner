@@ -1,4 +1,5 @@
-﻿using FlashPlanner.States;
+﻿using FlashPlanner.Models;
+using FlashPlanner.States;
 using FlashPlanner.Tools;
 using PDDLSharp.Models.SAS;
 
@@ -22,7 +23,7 @@ namespace FlashPlanner.Heuristics
         {
             var cost = 0;
             var dict = _graphGenerator.GenerateRelaxedGraph(state, operators);
-            foreach (var fact in state.Declaration.Goal)
+            foreach (var fact in state.Context.SAS.Goal)
             {
                 if (!dict.ContainsKey(fact.ID))
                     return int.MaxValue;

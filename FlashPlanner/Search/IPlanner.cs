@@ -1,4 +1,5 @@
 ﻿using FlashPlanner.Heuristics;
+using FlashPlanner.Models;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.SAS;
 
@@ -27,10 +28,10 @@ namespace FlashPlanner.Search
         public int Evaluations { get; }
 
         /// <summary>
-        /// Get a plan for some <seealso cref="SASDecl"/> on the <seealso cref="IHeuristic"/> provided
+        /// Get a plan for some <seealso cref="TranslatorContext"/> on the <seealso cref="IHeuristic"/> provided
         /// </summary>
-        /// <param name="decl"></param>
+        /// <param name="context"></param>
         /// <returns>A plan or null if unsolvable</returns>
-        public ActionPlan? Solve(SASDecl decl);
+        public ActionPlan? Solve(TranslatorContext context);
     }
 }

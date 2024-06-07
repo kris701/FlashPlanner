@@ -1,11 +1,11 @@
-﻿using FlashPlanner.Tools;
+﻿using FlashPlanner.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlashPlanner.Tests.Tools
+namespace FlashPlanner.Tests.Models
 {
     [TestClass]
     public class FixedMaxPriorityQueueTests

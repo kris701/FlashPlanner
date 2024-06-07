@@ -1,4 +1,5 @@
-﻿using FlashPlanner.Translators.Exceptions;
+﻿using FlashPlanner.Models;
+using FlashPlanner.Translators.Exceptions;
 using FlashPlanner.Translators.Normalizers;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
@@ -75,7 +76,7 @@ namespace FlashPlanner.Translators
         /// </summary>
         /// <param name="from"></param>
         /// <returns></returns>
-        public SASDecl Translate(PDDLDecl from)
+        public TranslatorContext Translate(PDDLDecl from)
         {
             Start();
 
@@ -133,12 +134,12 @@ namespace FlashPlanner.Translators
             // Init
             if (from.Problem.Init != null)
                 inits = ExtractInitFacts(from.Problem.Init.Predicates, deconstructor, from);
-            if (Abort) return new SASDecl();
+            if (Abort) return new TranslatorContext();
 
             // Goal
             if (from.Problem.Goal != null)
                 goals = ExtractGoalFacts(from.Problem.Goal.GoalExp, deconstructor);
-            if (Abort) return new SASDecl();
+            if (Abort) return new TranslatorContext();
 
             // Operators
             DoLog?.Invoke($"Normalizing actions...");
@@ -146,7 +147,7 @@ namespace FlashPlanner.Translators
             DoLog?.Invoke($"A total of {normalizedActions.Count} normalized actions to ground.");
             DoLog?.Invoke($"Grounding operators...");
             operators = GetOperators(normalizedActions, grounder);
-            if (Abort) return new SASDecl();
+            if (Abort) return new TranslatorContext();
 
             // Handle negative preconditions, if there where any
             if (_negativeFacts.Any(x => x.Value.Count > 0))
@@ -189,7 +190,40 @@ namespace FlashPlanner.Translators
             result.Facts = Facts;
 
             Stop();
-            return result;
+            return new TranslatorContext(result, from, GenerateFactHashes(result));
+        }
+
+        private int[] GenerateFactHashes(SASDecl decl)
+        {
+            var factHashes = new int[decl.Facts];
+            foreach (var fact in decl.Init)
+                if (factHashes[fact.ID] == 0)
+                    factHashes[fact.ID] = Hash32shiftmult(fact.ID);
+            foreach (var fact in decl.Goal)
+                if (factHashes[fact.ID] == 0)
+                    factHashes[fact.ID] = Hash32shiftmult(fact.ID);
+            foreach (var op in decl.Operators)
+            {
+                var all = new List<Fact>(op.Pre);
+                all.AddRange(op.Add);
+                all.AddRange(op.Del);
+                foreach (var fact in all)
+                    if (factHashes[fact.ID] == 0)
+                        factHashes[fact.ID] = Hash32shiftmult(fact.ID);
+            }
+            return factHashes;
+        }
+
+        // https://gist.github.com/badboy/6267743
+        private int Hash32shiftmult(int key)
+        {
+            int c2 = 0x27d4eb2d; // a prime or an odd constant
+            key = (key ^ 61) ^ (key >>> 16);
+            key = key + (key << 3);
+            key = key ^ (key >>> 4);
+            key = key * c2;
+            key = key ^ (key >>> 15);
+            return key;
         }
 
         private void EnsureNoDuplicatesInActions(PDDLDecl decl)
@@ -320,7 +354,7 @@ namespace FlashPlanner.Translators
             foreach (var fact in negInits)
             {
                 var findTrue = new Fact(fact.Name.Replace(_negatedPrefix, ""), fact.Arguments);
-                if (!init.Any(x => x.ContentEquals(findTrue)))
+                if (!init.Any(x => x.ContentEquals(findTrue)) && !init.Any(x => x.ContentEquals(fact)))
                     init.Add(fact);
                 if (Abort) return new List<Fact>();
             }

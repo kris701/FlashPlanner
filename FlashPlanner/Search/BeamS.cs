@@ -1,4 +1,5 @@
 ﻿using FlashPlanner.Heuristics;
+using FlashPlanner.Models;
 using FlashPlanner.States;
 using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
@@ -31,7 +32,7 @@ namespace FlashPlanner.Search
             {
                 var stateMove = ExpandBestState();
                 var newItems = new RefPriorityQueue<StateMove>();
-                foreach (var op in _declaration.Operators)
+                foreach (var op in _context.SAS.Operators)
                 {
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
@@ -39,7 +40,7 @@ namespace FlashPlanner.Search
                         var newMove = GenerateNewState(stateMove, op);
                         if (!IsVisited(newMove) && !newItems.Contains(newMove))
                         {
-                            var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
+                            var value = Heuristic.GetValue(stateMove, newMove.State, _context.SAS.Operators);
                             newMove.hValue = value;
                             QueueOpenList(stateMove, newMove, op);
                         }

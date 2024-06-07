@@ -25,9 +25,9 @@ namespace FlashPlanner.Tools
         /// <returns></returns>
         public List<Operator> GenerateReplaxedPlan(SASStateSpace state, List<Operator> operators)
         {
-            if (state.Declaration != _currentDecl)
+            if (state.Context.SAS != _currentDecl)
             {
-                _currentDecl = state.Declaration;
+                _currentDecl = state.Context.SAS;
                 GenerateAddCache();
             }
 
@@ -40,7 +40,7 @@ namespace FlashPlanner.Tools
                 Failed = true;
                 return new List<Operator>();
             }
-            var selectedOperators = ReconstructPlan(graphLayers, relaxedState.Declaration);
+            var selectedOperators = ReconstructPlan(graphLayers, relaxedState.Context.SAS);
 
             return selectedOperators;
         }

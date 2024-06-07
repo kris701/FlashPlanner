@@ -1,6 +1,6 @@
 ﻿using FlashPlanner;
 using FlashPlanner.Heuristics;
-using FlashPlanner.Tools;
+using FlashPlanner.Models;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.SAS;
@@ -23,7 +23,7 @@ namespace FlashPlanner.Tests.Heuristics
         {
             // ARRANGE
             IHeuristic h = new hPath();
-            var parent = new StateMove(new States.SASStateSpace(new SASDecl(), new Dictionary<int, int>()));
+            var parent = new StateMove(new States.SASStateSpace(new TranslatorContext()));
             parent.Steps = inValue;
 
             // ACT

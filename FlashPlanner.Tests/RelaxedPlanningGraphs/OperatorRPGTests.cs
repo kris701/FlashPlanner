@@ -1,4 +1,5 @@
-﻿using FlashPlanner.States;
+﻿using FlashPlanner.Models;
+using FlashPlanner.States;
 using FlashPlanner.Tools;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models;
@@ -16,7 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlashPlanner.Tests.Tools
+namespace FlashPlanner.Tests.RelaxedPlanningGraphs
 {
     [TestClass]
     public class OperatorRPGTests : BasePlannerTests
@@ -31,12 +32,12 @@ namespace FlashPlanner.Tests.Tools
         public void Can_GenerateRelaxedPlan_ResultsInGoal(string domain, string problem)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
-            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
+            var context = GetTranslatorContext(domain, problem);
+            var state = new RelaxedSASStateSpace(context);
             var generator = new OperatorRPG();
 
             // ACT
-            var result = generator.GenerateReplaxedPlan(state, decl.Operators);
+            var result = generator.GenerateReplaxedPlan(state, context.SAS.Operators);
 
             // ASSERT
             Assert.IsFalse(generator.Failed);
@@ -55,12 +56,12 @@ namespace FlashPlanner.Tests.Tools
         public void Can_GenerateRelaxedPlan_Length(string domain, string problem, int expected)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
-            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
+            var context = GetTranslatorContext(domain, problem);
+            var state = new RelaxedSASStateSpace(context);
             var generator = new OperatorRPG();
 
             // ACT
-            var result = generator.GenerateReplaxedPlan(state, decl.Operators);
+            var result = generator.GenerateReplaxedPlan(state, context.SAS.Operators);
 
             // ASSERT
             Assert.IsFalse(generator.Failed);
@@ -77,12 +78,12 @@ namespace FlashPlanner.Tests.Tools
         public void Can_GenerateGraph_Layer_Size(string domain, string problem, int expected)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
-            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
+            var context = GetTranslatorContext(domain, problem);
+            var state = new RelaxedSASStateSpace(context);
             var generator = new OperatorRPG();
 
             // ACT
-            var graph = generator.GenerateRelaxedPlanningGraph(state, decl.Operators);
+            var graph = generator.GenerateRelaxedPlanningGraph(state, context.SAS.Operators);
 
             // ASSERT
             Assert.AreEqual(expected, graph.Count);
@@ -98,12 +99,12 @@ namespace FlashPlanner.Tests.Tools
         public void Can_GenerateGraph_Layer_ActionSize(string domain, string problem, params int[] expecteds)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
-            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
+            var context = GetTranslatorContext(domain, problem);
+            var state = new RelaxedSASStateSpace(context);
             var generator = new OperatorRPG();
 
             // ACT
-            var graph = generator.GenerateRelaxedPlanningGraph(state, decl.Operators);
+            var graph = generator.GenerateRelaxedPlanningGraph(state, context.SAS.Operators);
 
             // ASSERT
             Assert.AreEqual(expecteds.Length, graph.Count);
@@ -121,15 +122,15 @@ namespace FlashPlanner.Tests.Tools
         public void Can_GenerateGraph_Layer_Proposition_FirstAlwaysInits(string domain, string problem)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
-            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
+            var context = GetTranslatorContext(domain, problem);
+            var state = new RelaxedSASStateSpace(context);
             var generator = new OperatorRPG();
 
             // ACT
-            var graph = generator.GenerateRelaxedPlanningGraph(state, decl.Operators);
+            var graph = generator.GenerateRelaxedPlanningGraph(state, context.SAS.Operators);
 
             // ASSERT
-            Assert.AreEqual(decl.Init.Count, graph[0].Propositions.Count);
+            Assert.AreEqual(context.SAS.Init.Count, graph[0].Propositions.Count);
         }
 
         [TestMethod]
@@ -138,7 +139,7 @@ namespace FlashPlanner.Tests.Tools
             // ARRANGE
             var decl = new SASDecl();
             decl.Goal.Add(new Fact("abc"));
-            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[0]));
             var generator = new OperatorRPG();
 
             // ACT
@@ -154,7 +155,7 @@ namespace FlashPlanner.Tests.Tools
             // ARRANGE
             var decl = new SASDecl();
             decl.Goal.Add(new Fact("abc"));
-            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[0]));
 
             var actions = new List<Operator>()
             {
@@ -180,7 +181,7 @@ namespace FlashPlanner.Tests.Tools
             // ARRANGE
             var decl = new SASDecl();
             decl.Goal.Add(new Fact("abc"));
-            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[0]));
 
             var actions = new List<Operator>()
             {

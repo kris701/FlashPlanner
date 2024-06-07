@@ -1,7 +1,7 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.HeuristicsCollections;
+using FlashPlanner.Models;
 using FlashPlanner.States;
-using FlashPlanner.Tools;
 using FlashPlanner.Translators;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL;
@@ -28,19 +28,16 @@ namespace FlashPlanner.Search
         private readonly int _searchBudget = 1;
         private readonly int _parameterLimit = 5;
         private List<MacroDecl> _learnedMacros;
-        private readonly PDDLDecl _pddlDecl;
 
         /// <summary>
         /// Main constructor
         /// </summary>
         /// <param name="heuristic"></param>
-        /// <param name="pddlDecl"></param>
         /// <param name="numberOfMacros"></param>
         /// <param name="searchBudget"></param>
         /// <param name="parameterLimit"></param>
-        public GreedyBFSFocused(IHeuristic heuristic, PDDLDecl pddlDecl, int numberOfMacros, int searchBudget, int parameterLimit) : base(heuristic)
+        public GreedyBFSFocused(IHeuristic heuristic, int numberOfMacros, int searchBudget, int parameterLimit) : base(heuristic)
         {
-            _pddlDecl = pddlDecl.Copy();
             _numberOfMacros = numberOfMacros;
             _searchBudget = searchBudget;
             _learnedMacros = new List<MacroDecl>();
@@ -53,17 +50,16 @@ namespace FlashPlanner.Search
             _learnedMacros = LearnFocusedMacros(_numberOfMacros, _searchBudget);
             DoLog?.Invoke($"Found {_learnedMacros.Count} macros!");
             DoLog?.Invoke($"Retranslating...");
-            _pddlDecl.Domain.Actions.AddRange(_learnedMacros.Select(x => x.Macro));
+            _context.PDDL.Domain.Actions.AddRange(_learnedMacros.Select(x => x.Macro));
             var translator = new PDDLToSASTranslator(true, false);
             translator.TimeLimit = TimeSpan.FromSeconds(1000);
-            _declaration = translator.Translate(_pddlDecl);
-            GenerateFactHashes(_declaration);
+            _context = translator.Translate(_context.PDDL);
             DoLog?.Invoke($"Searching...");
 
             while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
-                foreach (var op in _declaration.Operators)
+                foreach (var op in _context.SAS.Operators)
                 {
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
@@ -71,7 +67,7 @@ namespace FlashPlanner.Search
                         var newMove = GenerateNewState(stateMove, op);
                         if (!IsVisited(newMove))
                         {
-                            var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
+                            var value = Heuristic.GetValue(stateMove, newMove.State, _context.SAS.Operators);
                             newMove.hValue = value;
                             QueueOpenList(stateMove, newMove, op);
                             if (newMove.State.IsInGoal())
@@ -85,7 +81,7 @@ namespace FlashPlanner.Search
 
         private ActionPlan GeneratePlanChainWithoutMacros(StateMove state)
         {
-            var macroOps = _declaration.Operators.Where(x => _learnedMacros.Any(y => y.Macro.Name == x.Name)).ToList();
+            var macroOps = _context.SAS.Operators.Where(x => _learnedMacros.Any(y => y.Macro.Name == x.Name)).ToList();
             var chain = new List<GroundedAction>();
 
             while (_planMap.ContainsKey(state))
@@ -107,7 +103,7 @@ namespace FlashPlanner.Search
                     }
                 }
                 else
-                    chain.Add(GenerateFromOp(_declaration.Operators.First(x => x.ID == planStep.Item1)));
+                    chain.Add(GenerateFromOp(_context.SAS.Operators.First(x => x.ID == planStep.Item1)));
                 state = planStep.Item2;
             }
             chain.Reverse();
@@ -134,18 +130,18 @@ namespace FlashPlanner.Search
         // Note, the repetition step is left out, since it seemed unnessesary and complicated to make with this system (have to constantly retranslate)
         private List<MacroDecl> LearnFocusedMacros(int nMacros, int budget)
         {
-            var newDecl = _declaration.Copy();
+            var newDecl = _context.SAS.Copy();
             var returnMacros = new List<MacroDecl>();
 
             if (Abort) return new List<MacroDecl>();
             var queue = new FixedMaxPriorityQueue<MacroDecl>(nMacros);
-            var h = new EffectHeuristic(new SASStateSpace(newDecl, _factHashes));
+            var h = new EffectHeuristic(new SASStateSpace(new TranslatorContext(newDecl, _context.PDDL, _context.FactHashes)));
             var g = new hPath();
 
             // Explore state space
             var planner = new GreedyBFS(new hColSum(new List<IHeuristic>() { g, h }));
             planner.TimeLimit = TimeSpan.FromSeconds(budget);
-            planner.Solve(newDecl);
+            planner.Solve(new TranslatorContext(newDecl, _context.PDDL, _context.FactHashes));
             foreach (var state in planner._closedList)
             {
                 if (Abort) return new List<MacroDecl>();
@@ -153,7 +149,7 @@ namespace FlashPlanner.Search
                 if (plan.Count > 1)
                     queue.Enqueue(
                         GenerateMacroFromOperatorSteps(plan),
-                        h.GetValue(new StateMove(new SASStateSpace(new SASDecl(), _factHashes)), state.State, new List<Operator>()));
+                        h.GetValue(new StateMove(new SASStateSpace(new Models.TranslatorContext(new SASDecl(), _context.PDDL, _context.FactHashes))), state.State, new List<Operator>()));
             }
 
             // Add unique macros
@@ -187,8 +183,8 @@ namespace FlashPlanner.Search
             // Convert operator steps into pddl actions
             foreach (var id in steps)
             {
-                var step = _declaration.GetOperatorByID(id);
-                var newAct = _pddlDecl.Domain.Actions.Single(x => x.Name == step.Name).Copy();
+                var step = _context.SAS.GetOperatorByID(id);
+                var newAct = _context.PDDL.Domain.Actions.Single(x => x.Name == step.Name).Copy();
                 for (int j = 0; j < newAct.Parameters.Values.Count; j++)
                 {
                     var allRefs = newAct.FindNames(newAct.Parameters.Values[j].Name);

@@ -83,12 +83,11 @@ namespace FlashPlanner.CLI.ArgumentParsing
                 { "p", typeof(int) },
             }, (args) =>
             {
-                if (args["pddl"] is PDDLDecl pddl &&
-                    args["h"] is IHeuristic h &&
+                if (args["h"] is IHeuristic h &&
                     args["n"] is int n &&
                     args["b"] is int b &&
                     args["p"] is int p)
-                    return new GreedyBFSFocused(h, pddl, n, b, p);
+                    return new GreedyBFSFocused(h, n, b, p);
                 throw new Exception("Invalid arguments given for planner!");
             }),
             new Argument("greedy_lazy", new Dictionary<string, Type>(){

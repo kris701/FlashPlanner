@@ -1,4 +1,5 @@
 ﻿using FlashPlanner.Heuristics;
+using FlashPlanner.Models;
 using FlashPlanner.States;
 using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
@@ -84,8 +85,8 @@ namespace FlashPlanner.Search
         private List<Operator> GetInitialOperators()
         {
             var operators = _graphGenerator.GenerateReplaxedPlan(
-                new RelaxedSASStateSpace(_declaration, _factHashes),
-                _declaration.Operators
+                new RelaxedSASStateSpace(_context),
+                _context.SAS.Operators
                 );
             if (_graphGenerator.Failed)
                 throw new Exception("No relaxed plan could be found from the initial state! Could indicate the problem is unsolvable.");
@@ -200,7 +201,7 @@ namespace FlashPlanner.Search
                 {
                     var newOps = _graphGenerator.GenerateReplaxedPlan(
                         item.State,
-                        _declaration.Operators
+                        _context.SAS.Operators
                         );
                     if (!_graphGenerator.Failed)
                     {
@@ -219,7 +220,7 @@ namespace FlashPlanner.Search
             foreach (var item in allSmallest)
             {
                 if (Abort) return new List<Operator>();
-                foreach (var op in _declaration.Operators)
+                foreach (var op in _context.SAS.Operators)
                 {
                     if (!operators.Contains(op))
                     {

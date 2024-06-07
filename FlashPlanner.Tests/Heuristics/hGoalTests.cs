@@ -1,6 +1,6 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.States;
-using FlashPlanner.Tools;
+using FlashPlanner.Models;
 using PDDLSharp.Models;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
@@ -28,7 +28,7 @@ namespace FlashPlanner.Tests.Heuristics
             decl.Goal.ElementAt(0).ID = 0;
             decl.Facts = 1;
             var h = new hGoal();
-            var state = new SASStateSpace(decl, new Dictionary<int, int>());
+            var state = new SASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[0]));
             var parent = new StateMove(state);
 
             // ACT
@@ -51,7 +51,7 @@ namespace FlashPlanner.Tests.Heuristics
             decl.Init.ElementAt(0).ID = 0;
             decl.Facts = 1;
             var h = new hGoal();
-            var state = new SASStateSpace(decl, new Dictionary<int, int>());
+            var state = new SASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[0]));
             var parent = new StateMove(state);
 
             // ACT
@@ -80,7 +80,7 @@ namespace FlashPlanner.Tests.Heuristics
             decl.Init.ElementAt(1).ID = 1;
             decl.Facts = 3;
             var h = new hGoal();
-            var state = new SASStateSpace(decl, new Dictionary<int, int>());
+            var state = new SASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[0]));
             var parent = new StateMove(state);
 
             // ACT
@@ -111,7 +111,7 @@ namespace FlashPlanner.Tests.Heuristics
             decl.Init.ElementAt(2).ID = 2;
             decl.Facts = 3;
             var h = new hGoal();
-            var state = new SASStateSpace(decl, new Dictionary<int, int>());
+            var state = new SASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[0]));
             var parent = new StateMove(state);
 
             // ACT

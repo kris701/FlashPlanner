@@ -17,7 +17,7 @@ namespace FlashPlanner.Translators
         {
             bool any = true;
             bool[] covered = new bool[decl.Operators.Count];
-            var state = new RelaxedSASStateSpace(decl, new Dictionary<int, int>());
+            var state = new RelaxedSASStateSpace(new Models.TranslatorContext(decl, new PDDLSharp.Models.PDDL.PDDLDecl(), new int[decl.Facts]));
             var applicables = new List<Operator>();
             while (any)
             {

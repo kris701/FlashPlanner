@@ -1,4 +1,5 @@
-﻿using FlashPlanner.Translators;
+﻿using FlashPlanner.Models;
+using FlashPlanner.Translators;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models;
 using PDDLSharp.Models.PDDL;
@@ -21,11 +22,11 @@ namespace FlashPlanner.Tests
 {
     public class BasePlannerTests
     {
-        private static Dictionary<string, SASDecl> _declCache = new Dictionary<string, SASDecl>();
-        internal static SASDecl GetSASDecl(string domain, string problem)
+        private static Dictionary<string, TranslatorContext> _declCache = new Dictionary<string, TranslatorContext>();
+        internal static TranslatorContext GetTranslatorContext(string domain, string problem)
         {
             if (_declCache.ContainsKey(domain + problem))
-                return _declCache[domain + problem].Copy();
+                return _declCache[domain + problem];
 
             IErrorListener listener = new ErrorListener();
             IParser<INode> parser = new PDDLParser(listener);
@@ -38,23 +39,6 @@ namespace FlashPlanner.Tests
             var decl = translator.Translate(pddlDecl);
 
             _declCache.Add(domain + problem, decl);
-            return decl;
-        }
-
-        private static Dictionary<string, PDDLDecl> _pddlDeclCache = new Dictionary<string, PDDLDecl>();
-        internal static PDDLDecl GetPDDLDecl(string domain, string problem)
-        {
-            if (_pddlDeclCache.ContainsKey(domain + problem))
-                return _pddlDeclCache[domain + problem].Copy();
-
-            IErrorListener listener = new ErrorListener();
-            IParser<INode> parser = new PDDLParser(listener);
-            var decl = new PDDLDecl(
-                parser.ParseAs<DomainDecl>(new FileInfo(domain)),
-                parser.ParseAs<ProblemDecl>(new FileInfo(problem))
-                );
-
-            _pddlDeclCache.Add(domain + problem, decl);
             return decl;
         }
     }

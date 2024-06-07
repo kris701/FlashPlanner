@@ -1,6 +1,6 @@
 ﻿using FlashPlanner.Heuristics;
 using FlashPlanner.States;
-using FlashPlanner.Tools;
+using FlashPlanner.Models;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models;
 using PDDLSharp.Models.PDDL;
@@ -8,7 +8,7 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers;
 using PDDLSharp.Parsers.PDDL;
-using PDDLSharp.Tools;
+using PDDLSharp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,12 +30,12 @@ namespace FlashPlanner.Tests.Heuristics
         public void Can_GeneratehFFCorrectly_FromInitialState(string domain, string problem, int expected)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
+            var context = GetTranslatorContext(domain, problem);
             var h = new hFF();
-            var state = new SASStateSpace(decl, new Dictionary<int, int>());
+            var state = new SASStateSpace(context);
 
             // ACT
-            var newValue = h.GetValue(new StateMove(state), state, decl.Operators);
+            var newValue = h.GetValue(new StateMove(state), state, context.SAS.Operators);
 
             // ASSERT
             Assert.AreEqual(expected, newValue);
@@ -51,14 +51,14 @@ namespace FlashPlanner.Tests.Heuristics
         public void Can_GeneratehFFCorrectly_FromGoalState(string domain, string problem, int expected)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
+            var context = GetTranslatorContext(domain, problem);
             var h = new hFF();
-            var state = new SASStateSpace(decl, new Dictionary<int, int>());
-            foreach (var goal in decl.Goal)
+            var state = new SASStateSpace(context);
+            foreach (var goal in context.SAS.Goal)
                 state._state[goal.ID] = true;
 
             // ACT
-            var newValue = h.GetValue(new StateMove(state), state, decl.Operators);
+            var newValue = h.GetValue(new StateMove(state), state, context.SAS.Operators);
 
             // ASSERT
             Assert.AreEqual(expected, newValue);

@@ -1,4 +1,5 @@
-﻿using PDDLSharp.Models.PDDL;
+﻿using FlashPlanner.Models;
+using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Translators
@@ -22,6 +23,6 @@ namespace FlashPlanner.Translators
         /// </summary>
         /// <param name="from"></param>
         /// <returns></returns>
-        public SASDecl Translate(PDDLDecl from);
+        public TranslatorContext Translate(PDDLDecl from);
     }
 }

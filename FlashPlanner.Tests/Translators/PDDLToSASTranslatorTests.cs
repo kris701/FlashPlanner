@@ -47,10 +47,10 @@ namespace FlashPlanner.Tests.Translator
                 expected += decl.Problem.Objects.Objs.Count;
 
             // ACT
-            var sas = translator.Translate(decl);
+            var context = translator.Translate(decl);
 
             // ASSERT
-            Assert.AreEqual(expected, sas.DomainVariables.Count);
+            Assert.AreEqual(expected, context.SAS.DomainVariables.Count);
         }
 
         [TestMethod]
@@ -68,10 +68,10 @@ namespace FlashPlanner.Tests.Translator
             var translator = new PDDLToSASTranslator(true, false);
 
             // ACT
-            var sas = translator.Translate(decl);
+            var contex = translator.Translate(decl);
 
             // ASSERT
-            Assert.AreEqual(expected, sas.Operators.Count);
+            Assert.AreEqual(expected, contex.SAS.Operators.Count);
         }
 
         [TestMethod]
@@ -90,13 +90,13 @@ namespace FlashPlanner.Tests.Translator
             var statics = SimpleStaticPredicateDetector.FindStaticPredicates(decl);
 
             // ACT
-            var sas = translator.Translate(decl);
+            var context = translator.Translate(decl);
 
             // ASSERT
             foreach (var staticPred in statics)
             {
                 var fact = GetFactFromPredicate(staticPred);
-                foreach (var op in sas.Operators)
+                foreach (var op in context.SAS.Operators)
                 {
                     Assert.IsFalse(op.Pre.Contains(fact));
                     Assert.IsFalse(op.Add.Contains(fact));
@@ -129,10 +129,10 @@ namespace FlashPlanner.Tests.Translator
             var translator = new PDDLToSASTranslator(true, false);
 
             // ACT
-            var sas = translator.Translate(decl);
+            var context = translator.Translate(decl);
 
             // ASSERT
-            Assert.AreEqual(expected, sas.Goal.Count);
+            Assert.AreEqual(expected, context.SAS.Goal.Count);
         }
 
         [TestMethod]
@@ -150,14 +150,14 @@ namespace FlashPlanner.Tests.Translator
             var translator = new PDDLToSASTranslator(true, false);
 
             // ACT
-            var sas = translator.Translate(decl);
+            var context = translator.Translate(decl);
 
             // ASSERT
-            Assert.AreEqual(expected, sas.Init.Count);
+            Assert.AreEqual(expected, context.SAS.Init.Count);
         }
 
         [TestMethod]
-        [DataRow("../../../../Dependencies/downward-benchmarks/pathways/domain_p01.pddl", "../../../../Dependencies/downward-benchmarks/pathways/p01.pddl", 33)]
+        [DataRow("../../../../Dependencies/downward-benchmarks/pathways/domain_p01.pddl", "../../../../Dependencies/downward-benchmarks/pathways/p01.pddl", 17)]
         public void Can_Translate_ExpectedInits_NegativePreconditions(string domain, string problem, int expected)
         {
             // ARRANGE
@@ -167,10 +167,10 @@ namespace FlashPlanner.Tests.Translator
             var translator = new PDDLToSASTranslator(true, false);
 
             // ACT
-            var sas = translator.Translate(decl);
+            var context = translator.Translate(decl);
 
             // ASSERT
-            Assert.AreEqual(expected, sas.Init.Count);
+            Assert.AreEqual(expected, context.SAS.Init.Count);
         }
 
         [TestMethod]
@@ -184,12 +184,12 @@ namespace FlashPlanner.Tests.Translator
             var translator = new PDDLToSASTranslator(true, false);
 
             // ACT
-            var sas = translator.Translate(decl);
+            var context = translator.Translate(decl);
 
             // ASSERT
             foreach (var target in ops)
             {
-                var all = sas.Operators.Where(x => x.Name == target);
+                var all = context.SAS.Operators.Where(x => x.Name == target);
                 foreach (var op in all)
                 {
                     var negs = op.Pre.Where(x => x.Name.StartsWith("$neg-"));

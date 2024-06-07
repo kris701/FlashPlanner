@@ -2,7 +2,7 @@
 using PDDLSharp.Models.SAS;
 using System;
 
-namespace FlashPlanner.Tools
+namespace FlashPlanner.Models
 {
     /// <summary>
     /// Represents a state during the search, with the actual state space, what operators have been executed and the heuristic value.

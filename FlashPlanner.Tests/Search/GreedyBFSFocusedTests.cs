@@ -32,16 +32,15 @@ namespace FlashPlanner.Tests.Search
         public void Can_FindSolution_hDepth(string domain, string problem)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
-            var pddlDecl = GetPDDLDecl(domain, problem);
-            var planner = new GreedyBFSFocused(new hDepth(), pddlDecl, 2, 1, 3);
+            var context = GetTranslatorContext(domain, problem);
+            var planner = new GreedyBFSFocused(new hDepth(), 2, 1, 3);
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve(decl);
+            var result = planner.Solve(context);
 
             // ASSERT
-            Assert.IsTrue(validator.Validate(result, pddlDecl));
+            Assert.IsTrue(validator.Validate(result, context.PDDL));
         }
 
         [TestMethod]
@@ -57,16 +56,15 @@ namespace FlashPlanner.Tests.Search
         public void Can_FindSolution_hFF(string domain, string problem)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
-            var pddlDecl = GetPDDLDecl(domain, problem);
-            var planner = new GreedyBFSFocused(new hFF(), pddlDecl, 2, 1, 3);
+            var context = GetTranslatorContext(domain, problem);
+            var planner = new GreedyBFSFocused(new hFF(), 2, 1, 3);
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve(decl);
+            var result = planner.Solve(context);
 
             // ASSERT
-            Assert.IsTrue(validator.Validate(result, pddlDecl));
+            Assert.IsTrue(validator.Validate(result, context.PDDL));
         }
 
         [TestMethod]
@@ -82,16 +80,15 @@ namespace FlashPlanner.Tests.Search
         public void Can_FindSolution_hAdd(string domain, string problem)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
-            var pddlDecl = GetPDDLDecl(domain, problem);
-            var planner = new GreedyBFSFocused(new hAdd(), pddlDecl, 2, 1, 3);
+            var context = GetTranslatorContext(domain, problem);
+            var planner = new GreedyBFSFocused(new hAdd(), 2, 1, 3);
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve(decl);
+            var result = planner.Solve(context);
 
             // ASSERT
-            Assert.IsTrue(validator.Validate(result, pddlDecl));
+            Assert.IsTrue(validator.Validate(result, context.PDDL));
         }
 
         [TestMethod]
@@ -107,16 +104,15 @@ namespace FlashPlanner.Tests.Search
         public void Can_FindSolution_hGoal(string domain, string problem)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
-            var pddlDecl = GetPDDLDecl(domain, problem);
-            var planner = new GreedyBFSFocused(new hGoal(), pddlDecl, 2, 1, 3);
+            var context = GetTranslatorContext(domain, problem);
+            var planner = new GreedyBFSFocused(new hGoal(), 2, 1, 3);
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve(decl);
+            var result = planner.Solve(context);
 
             // ASSERT
-            Assert.IsTrue(validator.Validate(result, pddlDecl));
+            Assert.IsTrue(validator.Validate(result, context.PDDL));
         }
 
         [TestMethod]
@@ -132,16 +128,15 @@ namespace FlashPlanner.Tests.Search
         public void Can_FindSolution_hMax(string domain, string problem)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
-            var pddlDecl = GetPDDLDecl(domain, problem);
-            var planner = new GreedyBFSFocused(new hMax(), pddlDecl, 2, 1, 3);
+            var context = GetTranslatorContext(domain, problem);
+            var planner = new GreedyBFSFocused(new hMax(), 2, 1, 3);
             var validator = new PlanValidator();
 
             // ACT
-            var result = planner.Solve(decl);
+            var result = planner.Solve(context);
 
             // ASSERT
-            Assert.IsTrue(validator.Validate(result, pddlDecl));
+            Assert.IsTrue(validator.Validate(result, context.PDDL));
         }
     }
 }

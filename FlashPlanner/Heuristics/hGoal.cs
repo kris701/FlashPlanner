@@ -1,5 +1,5 @@
-﻿using FlashPlanner.States;
-using FlashPlanner.Tools;
+﻿using FlashPlanner.Models;
+using FlashPlanner.States;
 using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.Heuristics
@@ -12,10 +12,10 @@ namespace FlashPlanner.Heuristics
         internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
             int count = 0;
-            foreach (var goal in state.Declaration.Goal)
+            foreach (var goal in state.Context.SAS.Goal)
                 if (state.Contains(goal.ID))
                     count++;
-            return state.Declaration.Goal.Count - count;
+            return state.Context.SAS.Goal.Count - count;
         }
     }
 }

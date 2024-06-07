@@ -47,7 +47,7 @@ namespace FlashPlanner.Search
                             var newMove = GenerateNewState(stateMove, op);
                             if (!IsVisited(newMove) && !preferredQueue.Contains(newMove))
                             {
-                                var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
+                                var value = Heuristic.GetValue(stateMove, newMove.State, _context.SAS.Operators);
                                 newMove.hValue = value;
                                 QueueOpenList(stateMove, newMove, op);
                                 if (newMove.State.IsInGoal())
@@ -63,7 +63,7 @@ namespace FlashPlanner.Search
 
                     var stateMove = ExpandBestState();
 
-                    foreach (var op in _declaration.Operators)
+                    foreach (var op in _context.SAS.Operators)
                     {
                         if (Abort) break;
                         if (stateMove.State.IsApplicable(op))
@@ -71,7 +71,7 @@ namespace FlashPlanner.Search
                             var newMove = GenerateNewState(stateMove, op);
                             if (!IsVisited(newMove) && !preferredQueue.Contains(newMove))
                             {
-                                var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
+                                var value = Heuristic.GetValue(stateMove, newMove.State, _context.SAS.Operators);
                                 newMove.hValue = value;
                                 QueueOpenList(stateMove, newMove, op);
                                 if (newMove.State.IsInGoal())
@@ -88,8 +88,8 @@ namespace FlashPlanner.Search
         private List<Operator> GetPreferredOperators()
         {
             var operators = _graphGenerator.GenerateReplaxedPlan(
-                new SASStateSpace(_declaration, _factHashes),
-                _declaration.Operators
+                new SASStateSpace(_context),
+                _context.SAS.Operators
                 );
             if (_graphGenerator.Failed)
                 throw new Exception("No relaxed plan could be found from the initial state! Could indicate the problem is unsolvable.");

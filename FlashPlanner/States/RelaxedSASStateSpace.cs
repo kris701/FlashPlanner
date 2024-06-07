@@ -1,4 +1,5 @@
-﻿using PDDLSharp.Models.SAS;
+﻿using FlashPlanner.Models;
+using PDDLSharp.Models.SAS;
 
 namespace FlashPlanner.States
 {
@@ -10,9 +11,8 @@ namespace FlashPlanner.States
         /// <summary>
         /// Main initializer constructor
         /// </summary>
-        /// <param name="declaration"></param>
-        /// <param name="factHashes"></param>
-        public RelaxedSASStateSpace(SASDecl declaration, Dictionary<int, int> factHashes) : base(declaration, factHashes)
+        /// <param name="context"></param>
+        public RelaxedSASStateSpace(TranslatorContext context) : base(context)
         {
         }
 
@@ -41,7 +41,7 @@ namespace FlashPlanner.States
         {
             foreach (var add in op.Add)
                 _state[add.ID] = true;
-            SetCount();
+            Count = _state.GetTrueBits();
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace FlashPlanner.States
         {
             foreach (var add in op.Add)
                 _state[add.ID] = true;
-            SetCount();
+            Count = _state.GetTrueBits();
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace FlashPlanner.States
             foreach (var op in ops)
                 foreach (var add in op.Add)
                     _state[add.ID] = true;
-            SetCount();
+            Count = _state.GetTrueBits();
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace FlashPlanner.States
             foreach (var op in ops)
                 foreach (var add in op.Add)
                     _state[add.ID] = true;
-            SetCount();
+            Count = _state.GetTrueBits();
         }
     }
 }

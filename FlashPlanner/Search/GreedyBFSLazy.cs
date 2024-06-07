@@ -24,9 +24,9 @@ namespace FlashPlanner.Search
             while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
-                stateMove.hValue = Heuristic.GetValue(stateMove, stateMove.State, _declaration.Operators);
+                stateMove.hValue = Heuristic.GetValue(stateMove, stateMove.State, _context.SAS.Operators);
 
-                foreach (var op in _declaration.Operators)
+                foreach (var op in _context.SAS.Operators)
                 {
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))

@@ -1,7 +1,7 @@
 ﻿using FlashPlanner;
 using FlashPlanner.Heuristics;
 using FlashPlanner.HeuristicsCollections;
-using FlashPlanner.Tools;
+using FlashPlanner.Models;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.SAS;
 using System;
@@ -24,7 +24,7 @@ namespace FlashPlanner.Tests.HeuristicsCollections
             IHeuristicCollection h = new hColSum(new List<IHeuristic>());
             for (int i = 0; i < constants.Length; i++)
                 h.Heuristics.Add(new hConstant(constants[i]));
-            var parent = new StateMove(new States.SASStateSpace(new SASDecl(), new Dictionary<int, int>()));
+            var parent = new StateMove(new States.SASStateSpace(new TranslatorContext()));
 
             // ACT
             var newValue = h.GetValue(parent, null, new List<Operator>());

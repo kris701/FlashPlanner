@@ -1,6 +1,6 @@
 ﻿using FlashPlanner.Heuristics;
+using FlashPlanner.Models;
 using FlashPlanner.States;
-using FlashPlanner.Tools;
 using PDDLSharp.Models.FastDownward.Plans;
 
 namespace FlashPlanner.Search
@@ -29,10 +29,10 @@ namespace FlashPlanner.Search
             {
                 var stateMove = ExpandBestState();
                 if (_isEvaluated.TryGetValue(stateMove, out bool isEvaluated) && !isEvaluated)
-                    stateMove.hValue = Heuristic.GetValue(stateMove, stateMove.State, _declaration.Operators);
+                    stateMove.hValue = Heuristic.GetValue(stateMove, stateMove.State, _context.SAS.Operators);
 
                 bool lowerFound = false;
-                foreach (var op in _declaration.Operators)
+                foreach (var op in _context.SAS.Operators)
                 {
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
@@ -50,7 +50,7 @@ namespace FlashPlanner.Search
                             }
                             else
                             {
-                                var value = Heuristic.GetValue(stateMove, newMove.State, _declaration.Operators);
+                                var value = Heuristic.GetValue(stateMove, newMove.State, _context.SAS.Operators);
                                 if (value < stateMove.hValue)
                                     lowerFound = true;
                                 newMove.hValue = value;

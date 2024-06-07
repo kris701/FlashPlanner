@@ -1,4 +1,5 @@
 ﻿using FlashPlanner.Heuristics;
+using FlashPlanner.Models;
 using FlashPlanner.States;
 using FlashPlanner.Tools;
 using System;
@@ -22,12 +23,12 @@ namespace FlashPlanner.Tests.Heuristics
         public void Can_GeneratehMaxCorrectly_FromInitialState(string domain, string problem, int expected)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
+            var context = GetTranslatorContext(domain, problem);
             var h = new hMax();
-            var state = new SASStateSpace(decl, new Dictionary<int, int>());
+            var state = new SASStateSpace(context);
 
             // ACT
-            var newValue = h.GetValue(new StateMove(state), state, decl.Operators);
+            var newValue = h.GetValue(new StateMove(state), state, context.SAS.Operators);
 
             // ASSERT
             Assert.AreEqual(expected, newValue);
@@ -43,14 +44,14 @@ namespace FlashPlanner.Tests.Heuristics
         public void Can_GeneratehMaxCorrectly_FromGoalState(string domain, string problem, int expected)
         {
             // ARRANGE
-            var decl = GetSASDecl(domain, problem);
+            var context = GetTranslatorContext(domain, problem);
             var h = new hMax();
-            var state = new SASStateSpace(decl, new Dictionary<int, int>());
-            foreach (var goal in decl.Goal)
+            var state = new SASStateSpace(context);
+            foreach (var goal in context.SAS.Goal)
                 state._state[goal.ID] = true;
 
             // ACT
-            var newValue = h.GetValue(new StateMove(state), state, decl.Operators);
+            var newValue = h.GetValue(new StateMove(state), state, context.SAS.Operators);
 
             // ASSERT
             Assert.AreEqual(expected, newValue);
