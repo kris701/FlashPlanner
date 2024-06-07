@@ -50,7 +50,7 @@ namespace FlashPlanner.Search
             DoLog?.Invoke($"Found {_learnedMacros.Count} macros!");
             DoLog?.Invoke($"Retranslating...");
             _context.PDDL.Domain.Actions.AddRange(_learnedMacros.Select(x => x.Macro));
-            var translator = new PDDLToSASTranslator(true, false);
+            var translator = new PDDLToSASTranslator(false);
             translator.TimeLimit = TimeSpan.FromSeconds(1000);
             _context = translator.Translate(_context.PDDL);
             DoLog?.Invoke($"Searching...");

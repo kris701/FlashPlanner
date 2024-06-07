@@ -2,6 +2,7 @@
 using FlashPlanner.Models.SAS;
 using FlashPlanner.Translators.Exceptions;
 using FlashPlanner.Translators.Normalizers;
+using FlashPlanner.Translators.Phases;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
@@ -25,10 +26,6 @@ namespace FlashPlanner.Translators
         public override event LogEventHandler? DoLog;
 
         /// <summary>
-        /// A bool representing if statics should be removed from the resulting <seealso cref="SASDecl"/>
-        /// </summary>
-        public bool RemoveStaticsFromOutput { get; set; } = false;
-        /// <summary>
         /// If a (not (= ?x ?y)) should be added to all actions.
         /// </summary>
         public bool AssumeNoEqualParameters { get; set; } = false;
@@ -42,21 +39,15 @@ namespace FlashPlanner.Translators
         public int Operators { get; internal set; }
 
         private ParametizedGrounder? _grounder;
-        private NodeNormalizer? _deconstructor;
-        private Dictionary<string, List<Fact>> _factSet = new Dictionary<string, List<Fact>>();
-        private int _factID = 0;
-        private int _opID = 0;
-        private Dictionary<string, List<Fact>> _negativeFacts = new Dictionary<string, List<Fact>>();
-        private readonly string _negatedPrefix = "$neg-";
+        private NodeNormalizer? _normalizer;
+        private ITranslatorPhase? _currentPhase;
 
         /// <summary>
         /// Main constructor
         /// </summary>
-        /// <param name="removeStaticsFromOutput"></param>
         /// <param name="assumeNoEqualParameters"></param>
-        public PDDLToSASTranslator(bool removeStaticsFromOutput, bool assumeNoEqualParameters)
+        public PDDLToSASTranslator(bool assumeNoEqualParameters)
         {
-            RemoveStaticsFromOutput = removeStaticsFromOutput;
             AssumeNoEqualParameters = assumeNoEqualParameters;
         }
 
@@ -66,7 +57,37 @@ namespace FlashPlanner.Translators
         public override void DoAbort()
         {
             _grounder?.Abort();
-            _deconstructor?.Abort();
+            _normalizer?.Abort();
+            if (_currentPhase != null)
+                _currentPhase.Abort = true;
+        }
+
+        private List<ITranslatorPhase> GetTranslatorPhases(PDDLDecl from)
+        {
+            _grounder = new ParametizedGrounder(from);
+            _grounder.RemoveStaticsFromOutput = true;
+            _normalizer = new NodeNormalizer(_grounder);
+
+            var phases = new List<ITranslatorPhase>();
+            if (AssumeNoEqualParameters)
+                phases.Add(new ForceNonEqualParametersPhase(DoLog));
+            phases.Add(new ContextualizationPhase(DoLog));
+            phases.Add(new EnsureNoDuplicateExpressionsPhase(DoLog));
+            phases.Add(new ExtractInitialFactsPhase(DoLog, _grounder, _normalizer));
+            phases.Add(new ExtractGoalFactsPhase(DoLog, _grounder, _normalizer));
+            phases.Add(new OperatorGroundingPhase(DoLog, _grounder, _normalizer));
+            phases.Add(new ProcessNegativeFactsPhase(DoLog));
+            phases.Add(new NormalizeOperatorIDsPhase(DoLog));
+            phases.Add(new NormalizeFactIDsPhase(DoLog));
+            phases.Add(new ResetOperatorsPhase(DoLog));
+            phases.Add(new RemoveUnreachableOperatorsPhase(DoLog));
+            phases.Add(new CheckIfClearlyUnsolvablePhase(DoLog));
+            phases.Add(new NormalizeOperatorIDsPhase(DoLog));
+            phases.Add(new NormalizeFactIDsPhase(DoLog));
+            phases.Add(new ResetOperatorsPhase(DoLog));
+            phases.Add(new GenerateFactHashesPhase(DoLog));
+
+            return phases;
         }
 
         /// <summary>
@@ -78,455 +99,21 @@ namespace FlashPlanner.Translators
         {
             Start();
 
-            if (AssumeNoEqualParameters)
-                from.Domain.Actions = InsertNonEqualsInActions(from.Domain.Actions);
-
-            if (!from.IsContextualised)
-            {
-                DoLog?.Invoke($"Contextualizing...");
-                var listener = new ErrorListener();
-                var contextualiser = new PDDLContextualiser(listener);
-                contextualiser.Contexturalise(from);
-            }
-
-            DoLog?.Invoke($"Ensureing that action effects and preconditions contains no duplicates...");
-            EnsureNoDuplicatesInActions(from);
-
             DoLog?.Invoke($"Checking if task can be translated...");
             CheckIfValid(from);
 
-            var operators = new List<Operator>();
-            var goals = new List<Fact>();
-            var inits = new List<Fact>();
-
-            var grounder = new ParametizedGrounder(from);
-            _grounder = grounder;
-            grounder.RemoveStaticsFromOutput = RemoveStaticsFromOutput;
-            var deconstructor = new NodeNormalizer(grounder);
-            _deconstructor = deconstructor;
-            _factID = 0;
-            _factSet = new Dictionary<string, List<Fact>>();
-            _negativeFacts = new Dictionary<string, List<Fact>>();
-
-            if (from.Domain.Predicates != null)
+            var phases = GetTranslatorPhases(from);
+            var result = new TranslatorContext(new SASDecl(), from, new int[0]);
+            foreach(var phase in phases)
             {
-                foreach (var pred in from.Domain.Predicates.Predicates)
-                {
-                    _factSet.Add(pred.Name, new List<Fact>());
-                    _negativeFacts.Add(pred.Name, new List<Fact>());
-                }
+                if (Abort) return new TranslatorContext();
+                _currentPhase = phase;
+                result = phase.ExecutePhase(result);
             }
-            DoLog?.Invoke($"Fact translation dictionary contains {_factSet.Count} keys");
-
-            _opID = 0;
-
-            // Init
-            if (from.Problem.Init != null)
-                inits = ExtractInitFacts(from.Problem.Init.Predicates, deconstructor, from);
-            if (Abort) return new TranslatorContext();
-
-            // Goal
-            if (from.Problem.Goal != null)
-                goals = ExtractGoalFacts(from.Problem.Goal.GoalExp, deconstructor);
-            if (Abort) return new TranslatorContext();
-
-            // Operators
-            DoLog?.Invoke($"Normalizing actions...");
-            var normalizedActions = NormalizeActions(from.Domain.Actions, deconstructor);
-            DoLog?.Invoke($"A total of {normalizedActions.Count} normalized actions to ground.");
-            DoLog?.Invoke($"Grounding operators...");
-            operators = GetOperators(normalizedActions, grounder);
-            if (Abort) return new TranslatorContext();
-
-            // Handle negative preconditions, if there where any
-            if (_negativeFacts.Any(x => x.Value.Count > 0))
-            {
-                DoLog?.Invoke($"Task contains negative facts! Ensuring operators upholds them...");
-                var negInits = ProcessNegativeFactsInOperators(operators);
-                inits = ProcessNegativeFactsInInit(negInits, inits);
-            }
-
-            var result = new SASDecl(operators, goals.ToHashSet(), inits.ToHashSet(), Facts);
-
-            // Only use operators that is reachable in a relaxed planning graph
-            var reachability = new ReachabilityChecker();
-            DoLog?.Invoke($"Checking if all {result.Operators.Count} operators are reachable.");
-            var opsNow = reachability.GetPotentiallyReachableOperators(result);
-            DoLog?.Invoke($"{result.Operators.Count - opsNow.Count} operators removed by not being reachable.");
-            result = new SASDecl(opsNow, goals.ToHashSet(), inits.ToHashSet(), Facts);
-
-            // Check if operators can satisfy goal condition
-            foreach (var goal in goals)
-            {
-                if (!result.Operators.Any(x => x.Add.Contains(goal)))
-                {
-                    result = new SASDecl(new List<Operator>(), goals.ToHashSet(), inits.ToHashSet(), Facts);
-                    DoLog?.Invoke($"Goal fact '{goal}' cannot be reached! Removing all operators");
-                    break;
-                }
-            }
-
-            DoLog?.Invoke($"Normalizing remaining operator IDs...");
-            RecountOperators(result.Operators);
-            DoLog?.Invoke($"Normalizing remaining fact IDs...");
-            RecountFacts(result);
-            DoLog?.Invoke($"Recreating SAS declaration...");
-            var resetOps = new List<Operator>();
-            foreach (var op in result.Operators)
-            {
-                var reset = new Operator(op.Name, op.Arguments, op.Pre, op.Add, op.Del, Facts);
-                reset.ID = op.ID;
-                resetOps.Add(reset);
-            }
-            result = new SASDecl(resetOps, goals.ToHashSet(), inits.ToHashSet(), Facts);
-
+            Operators = result.SAS.Operators.Count;
+            Facts = result.SAS.Facts;
             Stop();
-            return new TranslatorContext(result, from, GenerateFactHashes(result));
-        }
-
-        private int[] GenerateFactHashes(SASDecl decl)
-        {
-            var factHashes = new int[decl.Facts];
-            foreach (var fact in decl.Init)
-                if (factHashes[fact.ID] == 0)
-                    factHashes[fact.ID] = Hash32shiftmult(fact.ID);
-            foreach (var fact in decl.Goal)
-                if (factHashes[fact.ID] == 0)
-                    factHashes[fact.ID] = Hash32shiftmult(fact.ID);
-            foreach (var op in decl.Operators)
-            {
-                var all = new List<Fact>(op.Pre);
-                all.AddRange(op.Add);
-                all.AddRange(op.Del);
-                foreach (var fact in all)
-                    if (factHashes[fact.ID] == 0)
-                        factHashes[fact.ID] = Hash32shiftmult(fact.ID);
-            }
-            return factHashes;
-        }
-
-        // https://gist.github.com/badboy/6267743
-        private int Hash32shiftmult(int key)
-        {
-            int c2 = 0x27d4eb2d; // a prime or an odd constant
-            key = (key ^ 61) ^ (key >>> 16);
-            key = key + (key << 3);
-            key = key ^ (key >>> 4);
-            key = key * c2;
-            key = key ^ (key >>> 15);
-            return key;
-        }
-
-        private void EnsureNoDuplicatesInActions(PDDLDecl decl)
-        {
-            foreach (var act in decl.Domain.Actions)
-            {
-                act.EnsureAnd();
-                if (act.Preconditions is AndExp pres)
-                    pres.Children = pres.Children.Distinct().ToList();
-                if (act.Effects is AndExp effs)
-                    effs.Children = effs.Children.Distinct().ToList();
-            }
-        }
-
-        private void RecountOperators(List<Operator> ops)
-        {
-            int count = 0;
-            foreach (var op in ops)
-                op.ID = count++;
-            Operators = ops.Count;
-        }
-
-        private void RecountFacts(SASDecl decl)
-        {
-            int count = 0;
-            var check = new List<Fact>();
-            foreach (var op in decl.Operators)
-            {
-                check.AddRange(op.Pre);
-                check.AddRange(op.Add);
-                check.AddRange(op.Del);
-            }
-            check.AddRange(decl.Init);
-            check.AddRange(decl.Goal);
-            foreach (var fact in check)
-                fact.ID = -1;
-            foreach (var fact in check)
-            {
-                if (fact.ID != -1)
-                    continue;
-                fact.ID = count;
-                foreach (var fact2 in check)
-                {
-                    if (fact2.ContentEquals(fact))
-                        fact2.ID = count;
-                }
-                count++;
-            }
-            decl.Facts = count;
-            Facts = count;
-        }
-
-        private List<ActionDecl> InsertNonEqualsInActions(List<ActionDecl> actions)
-        {
-            foreach (var action in actions)
-            {
-                action.EnsureAnd();
-                if (action.Preconditions is AndExp and)
-                    for (int i = 0; i < action.Parameters.Values.Count; i++)
-                        for (int j = i + 1; j < action.Parameters.Values.Count; j++)
-                            and.Add(GenerateNotPredicateEq(action.Parameters.Values[i], action.Parameters.Values[j], and));
-            }
-            return actions;
-        }
-
-        private NotExp GenerateNotPredicateEq(NameExp x, NameExp y, INode parent)
-        {
-            var args = new List<NameExp>()
-            {
-                x, y
-            };
-            var notNode = new NotExp(parent);
-            notNode.Child = new PredicateExp(notNode, "=", args);
-            return notNode;
-        }
-
-        private List<Fact> ProcessNegativeFactsInOperators(List<Operator> operators)
-        {
-            var negInits = new List<Fact>();
-            // Adds negated facts to all ops
-            foreach (var fact in _negativeFacts.Keys)
-            {
-                if (_negativeFacts[fact].Count == 0)
-                    continue;
-                for (int i = 0; i < operators.Count; i++)
-                {
-                    var negDels = operators[i].Add.Where(x => x.Name == fact).ToList();
-                    var negAdds = operators[i].Del.Where(x => x.Name == fact).ToList();
-                    negInits.AddRange(operators[i].Pre.Where(x => x.Name.Contains(_negatedPrefix) && x.Name.Replace(_negatedPrefix, "") == fact).ToHashSet());
-
-                    if (negDels.Count == 0 && negAdds.Count == 0)
-                        continue;
-
-                    var adds = operators[i].Add.ToHashSet();
-                    foreach (var nFact in negAdds)
-                    {
-                        var negated = GetNegatedOf(nFact);
-                        negInits.Add(negated);
-                        adds.Add(negated);
-                    }
-                    var dels = operators[i].Del.ToHashSet();
-                    foreach (var nFact in negDels)
-                    {
-                        var negated = GetNegatedOf(nFact);
-                        negInits.Add(negated);
-                        dels.Add(negated);
-                    }
-
-                    if (adds.Count != operators[i].Add.Length || dels.Count != operators[i].Del.Length)
-                    {
-                        var id = operators[i].ID;
-                        operators[i] = new Operator(
-                            operators[i].Name,
-                            operators[i].Arguments,
-                            operators[i].Pre,
-                            adds.ToArray(),
-                            dels.ToArray(),
-                            Facts);
-                        operators[i].ID = id;
-                    }
-                }
-                if (Abort) return new List<Fact>();
-            }
-            return negInits;
-        }
-
-        private List<Fact> ProcessNegativeFactsInInit(List<Fact> negInits, List<Fact> init)
-        {
-            foreach (var fact in negInits)
-            {
-                var findTrue = new Fact(fact.Name.Replace(_negatedPrefix, ""), fact.Arguments);
-                if (!init.Any(x => x.ContentEquals(findTrue)) && !init.Any(x => x.ContentEquals(fact)))
-                    init.Add(fact);
-                if (Abort) return new List<Fact>();
-            }
-            return init;
-        }
-
-        private Dictionary<bool, List<Fact>> ExtractFactsFromExp(IExp exp, bool possitive = true)
-        {
-            var facts = new Dictionary<bool, List<Fact>>();
-            facts.Add(true, new List<Fact>());
-            facts.Add(false, new List<Fact>());
-
-            switch (exp)
-            {
-                case EmptyExp: break;
-                case PredicateExp pred: facts[possitive].Add(GetFactFromPredicate(pred)); break;
-                case NotExp not: facts = MergeDictionaries(facts, ExtractFactsFromExp(not.Child, !possitive)); break;
-                case AndExp and:
-                    foreach (var child in and.Children)
-                        facts = MergeDictionaries(facts, ExtractFactsFromExp(child, possitive));
-                    break;
-                default:
-                    throw new ArgumentException($"Cannot translate node type '{exp.GetType().Name}'");
-            }
-
-            return facts;
-        }
-
-        private Dictionary<bool, List<Fact>> MergeDictionaries(Dictionary<bool, List<Fact>> dict1, Dictionary<bool, List<Fact>> dict2)
-        {
-            var resultDict = new Dictionary<bool, List<Fact>>();
-            foreach (var key in dict1.Keys)
-                resultDict.Add(key, dict1[key]);
-            foreach (var key in dict2.Keys)
-                resultDict[key].AddRange(dict2[key]);
-
-            return resultDict;
-        }
-
-        private List<Fact> ExtractInitFacts(List<IExp> inits, NodeNormalizer deconstructor, PDDLDecl decl)
-        {
-            var initFacts = new List<Fact>();
-            var statics = SimpleStaticPredicateDetector.FindStaticPredicates(decl);
-
-            var deconstructed = new List<IExp>();
-            foreach (var exp in inits)
-                deconstructed.Add(deconstructor.Deconstruct(exp));
-
-            foreach (var init in deconstructed)
-                if (init is PredicateExp pred)
-                    initFacts.Add(GetFactFromPredicate(pred));
-
-            initFacts.RemoveAll(x => statics.Any(y => y.Name == x.Name));
-
-            return initFacts;
-        }
-
-        private List<Fact> ExtractGoalFacts(IExp goalExp, NodeNormalizer deconstructor)
-        {
-            var deconstructed = deconstructor.Deconstruct(EnsureAnd(goalExp));
-            if (deconstructed.FindTypes<OrExp>().Count > 0)
-                throw new TranslatorException("Translator does not support or expressions in goal declaration!");
-            var goals = ExtractFactsFromExp(
-                deconstructed);
-            var goal = goals[true];
-            foreach (var fact in goals[false])
-                goal.Add(GetNegatedOf(fact));
-            return goal;
-        }
-
-        private List<ActionDecl> NormalizeActions(List<ActionDecl> actions, NodeNormalizer deconstructor)
-        {
-            var normalizedActions = new List<ActionDecl>();
-            int count = 1;
-            foreach (var action in actions)
-            {
-                DoLog?.Invoke($"Normalizing action '{action.Name}' [{count++} of {actions.Count}]");
-                action.EnsureAnd();
-                if (Abort) return new List<ActionDecl>();
-                normalizedActions.AddRange(deconstructor.DeconstructAction(action));
-            }
-            return normalizedActions;
-        }
-
-        private List<Operator> GetOperators(List<ActionDecl> actions, ParametizedGrounder grounder)
-        {
-            var operators = new List<Operator>();
-            foreach (var action in actions)
-            {
-                if (Abort) return new List<Operator>();
-                var newActs = grounder.Ground(action).Cast<ActionDecl>();
-                foreach (var act in newActs)
-                {
-                    if (Abort) return new List<Operator>();
-
-                    var preFacts = ExtractFactsFromExp(act.Preconditions);
-                    if (preFacts[true].Intersect(preFacts[false]).Any())
-                        continue;
-                    var pre = preFacts[true];
-
-                    var effFacts = ExtractFactsFromExp(act.Effects);
-                    var add = effFacts[true];
-                    var del = effFacts[false];
-
-                    if (preFacts[false].Count > 0)
-                    {
-                        foreach (var fact in preFacts[false])
-                        {
-                            if (_negativeFacts[fact.Name].Count == 0)
-                                _negativeFacts[fact.Name].Add(fact);
-
-                            var nFact = GetNegatedOf(fact);
-                            pre.Add(nFact);
-
-                            bool addToAdd = false;
-                            bool addToDel = false;
-                            if (add.Contains(fact))
-                                addToDel = true;
-                            if (del.Contains(fact))
-                                addToAdd = true;
-
-                            if (addToAdd)
-                                add.Add(nFact);
-                            if (addToDel)
-                                del.Add(nFact);
-                        }
-                    }
-
-                    var args = new List<string>();
-                    foreach (var arg in act.Parameters.Values)
-                        args.Add(arg.Name);
-
-                    var newOp = new Operator(act.Name, args.ToArray(), pre.Distinct().ToArray(), add.Distinct().ToArray(), del.Distinct().ToArray(), Facts);
-                    newOp.ID = _opID++;
-                    Operators++;
-                    operators.Add(newOp);
-                }
-            }
-            return operators;
-        }
-
-        private IExp EnsureAnd(IExp exp)
-        {
-            if (exp is AndExp)
-                return exp;
-            return new AndExp(new List<IExp>() { exp });
-        }
-
-        private Fact GetFactFromPredicate(PredicateExp pred)
-        {
-            var name = pred.Name;
-            var args = new List<string>();
-            foreach (var arg in pred.Arguments)
-                args.Add(arg.Name);
-            var newFact = new Fact(name, args.ToArray());
-            var find = _factSet[name].FirstOrDefault(x => x.ContentEquals(newFact));
-            if (find == null)
-            {
-                newFact.ID = _factID++;
-                Facts++;
-                _factSet[name].Add(newFact);
-            }
-            else
-                newFact.ID = find.ID;
-            return newFact;
-        }
-
-        private Fact GetNegatedOf(Fact fact)
-        {
-            var newFact = new Fact($"{_negatedPrefix}{fact.Name}", fact.Arguments);
-            var find = _negativeFacts[fact.Name].FirstOrDefault(x => x.ContentEquals(newFact));
-            if (find == null)
-            {
-                newFact.ID = _factID++;
-                Facts++;
-                _negativeFacts[fact.Name].Add(newFact);
-            }
-            else
-                newFact.ID = find.ID;
-            return newFact;
+            return result;
         }
 
         private void CheckIfValid(PDDLDecl decl)

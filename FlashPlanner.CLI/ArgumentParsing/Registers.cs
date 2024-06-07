@@ -13,7 +13,7 @@ namespace FlashPlanner.CLI.ArgumentParsing
             {
                 return new AliasArgument(
                     "greedy(hFF())",
-                    "primary(true,false)");
+                    "primary(false)");
             }),
         };
 
@@ -21,12 +21,11 @@ namespace FlashPlanner.CLI.ArgumentParsing
         {
             new Argument("primary", new Dictionary<string, Type>()
             {
-                { "removeStatics", typeof(bool) },
                 { "noEqualsParams", typeof(bool) },
             }, (args) =>
             {
-                if (args["removeStatics"] is bool remove && args["noEqualsParams"] is bool noEquals)
-                    return new PDDLToSASTranslator(remove, noEquals);
+                if (args["noEqualsParams"] is bool noEquals)
+                    return new PDDLToSASTranslator(noEquals);
                 throw new Exception("Invalid arguments given for translator!");
             })
         };

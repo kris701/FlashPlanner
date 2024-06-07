@@ -11,7 +11,7 @@ namespace FlashPlanner.CLI
         [Option("search", Required = false, HelpText = "What search algorithm to use")]
         public string SearchOption { get; set; } = "";
         [Option("translator", Required = false, HelpText = "What translator to use")]
-        public string TranslatorOption { get; set; } = "primary(true,false)";
+        public string TranslatorOption { get; set; } = "primary(false)";
         [Option("alias", Required = false, HelpText = "An alias that represents a configuration for the search and translation")]
         public string AliasOption { get; set; } = "";
 

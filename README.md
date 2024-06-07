@@ -74,7 +74,7 @@ The options are:
 To find a plan using the Greedy Best First Search engine:
 ```csharp
 var decl = new PDDLDecl(...);
-var translator = new PDDLToSASTranslator(true);
+var translator = new PDDLToSASTranslator(false);
 var sas = translator.Translate(decl);
 var greedyBFS = new GreedyBFS(new hFF());
 ar plan = greedyBFS.Solve(sas);

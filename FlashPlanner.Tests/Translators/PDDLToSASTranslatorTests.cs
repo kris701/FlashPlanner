@@ -39,7 +39,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator(true, false);
+            var translator = new PDDLToSASTranslator(false);
 
             // ACT
             var contex = translator.Translate(decl);
@@ -60,7 +60,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator(true, false);
+            var translator = new PDDLToSASTranslator(false);
             var statics = SimpleStaticPredicateDetector.FindStaticPredicates(decl);
 
             // ACT
@@ -72,9 +72,9 @@ namespace FlashPlanner.Tests.Translator
                 var fact = GetFactFromPredicate(staticPred);
                 foreach (var op in context.SAS.Operators)
                 {
-                    Assert.IsFalse(op.Pre.Contains(fact));
-                    Assert.IsFalse(op.Add.Contains(fact));
-                    Assert.IsFalse(op.Del.Contains(fact));
+                    Assert.IsFalse(op.Pre.Any(x => x.ContentEquals(fact)));
+                    Assert.IsFalse(op.Add.Any(x => x.ContentEquals(fact)));
+                    Assert.IsFalse(op.Del.Any(x => x.ContentEquals(fact)));
                 }
             }
         }
@@ -100,7 +100,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator(true, false);
+            var translator = new PDDLToSASTranslator(false);
 
             // ACT
             var context = translator.Translate(decl);
@@ -121,7 +121,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator(true, false);
+            var translator = new PDDLToSASTranslator(false);
 
             // ACT
             var context = translator.Translate(decl);
@@ -138,7 +138,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator(true, false);
+            var translator = new PDDLToSASTranslator(false);
 
             // ACT
             var context = translator.Translate(decl);
@@ -155,7 +155,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator(true, false);
+            var translator = new PDDLToSASTranslator(false);
 
             // ACT
             var context = translator.Translate(decl);
@@ -186,7 +186,7 @@ namespace FlashPlanner.Tests.Translator
             var listener = new ErrorListener();
             var parser = new PDDLParser(listener);
             var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
-            var translator = new PDDLToSASTranslator(true, false);
+            var translator = new PDDLToSASTranslator(false);
             translator.TimeLimit = TimeSpan.FromMilliseconds(1);
 
             // ACT

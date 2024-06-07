@@ -10,7 +10,7 @@ namespace FlashPlanner.Models.SAS
         /// <summary>
         /// ID of this fact
         /// </summary>
-        public int ID = -1;
+        public int ID = 0;
         /// <summary>
         /// Name of this fact 
         /// </summary>
