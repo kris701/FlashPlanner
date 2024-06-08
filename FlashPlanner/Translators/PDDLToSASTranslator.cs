@@ -25,14 +25,6 @@ namespace FlashPlanner.Translators
         /// If a (not (= ?x ?y)) should be added to all actions.
         /// </summary>
         public bool AssumeNoEqualParameters { get; set; } = false;
-        /// <summary>
-        /// How many facts have been created during the translation
-        /// </summary>
-        public int Facts { get; internal set; }
-        /// <summary>
-        /// How many operators have been created during the translation
-        /// </summary>
-        public int Operators { get; internal set; }
 
         private ParametizedGrounder? _grounder;
         private NodeNormalizer? _normalizer;
@@ -107,8 +99,6 @@ namespace FlashPlanner.Translators
                 _currentPhase = phase;
                 result = phase.ExecutePhase(result);
             }
-            Operators = result.SAS.Operators.Count;
-            Facts = result.SAS.Facts;
             Stop();
             return result;
         }

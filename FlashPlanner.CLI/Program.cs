@@ -93,19 +93,9 @@ namespace FlashPlanner.CLI
             translator.DoLog += OnLog;
             var watch = new Stopwatch();
 
-            var logTimer = new System.Timers.Timer();
-            logTimer.Interval = 1000;
-            logTimer.AutoReset = true;
-            logTimer.Elapsed += (s, e) =>
-            {
-                WriteLineColor($"\t\t[{Math.Round(watch.Elapsed.TotalSeconds, 0)}s] Operators {translator.Operators} ({GetItemPrSecond(translator.Operators, watch.Elapsed)}/s). Facts {translator.Facts} ({GetItemPrSecond(translator.Facts, watch.Elapsed)}/s)", ConsoleColor.DarkGray);
-            };
-            logTimer.Start();
             watch.Start();
-
             WriteLineColor("\tTranslating...");
             var context = translator.Translate(pddlDecl);
-            logTimer.Stop();
             watch.Stop();
 
             switch (translator.Code)

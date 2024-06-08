@@ -6,6 +6,7 @@ using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Translators.Grounders;
+using System.Diagnostics;
 
 namespace FlashPlanner.Translators.Phases
 {
@@ -53,7 +54,9 @@ namespace FlashPlanner.Translators.Phases
             var operators = new List<Operator>();
             foreach (var action in actions)
             {
+                DoLog?.Invoke($"Grounding action '{action.Name}'...");
                 var newActs = Grounder.Ground(action).Cast<ActionDecl>();
+                DoLog?.Invoke($"Action '{action.Name}' created {newActs.Count()} operators.");
                 if (Abort) return new List<Operator>();
                 foreach (var act in newActs)
                 {
@@ -96,6 +99,7 @@ namespace FlashPlanner.Translators.Phases
                     operators.Add(newOp);
                 }
             }
+
             return operators;
         }
     }

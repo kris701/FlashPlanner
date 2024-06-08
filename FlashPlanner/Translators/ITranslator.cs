@@ -9,15 +9,6 @@ namespace FlashPlanner.Translators
     public interface ITranslator : ILimitedComponent
     {
         /// <summary>
-        /// How many facts have been created during the translation
-        /// </summary>
-        public int Facts { get; }
-        /// <summary>
-        /// How many operators have been created during the translation
-        /// </summary>
-        public int Operators { get; }
-
-        /// <summary>
         /// Convert a <seealso cref="PDDLDecl"/> into a <seealso cref="TranslatorContext"/>
         /// </summary>
         /// <param name="from"></param>
