@@ -1,16 +1,10 @@
-﻿using FlashPlanner.Models.SAS;
-using FlashPlanner.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FlashPlanner.Heuristics;
+﻿using FlashPlanner.Models;
+using FlashPlanner.Models.SAS;
 using FlashPlanner.Translators.Exceptions;
-using FlashPlanner.Translators.Normalizers;
-using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Models.PDDL;
 using FlashPlanner.Translators.Helpers;
+using FlashPlanner.Translators.Normalizers;
+using PDDLSharp.Models.PDDL;
+using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Translators.Grounders;
 
 namespace FlashPlanner.Translators.Phases
@@ -35,7 +29,7 @@ namespace FlashPlanner.Translators.Phases
             if (from.PDDL.Problem.Goal != null)
                 goals = ExtractGoalFacts(from.PDDL.Problem.Goal.GoalExp);
             DoLog?.Invoke($"A total of {goals.Count} goal facts have been extracted.");
-            from.SAS = new SASDecl(from.SAS.Operators, goals, from.SAS.Init, from.SAS.Facts);
+            from.SAS = new SASDecl(from.SAS.Operators, goals.ToArray(), from.SAS.Init, from.SAS.Facts);
             return from;
         }
 

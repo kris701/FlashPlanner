@@ -1,13 +1,6 @@
 ﻿using FlashPlanner.Models;
 using FlashPlanner.Models.SAS;
 using FlashPlanner.Translators.Helpers;
-using FlashPlanner.Translators.Normalizers;
-using PDDLSharp.Translators.Grounders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FlashPlanner.Translators.Phases
 {
@@ -28,7 +21,7 @@ namespace FlashPlanner.Translators.Phases
                 DoLog?.Invoke($"Negative facts detected! Processing...");
                 var negInits = ProcessNegativeFactsInOperators(from.SAS.Operators, negativeFacts);
                 var inits = ProcessNegativeFactsInInit(negInits, from.SAS.Init);
-                from.SAS = new SASDecl(from.SAS.Operators, from.SAS.Goal, inits, from.SAS.Facts);
+                from.SAS = new SASDecl(from.SAS.Operators, from.SAS.Goal, inits.ToArray(), from.SAS.Facts);
             }
 
             return from;
@@ -38,7 +31,7 @@ namespace FlashPlanner.Translators.Phases
         {
             var factsNames = new HashSet<string>();
 
-            foreach(var fact in decl.Init)
+            foreach (var fact in decl.Init)
                 if (fact.Name.StartsWith(FactHelpers.NegatedPrefix))
                     factsNames.Add(fact.Name);
             foreach (var fact in decl.Goal)
@@ -59,7 +52,7 @@ namespace FlashPlanner.Translators.Phases
 
             var negFacts = new List<string>();
             foreach (var name in factsNames)
-                negFacts.Add(name.Replace(FactHelpers.NegatedPrefix,""));
+                negFacts.Add(name.Replace(FactHelpers.NegatedPrefix, ""));
 
             return negFacts;
         }
@@ -113,15 +106,16 @@ namespace FlashPlanner.Translators.Phases
             return negInits;
         }
 
-        private HashSet<Fact> ProcessNegativeFactsInInit(List<Fact> negInits, HashSet<Fact> init)
+        private List<Fact> ProcessNegativeFactsInInit(List<Fact> negInits, Fact[] init)
         {
+            var newInits = new HashSet<Fact>(init);
             foreach (var fact in negInits)
             {
                 var findTrue = new Fact(fact.Name.Replace(FactHelpers.NegatedPrefix, ""), fact.Arguments);
                 if (!init.Any(x => x.ContentEquals(findTrue)) && !init.Any(x => x.ContentEquals(fact)))
-                    init.Add(fact);
+                    newInits.Add(fact);
             }
-            return init;
+            return newInits.ToList();
         }
     }
 }

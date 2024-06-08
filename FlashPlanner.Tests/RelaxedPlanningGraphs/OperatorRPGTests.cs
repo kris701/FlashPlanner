@@ -130,7 +130,7 @@ namespace FlashPlanner.Tests.RelaxedPlanningGraphs
             var graph = generator.GenerateRelaxedPlanningGraph(state, context.SAS.Operators);
 
             // ASSERT
-            Assert.AreEqual(context.SAS.Init.Count, graph[0].Propositions.Count);
+            Assert.AreEqual(context.SAS.Init.Length, graph[0].Propositions.Count);
         }
 
         [TestMethod]
@@ -140,8 +140,8 @@ namespace FlashPlanner.Tests.RelaxedPlanningGraphs
             var goal = new HashSet<Fact>();
             goal.Add(new Fact("abc"));
             goal.ElementAt(0).ID = 0;
-            var decl = new SASDecl(new List<Operator>(), goal, new HashSet<Fact>(), 1);
-            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[1]));
+            var decl = new SASDecl(new List<Operator>(), goal.ToArray(), new Fact[0], 1);
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[1], new Dictionary<int, List<Operator>>()));
             var generator = new OperatorRPG();
 
             // ACT
@@ -158,8 +158,8 @@ namespace FlashPlanner.Tests.RelaxedPlanningGraphs
             var goal = new HashSet<Fact>();
             goal.Add(new Fact("abc"));
             goal.ElementAt(0).ID = 0;
-            var decl = new SASDecl(new List<Operator>(), goal, new HashSet<Fact>(), 2);
-            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[2]));
+            var decl = new SASDecl(new List<Operator>(), goal.ToArray(), new Fact[0], 2);
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[2], new Dictionary<int, List<Operator>>()));
 
             var actions = new List<Operator>()
             {
@@ -187,8 +187,8 @@ namespace FlashPlanner.Tests.RelaxedPlanningGraphs
             var goal = new HashSet<Fact>();
             goal.Add(new Fact("abc"));
             goal.ElementAt(0).ID = 0;
-            var decl = new SASDecl(new List<Operator>(), goal, new HashSet<Fact>(), 1);
-            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[1]));
+            var decl = new SASDecl(new List<Operator>(), goal.ToArray(), new Fact[0], 1);
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[1], new Dictionary<int, List<Operator>>()));
 
             var operators = new List<Operator>()
             {

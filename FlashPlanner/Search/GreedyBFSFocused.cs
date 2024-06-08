@@ -58,7 +58,7 @@ namespace FlashPlanner.Search
             while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
-                foreach (var op in _context.SAS.Operators)
+                foreach (var op in _context.ApplicabilityGraph[stateMove.Operator])
                 {
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
@@ -85,8 +85,10 @@ namespace FlashPlanner.Search
 
             while (_planMap.ContainsKey(state))
             {
-                var planStep = _planMap[state];
-                var macroOp = macroOps.FirstOrDefault(x => x.ID == planStep.Item1);
+                if (state.Operator == -1)
+                    break;
+                var previousState = _planMap[state];
+                var macroOp = macroOps.FirstOrDefault(x => x.ID == state.Operator);
                 if (macroOp != null)
                 {
                     var macro = _learnedMacros.First(x => x.Macro.Name == macroOp.Name);
@@ -102,8 +104,8 @@ namespace FlashPlanner.Search
                     }
                 }
                 else
-                    chain.Add(GenerateFromOp(_context.SAS.Operators.First(x => x.ID == planStep.Item1)));
-                state = planStep.Item2;
+                    chain.Add(GenerateFromOp(_context.SAS.Operators.First(x => x.ID == state.Operator)));
+                state = previousState;
             }
             chain.Reverse();
 
@@ -116,9 +118,10 @@ namespace FlashPlanner.Search
 
             while (_planMap.ContainsKey(state))
             {
-                var planStep = _planMap[state];
-                chain.Add(planStep.Item1);
-                state = planStep.Item2;
+                if (state.Operator == -1)
+                    break;
+                chain.Add(state.Operator);
+                state = _planMap[state];
             }
             chain.Reverse();
 
@@ -134,13 +137,13 @@ namespace FlashPlanner.Search
 
             if (Abort) return new List<MacroDecl>();
             var queue = new FixedMaxPriorityQueue<MacroDecl>(nMacros);
-            var h = new EffectHeuristic(new SASStateSpace(new TranslatorContext(newDecl, _context.PDDL, _context.FactHashes)));
+            var h = new EffectHeuristic(new SASStateSpace(new TranslatorContext(newDecl, _context.PDDL, _context.FactHashes, _context.ApplicabilityGraph)));
             var g = new hPath();
 
             // Explore state space
             var planner = new GreedyBFS(new hColSum(new List<IHeuristic>() { g, h }));
             planner.TimeLimit = TimeSpan.FromSeconds(budget);
-            planner.Solve(new TranslatorContext(newDecl, _context.PDDL, _context.FactHashes));
+            planner.Solve(new TranslatorContext(newDecl, _context.PDDL, _context.FactHashes, _context.ApplicabilityGraph));
             foreach (var state in planner._closedList)
             {
                 if (Abort) return new List<MacroDecl>();
@@ -148,7 +151,7 @@ namespace FlashPlanner.Search
                 if (plan.Count > 1)
                     queue.Enqueue(
                         GenerateMacroFromOperatorSteps(plan),
-                        h.GetValue(new StateMove(new SASStateSpace(new TranslatorContext(new SASDecl(), _context.PDDL, _context.FactHashes))), state.State, new List<Operator>()));
+                        h.GetValue(new StateMove(new SASStateSpace(new TranslatorContext(new SASDecl(), _context.PDDL, _context.FactHashes, _context.ApplicabilityGraph))), state.State, new List<Operator>()));
             }
 
             // Add unique macros

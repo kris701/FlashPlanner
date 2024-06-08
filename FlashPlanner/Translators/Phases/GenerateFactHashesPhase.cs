@@ -1,10 +1,5 @@
 ﻿using FlashPlanner.Models;
 using FlashPlanner.Models.SAS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FlashPlanner.Translators.Phases
 {
@@ -16,7 +11,7 @@ namespace FlashPlanner.Translators.Phases
             DoLog = doLog;
         }
 
-        public override TranslatorContext ExecutePhase(TranslatorContext from) => new TranslatorContext(from.SAS, from.PDDL, GenerateFactHashes(from.SAS));
+        public override TranslatorContext ExecutePhase(TranslatorContext from) => new TranslatorContext(from.SAS, from.PDDL, GenerateFactHashes(from.SAS), from.ApplicabilityGraph);
 
         private int[] GenerateFactHashes(SASDecl decl)
         {

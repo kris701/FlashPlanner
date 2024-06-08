@@ -1,10 +1,5 @@
 ﻿using FlashPlanner.Models;
 using FlashPlanner.Models.SAS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FlashPlanner.Translators.Phases
 {
@@ -43,7 +38,7 @@ namespace FlashPlanner.Translators.Phases
                 if (check[i].ID != -1)
                     continue;
                 check[i].ID = count;
-                for(int j = 0; j < check.Count; j++)
+                for (int j = 0; j < check.Count; j++)
                 {
                     if (check[j].ContentEquals(check[i]))
                         check[j].ID = check[i].ID;

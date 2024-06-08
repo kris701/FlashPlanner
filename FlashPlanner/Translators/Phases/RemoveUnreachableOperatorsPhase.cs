@@ -1,12 +1,7 @@
-﻿using FlashPlanner.Heuristics;
-using FlashPlanner.Models;
+﻿using FlashPlanner.Models;
 using FlashPlanner.Models.SAS;
 using FlashPlanner.States;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PDDLSharp.Models.PDDL;
 
 namespace FlashPlanner.Translators.Phases
 {
@@ -31,7 +26,7 @@ namespace FlashPlanner.Translators.Phases
         {
             bool any = true;
             bool[] covered = new bool[decl.Operators.Count];
-            var state = new RelaxedSASStateSpace(new Models.TranslatorContext(decl, new PDDLSharp.Models.PDDL.PDDLDecl(), new int[decl.Facts]));
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[decl.Facts], new Dictionary<int, List<Operator>>()));
             var applicables = new List<Operator>();
             while (any)
             {

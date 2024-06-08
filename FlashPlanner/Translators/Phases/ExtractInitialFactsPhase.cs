@@ -6,11 +6,6 @@ using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Toolkits;
 using PDDLSharp.Translators.Grounders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FlashPlanner.Translators.Phases
 {
@@ -34,7 +29,7 @@ namespace FlashPlanner.Translators.Phases
             if (from.PDDL.Problem.Init != null)
                 inits = ExtractInitFacts(from.PDDL.Problem.Init.Predicates, from.PDDL);
             DoLog?.Invoke($"A total of {inits.Count} initial facts have been extracted.");
-            from.SAS = new SASDecl(from.SAS.Operators, from.SAS.Goal, inits, from.SAS.Facts);
+            from.SAS = new SASDecl(from.SAS.Operators, from.SAS.Goal, inits.ToArray(), from.SAS.Facts);
             return from;
         }
 

@@ -1,10 +1,5 @@
-﻿using FlashPlanner.Models.SAS;
-using FlashPlanner.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FlashPlanner.Models;
+using FlashPlanner.Models.SAS;
 
 namespace FlashPlanner.Translators.Phases
 {

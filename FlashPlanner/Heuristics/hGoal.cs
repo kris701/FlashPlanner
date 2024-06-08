@@ -15,7 +15,7 @@ namespace FlashPlanner.Heuristics
             foreach (var goal in state.Context.SAS.Goal)
                 if (state.Contains(goal.ID))
                     count++;
-            return state.Context.SAS.Goal.Count - count;
+            return state.Context.SAS.Goal.Length - count;
         }
     }
 }

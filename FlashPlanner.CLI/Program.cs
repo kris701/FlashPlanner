@@ -120,8 +120,8 @@ namespace FlashPlanner.CLI
             WriteLineColor("\tTranslator info:");
             WriteLineColor($"\t\t{context.SAS.Facts} total facts", ConsoleColor.DarkGray);
             WriteLineColor($"\t\t{context.SAS.Operators.Count} operators", ConsoleColor.DarkGray);
-            WriteLineColor($"\t\t{context.SAS.Init.Count} initial facts", ConsoleColor.DarkGray);
-            WriteLineColor($"\t\t{context.SAS.Goal.Count} goal facts", ConsoleColor.DarkGray);
+            WriteLineColor($"\t\t{context.SAS.Init.Length} initial facts", ConsoleColor.DarkGray);
+            WriteLineColor($"\t\t{context.SAS.Goal.Length} goal facts", ConsoleColor.DarkGray);
             return context;
         }
 

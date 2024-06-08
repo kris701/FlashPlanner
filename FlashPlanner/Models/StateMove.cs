@@ -17,6 +17,10 @@ namespace FlashPlanner.Models
         /// </summary>
         public int Steps { get; set; }
         /// <summary>
+        /// What operator was executed to get here
+        /// </summary>
+        public int Operator { get; set; }
+        /// <summary>
         /// Heuristic value of this state
         /// </summary>
         public int hValue { get; set; }
@@ -30,6 +34,7 @@ namespace FlashPlanner.Models
             State = state;
             hValue = int.MaxValue;
             Steps = 0;
+            Operator = -1;
         }
 
         /// <summary>
@@ -42,6 +47,7 @@ namespace FlashPlanner.Models
             State = new SASStateSpace(move.State, op);
             Steps = move.Steps + 1;
             hValue = -1;
+            Operator = op.ID;
         }
 
         /// <summary>

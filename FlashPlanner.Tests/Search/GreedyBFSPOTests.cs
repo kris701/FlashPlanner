@@ -28,6 +28,9 @@ namespace FlashPlanner.Tests.Search
         [DataRow("../../../../Dependencies/downward-benchmarks/mystery/domain.pddl", "../../../../Dependencies/downward-benchmarks/mystery/prob01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/driverlog/domain.pddl", "../../../../Dependencies/downward-benchmarks/driverlog/p01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/blocks/domain.pddl", "../../../../Dependencies/downward-benchmarks/blocks/probBLOCKS-4-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/logistics00/domain.pddl", "../../../../Dependencies/downward-benchmarks/logistics00/probLOGISTICS-4-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/freecell/domain.pddl", "../../../../Dependencies/downward-benchmarks/freecell/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/driverlog/domain.pddl", "../../../../Dependencies/downward-benchmarks/driverlog/p01.pddl")]
         public void Can_FindSolution_hDepth(string domain, string problem)
         {
             // ARRANGE
@@ -53,6 +56,9 @@ namespace FlashPlanner.Tests.Search
         [DataRow("../../../../Dependencies/downward-benchmarks/mystery/domain.pddl", "../../../../Dependencies/downward-benchmarks/mystery/prob01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/driverlog/domain.pddl", "../../../../Dependencies/downward-benchmarks/driverlog/p01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/blocks/domain.pddl", "../../../../Dependencies/downward-benchmarks/blocks/probBLOCKS-4-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/logistics00/domain.pddl", "../../../../Dependencies/downward-benchmarks/logistics00/probLOGISTICS-4-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/freecell/domain.pddl", "../../../../Dependencies/downward-benchmarks/freecell/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/driverlog/domain.pddl", "../../../../Dependencies/downward-benchmarks/driverlog/p01.pddl")]
         public void Can_FindSolution_hFF(string domain, string problem)
         {
             // ARRANGE
@@ -78,6 +84,9 @@ namespace FlashPlanner.Tests.Search
         [DataRow("../../../../Dependencies/downward-benchmarks/mystery/domain.pddl", "../../../../Dependencies/downward-benchmarks/mystery/prob01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/driverlog/domain.pddl", "../../../../Dependencies/downward-benchmarks/driverlog/p01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/blocks/domain.pddl", "../../../../Dependencies/downward-benchmarks/blocks/probBLOCKS-4-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/logistics00/domain.pddl", "../../../../Dependencies/downward-benchmarks/logistics00/probLOGISTICS-4-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/freecell/domain.pddl", "../../../../Dependencies/downward-benchmarks/freecell/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/driverlog/domain.pddl", "../../../../Dependencies/downward-benchmarks/driverlog/p01.pddl")]
         public void Can_FindSolution_hAdd(string domain, string problem)
         {
             // ARRANGE
@@ -103,6 +112,9 @@ namespace FlashPlanner.Tests.Search
         [DataRow("../../../../Dependencies/downward-benchmarks/mystery/domain.pddl", "../../../../Dependencies/downward-benchmarks/mystery/prob01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/driverlog/domain.pddl", "../../../../Dependencies/downward-benchmarks/driverlog/p01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/blocks/domain.pddl", "../../../../Dependencies/downward-benchmarks/blocks/probBLOCKS-4-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/logistics00/domain.pddl", "../../../../Dependencies/downward-benchmarks/logistics00/probLOGISTICS-4-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/freecell/domain.pddl", "../../../../Dependencies/downward-benchmarks/freecell/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/driverlog/domain.pddl", "../../../../Dependencies/downward-benchmarks/driverlog/p01.pddl")]
         public void Can_FindSolution_hGoal(string domain, string problem)
         {
             // ARRANGE
@@ -128,6 +140,9 @@ namespace FlashPlanner.Tests.Search
         [DataRow("../../../../Dependencies/downward-benchmarks/mystery/domain.pddl", "../../../../Dependencies/downward-benchmarks/mystery/prob01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/driverlog/domain.pddl", "../../../../Dependencies/downward-benchmarks/driverlog/p01.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/blocks/domain.pddl", "../../../../Dependencies/downward-benchmarks/blocks/probBLOCKS-4-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/logistics00/domain.pddl", "../../../../Dependencies/downward-benchmarks/logistics00/probLOGISTICS-4-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/freecell/domain.pddl", "../../../../Dependencies/downward-benchmarks/freecell/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/driverlog/domain.pddl", "../../../../Dependencies/downward-benchmarks/driverlog/p01.pddl")]
         public void Can_FindSolution_hMax(string domain, string problem)
         {
             // ARRANGE

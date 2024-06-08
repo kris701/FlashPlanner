@@ -36,7 +36,7 @@ namespace FlashPlanner.Search
         internal HashSet<StateMove> _closedList = new HashSet<StateMove>();
         internal RefPriorityQueue<StateMove> _openList = new RefPriorityQueue<StateMove>();
         // This is a map from a given State -> operatorID -> resulting state.
-        internal Dictionary<StateMove, Tuple<int, StateMove>> _planMap = new Dictionary<StateMove, Tuple<int, StateMove>>();
+        internal Dictionary<StateMove, StateMove> _planMap = new Dictionary<StateMove, StateMove>();
 
         /// <summary>
         /// Main constructor
@@ -57,7 +57,7 @@ namespace FlashPlanner.Search
         {
             Heuristic.Reset();
             _context = context;
-            _planMap = new Dictionary<StateMove, Tuple<int, StateMove>>();
+            _planMap = new Dictionary<StateMove, StateMove>();
 
             var state = new SASStateSpace(context);
             if (state.IsInGoal())
@@ -95,7 +95,7 @@ namespace FlashPlanner.Search
 
         internal void QueueOpenList(StateMove from, StateMove to, Operator op)
         {
-            _planMap.Add(to, new Tuple<int, StateMove>(op.ID, from));
+            _planMap.Add(to, from);
             _openList.Enqueue(to, to.hValue);
         }
 
@@ -123,9 +123,11 @@ namespace FlashPlanner.Search
 
             while (_planMap.ContainsKey(state))
             {
-                var planStep = _planMap[state];
-                chain.Add(GenerateFromOp(_context.SAS.Operators.First(x => x.ID == planStep.Item1)));
-                state = planStep.Item2;
+                if (state.Operator == -1)
+                    break;
+                var previousState = _planMap[state];
+                chain.Add(GenerateFromOp(_context.SAS.Operators.First(x => x.ID == state.Operator)));
+                state = previousState;
             }
             chain.Reverse();
 

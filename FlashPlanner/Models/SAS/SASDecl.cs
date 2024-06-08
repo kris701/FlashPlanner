@@ -15,7 +15,7 @@ namespace FlashPlanner.Models.SAS
         /// <summary>
         /// Goal facts
         /// </summary>
-        public HashSet<Fact> Goal;
+        public Fact[] Goal;
         /// <summary>
         /// Goal state as a bitmask
         /// </summary>
@@ -24,7 +24,7 @@ namespace FlashPlanner.Models.SAS
         /// <summary>
         /// Init facts
         /// </summary>
-        public HashSet<Fact> Init;
+        public Fact[] Init;
         /// <summary>
         /// Init state as a bitmask
         /// </summary>
@@ -45,7 +45,7 @@ namespace FlashPlanner.Models.SAS
         /// <param name="goal"></param>
         /// <param name="init"></param>
         /// <param name="factCount"></param>
-        public SASDecl(List<Operator> operators, HashSet<Fact> goal, HashSet<Fact> init, int factCount)
+        public SASDecl(List<Operator> operators, Fact[] goal, Fact[] init, int factCount)
         {
             Operators = operators;
             Goal = goal;
@@ -71,7 +71,7 @@ namespace FlashPlanner.Models.SAS
         /// <summary>
         /// Empty constructor
         /// </summary>
-        public SASDecl() : this(new List<Operator>(), new HashSet<Fact>(), new HashSet<Fact>(), 0)
+        public SASDecl() : this(new List<Operator>(), new Fact[0], new Fact[0], 0)
         {
         }
 
@@ -82,8 +82,8 @@ namespace FlashPlanner.Models.SAS
         public SASDecl Copy()
         {
             var operators = new List<Operator>();
-            var goal = new HashSet<Fact>();
-            var init = new HashSet<Fact>();
+            var goal = new List<Fact>();
+            var init = new List<Fact>();
 
             foreach (var op in Operators)
                 operators.Add(op.Copy());
@@ -92,7 +92,7 @@ namespace FlashPlanner.Models.SAS
             foreach (var i in Init)
                 init.Add(i.Copy());
 
-            return new SASDecl(operators, goal, init, Facts);
+            return new SASDecl(operators, goal.ToArray(), init.ToArray(), Facts);
         }
 
         /// <summary>

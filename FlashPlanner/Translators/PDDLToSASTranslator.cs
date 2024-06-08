@@ -3,14 +3,10 @@ using FlashPlanner.Models.SAS;
 using FlashPlanner.Translators.Exceptions;
 using FlashPlanner.Translators.Normalizers;
 using FlashPlanner.Translators.Phases;
-using PDDLSharp.Contextualisers.PDDL;
-using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
-using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Models.PDDL.Problem;
-using PDDLSharp.Toolkits;
 using PDDLSharp.Translators.Grounders;
 
 namespace FlashPlanner.Translators
@@ -86,6 +82,7 @@ namespace FlashPlanner.Translators
             phases.Add(new NormalizeFactIDsPhase(DoLog));
             phases.Add(new ResetOperatorsPhase(DoLog));
             phases.Add(new GenerateFactHashesPhase(DoLog));
+            phases.Add(new GenerateApplicabilityGraphPhase(DoLog));
 
             return phases;
         }
@@ -103,8 +100,8 @@ namespace FlashPlanner.Translators
             CheckIfValid(from);
 
             var phases = GetTranslatorPhases(from);
-            var result = new TranslatorContext(new SASDecl(), from, new int[0]);
-            foreach(var phase in phases)
+            var result = new TranslatorContext(new SASDecl(), from, new int[0], new Dictionary<int, List<Operator>>());
+            foreach (var phase in phases)
             {
                 if (Abort) return new TranslatorContext();
                 _currentPhase = phase;

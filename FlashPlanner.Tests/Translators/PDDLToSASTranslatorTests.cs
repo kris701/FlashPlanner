@@ -106,7 +106,7 @@ namespace FlashPlanner.Tests.Translator
             var context = translator.Translate(decl);
 
             // ASSERT
-            Assert.AreEqual(expected, context.SAS.Goal.Count);
+            Assert.AreEqual(expected, context.SAS.Goal.Length);
         }
 
         [TestMethod]
@@ -127,7 +127,7 @@ namespace FlashPlanner.Tests.Translator
             var context = translator.Translate(decl);
 
             // ASSERT
-            Assert.AreEqual(expected, context.SAS.Init.Count);
+            Assert.AreEqual(expected, context.SAS.Init.Length);
         }
 
         [TestMethod]
@@ -144,7 +144,7 @@ namespace FlashPlanner.Tests.Translator
             var context = translator.Translate(decl);
 
             // ASSERT
-            Assert.AreEqual(expected, context.SAS.Init.Count);
+            Assert.AreEqual(expected, context.SAS.Init.Length);
         }
 
         [TestMethod]
