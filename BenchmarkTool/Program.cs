@@ -7,33 +7,48 @@ using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
+using System.Diagnostics;
 using ToMarkdown;
 
 var tmpFolder = "tmp";
 var targetBenchmarkFolder = "../../../../Dependencies/downward-benchmarks/";
 var targetDomains = new List<string>() {
-    "blocks",
-    "depot",
     "gripper",
-    "logistics00",
-    "satellite",
     "miconic",
+    "depot",
     "rovers",
-    "tpp",
     "zenotravel",
+    "tpp",
+    "satellite",
+    "driverlog",
+    "blocks",
+    "logistics00",
+    "logistics98",
+    "freecell",
+    "movie",
+    "mprime",
+    "trucks",
+    "visitall-opt11-strips",
 };
 // Cached fast downward times
 var fdTimes = new Dictionary<string, int>()
 {
-    { "blocks", 20 },
-    { "depot", 15 },
-    { "gripper", 20 },
-    { "logistics00", 20 },
-    { "satellite", 20 },
-    { "miconic", 20 },
-    { "rovers", 20 },
-    { "tpp", 20 },
-    { "zenotravel", 20 },
+    {"gripper", 20 },
+    {"miconic", 20 },
+    {"depot", 15 },
+    {"rovers", 20 },
+    {"zenotravel", 20 },
+    {"tpp", 20 },
+    {"satellite", 20 },
+    {"driverlog", 20 },
+    {"blocks", 20 },
+    {"logistics00", 20 },
+    {"logistics98", 20 },
+    {"freecell", 20 },
+    {"movie", 20 },
+    {"mprime", 20 },
+    {"trucks", 14 },
+    {"visitall-opt11-strips", 20 },
 };
 var problemsToUse = 20;
 var timeLimit = 60;
@@ -108,6 +123,7 @@ foreach (var domainName in targetDomains)
             solvedB++;
     }
 
+    //results.Add(new CoverageResult(domainName, files.Count, solvedA, solvedB));
     results.Add(new CoverageResult(domainName, files.Count, fdTimes[domainName], solvedB));
 }
 

@@ -133,13 +133,20 @@ The planners have a time limit of 60 seconds and a memory limit of 4GB.
 <!-- This section is auto generated. -->
 | Domain | Problems | Fast Downward | Flash Planner |
 | - | - | - | - |
-| blocks | 20 | 20 | 20 |
-| depot | 20 | 15 | 11 |
 | gripper | 20 | 20 | 20 |
-| logistics00 | 20 | 20 | 20 |
-| satellite | 20 | 20 | 18 |
 | miconic | 20 | 20 | 20 |
-| rovers | 20 | 20 | 18 |
-| tpp | 20 | 20 | 14 |
-| zenotravel | 20 | 20 | 15 |
-| Total | 180 | 175 | 156 |
+| depot | 20 | 15 | 11 |
+| rovers | 20 | 20 | 17 |
+| zenotravel | 20 | 20 | 16 |
+| tpp | 20 | 20 | 11 |
+| satellite | 20 | 20 | 18 |
+| driverlog | 20 | 20 | 16 |
+| blocks | 20 | 20 | 20 |
+| logistics00 | 20 | 20 | 20 |
+| logistics98 | 20 | 20 | 9 |
+| freecell | 20 | 20 | 5 |
+| movie | 20 | 20 | 20 |
+| mprime | 20 | 20 | 6 |
+| trucks | 20 | 14 | 10 |
+| visitall-opt11-strips | 20 | 20 | 20 |
+| Total | 320 | 309 | 239 |
