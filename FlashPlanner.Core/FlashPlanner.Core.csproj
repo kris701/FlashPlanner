@@ -6,28 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-	<PropertyGroup>
-		<PackageIcon>logo.png</PackageIcon>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<None Include="logo.png" Pack="true" PackagePath="" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="..\LICENSE.txt">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="..\README.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
-
 	<ItemGroup>
     <PackageReference Include="PDDLSharp" Version="1.6.12" />
   </ItemGroup>
