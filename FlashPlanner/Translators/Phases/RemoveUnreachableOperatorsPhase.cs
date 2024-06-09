@@ -15,7 +15,7 @@ namespace FlashPlanner.Translators.Phases
 
         public override TranslatorContext ExecutePhase(TranslatorContext from)
         {
-            DoLog?.Invoke($"Checking if all {from.SAS.Operators.Count} operators are reachable.");
+            DoLog?.Invoke($"Checking if all {from.SAS.Operators.Count} operators are reachable...");
             var opsNow = GetPotentiallyReachableOperators(from.SAS);
             DoLog?.Invoke($"{from.SAS.Operators.Count - opsNow.Count} operators removed by not being reachable.");
             from.SAS = new SASDecl(opsNow, from.SAS.Goal, from.SAS.Init, from.SAS.Facts);

@@ -65,6 +65,7 @@ namespace FlashPlanner.Translators
             phases.Add(new ExtractGoalFactsPhase(DoLog, _grounder, _normalizer));
             phases.Add(new OperatorGroundingPhase(DoLog, _grounder, _normalizer));
             phases.Add(new ProcessNegativeFactsPhase(DoLog));
+            phases.Add(new RemoveUselessOperatorsPhase(DoLog));
             phases.Add(new NormalizeOperatorIDsPhase(DoLog));
             phases.Add(new NormalizeFactIDsPhase(DoLog));
             phases.Add(new ResetOperatorsPhase(DoLog));

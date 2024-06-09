@@ -21,7 +21,6 @@ namespace FlashPlanner.Translators.Phases
 
         private void RecountFacts(SASDecl decl)
         {
-            int count = 0;
             var check = new List<Fact>();
             check.AddRange(decl.Init);
             check.AddRange(decl.Goal);
@@ -31,21 +30,30 @@ namespace FlashPlanner.Translators.Phases
                 check.AddRange(op.Add);
                 check.AddRange(op.Del);
             }
-            foreach (var fact in check)
-                fact.ID = -1;
-            for (int i = 0; i < check.Count; i++)
+            var unique = new List<Fact>();
+            foreach(var fact in check)
+                if (!unique.Any(x => x.ContentEquals(fact)))
+                    unique.Add(fact);
+            int count = 0;
+            foreach (var fact in unique)
+                fact.ID = count++;
+
+            ReplaceFacts(decl.Init, unique);
+            ReplaceFacts(decl.Goal, unique);
+            foreach (var op in decl.Operators)
             {
-                if (check[i].ID != -1)
-                    continue;
-                check[i].ID = count;
-                for (int j = 0; j < check.Count; j++)
-                {
-                    if (check[j].ContentEquals(check[i]))
-                        check[j].ID = check[i].ID;
-                }
-                count++;
+                ReplaceFacts(op.Pre, unique);
+                ReplaceFacts(op.Add, unique);
+                ReplaceFacts(op.Del, unique);
             }
+
             decl.Facts = count;
+        }
+
+        private void ReplaceFacts(Fact[] from, List<Fact> with)
+        {
+            for (int i = 0; i < from.Length; i++)
+                from[i] = with.First(x => x.ContentEquals(from[i]));
         }
     }
 }
