@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FlashPlanner\FlashPlanner.csproj" />
+    <ProjectReference Include="..\FlashPlanner.Core\FlashPlanner.Core.csproj" />
   </ItemGroup>
 
 </Project>

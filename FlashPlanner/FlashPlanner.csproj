@@ -1,9 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	  <PackAsTool>flashplanner</PackAsTool>
+	  <ToolCommandName>botsay</ToolCommandName>
 	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	  <Title>FlashPlanner</Title>
 	  <Authors>Kristian Skov Johansen</Authors>
@@ -17,14 +20,6 @@
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 		<Version>1.2.8</Version>
 	</PropertyGroup>
-
-	<PropertyGroup>
-		<PackageIcon>logo.png</PackageIcon>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<None Include="logo.png" Pack="true" PackagePath="" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="..\LICENSE.txt">
@@ -40,8 +35,21 @@
 		</None>
 	</ItemGroup>
 
+	<PropertyGroup>
+		<PackageIcon>logo.png</PackageIcon>
+	</PropertyGroup>
+
 	<ItemGroup>
-    <PackageReference Include="PDDLSharp" Version="1.6.12" />
+		<None Include="logo.png" Pack="true" PackagePath="" />
+	</ItemGroup>
+
+	<ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
+    <PackageReference Include="PlanVal" Version="1.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FlashPlanner.Core\FlashPlanner.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlashPlanner.CLI", "FlashPlanner.CLI\FlashPlanner.CLI.csproj", "{3C446F9D-6564-42A5-9F8D-E1405C88021C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlashPlanner", "FlashPlanner\FlashPlanner.csproj", "{3C446F9D-6564-42A5-9F8D-E1405C88021C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlashPlanner", "FlashPlanner\FlashPlanner.csproj", "{332714A7-3BDD-4AEC-8759-C25D52A0E848}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlashPlanner.Core", "FlashPlanner.Core\FlashPlanner.Core.csproj", "{332714A7-3BDD-4AEC-8759-C25D52A0E848}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlashPlanner.Tests", "FlashPlanner.Tests\FlashPlanner.Tests.csproj", "{CEAD8EB5-6AFF-4C03-B73D-267F9E38CD1B}"
 EndProject
