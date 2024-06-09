@@ -1,4 +1,5 @@
-﻿using FlashPlanner.Models;
+﻿using FlashPlanner.Heuristics;
+using FlashPlanner.Models;
 using FlashPlanner.Models.SAS;
 
 namespace FlashPlanner.Translators.Phases
@@ -13,6 +14,7 @@ namespace FlashPlanner.Translators.Phases
 
         public override TranslatorContext ExecutePhase(TranslatorContext from)
         {
+            DoLog?.Invoke($"Checking if task is clearly unsolvable...");
             foreach (var goal in from.SAS.Goal)
             {
                 if (!from.SAS.Operators.Any(x => x.Add.Contains(goal)))

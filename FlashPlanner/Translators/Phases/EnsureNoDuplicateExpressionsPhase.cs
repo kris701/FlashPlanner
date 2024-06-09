@@ -14,7 +14,7 @@ namespace FlashPlanner.Translators.Phases
 
         public override TranslatorContext ExecutePhase(TranslatorContext from)
         {
-            DoLog?.Invoke($"Ensureing that action effects and preconditions contains no duplicates...");
+            DoLog?.Invoke($"Ensuring that action effects and preconditions contains no duplicates...");
             foreach (var act in from.PDDL.Domain.Actions)
             {
                 act.EnsureAnd();

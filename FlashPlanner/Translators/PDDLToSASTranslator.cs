@@ -57,6 +57,7 @@ namespace FlashPlanner.Translators
             _normalizer = new NodeNormalizer(_grounder);
 
             var phases = new List<ITranslatorPhase>();
+            phases.Add(new RemoveUnreachablePredicatesPhase(DoLog));
             if (AssumeNoEqualParameters)
                 phases.Add(new ForceNonEqualParametersPhase(DoLog));
             phases.Add(new ContextualizationPhase(DoLog));

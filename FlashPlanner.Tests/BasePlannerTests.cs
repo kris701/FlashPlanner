@@ -19,7 +19,7 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace FlashPlanner.Tests
 {
-    public class BasePlannerTests
+    public abstract class BasePlannerTests
     {
         private static Dictionary<string, TranslatorContext> _declCache = new Dictionary<string, TranslatorContext>();
         internal static TranslatorContext GetTranslatorContext(string domain, string problem)

@@ -195,5 +195,36 @@ namespace FlashPlanner.Tests.Translator
             // ASSERT
             Assert.AreEqual(translator.Code, ILimitedComponent.ReturnCode.TimedOut);
         }
+
+        [TestMethod]
+        [DataRow("../../../../Dependencies/downward-benchmarks/rovers/domain.pddl", "../../../../Dependencies/downward-benchmarks/rovers/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/depot/domain.pddl", "../../../../Dependencies/downward-benchmarks/depot/p01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob01.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/miconic/domain.pddl", "../../../../Dependencies/downward-benchmarks/miconic/s1-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/logistics00/domain.pddl", "../../../../Dependencies/downward-benchmarks/logistics00/probLOGISTICS-4-0.pddl")]
+        [DataRow("../../../../Dependencies/downward-benchmarks/logistics98/domain.pddl", "../../../../Dependencies/downward-benchmarks/logistics98/prob01.pddl")]
+        public void Cant_Translate_IfUnsolvableByRelaxedPlan(string domain, string problem)
+        {
+            // ARRANGE
+            var listener = new ErrorListener();
+            var parser = new PDDLParser(listener);
+            var decl = parser.ParseDecl(new FileInfo(domain), new FileInfo(problem));
+            if (decl.Problem.Goal.GoalExp is not AndExp)
+            {
+                var and = new AndExp(decl.Problem.Goal, new List<IExp>());
+                decl.Problem.Goal.GoalExp.Parent = and;
+                and.Children.Add(decl.Problem.Goal.GoalExp);
+                decl.Problem.Goal.GoalExp = and;
+            }
+            if (decl.Problem.Goal.GoalExp is AndExp and2)
+                and2.Add(new PredicateExp("asdardfasfafk"));
+            var translator = new PDDLToSASTranslator(false);
+
+            // ACT
+            var sas = translator.Translate(decl);
+
+            // ASSERT
+            Assert.AreEqual(0, sas.SAS.Operators.Count);
+        }
     }
 }
