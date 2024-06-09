@@ -17,17 +17,15 @@
 This is a project that contains a simple planner, operating on a grounded representation.
 You can either use the planner as the C# code or use the CLI interface to get plans.
 The planner expects a grounded representation of a PDDL domain+problem, that can be obtained from the Translator.
-This project is also available as a package on the [NuGet Package Manager](https://www.nuget.org/packages/FlashPlanner).
+This project is also available as a dotnet tool on the [NuGet Package Manager](https://www.nuget.org/packages/FlashPlanner).
 
 ## Planner Usage
 
-You can use this planner as code, or more likely by the CLI tool.
-The tool is heavily inspired by [Fast Downward](https://github.com/aibasel/downward), where there is seperate string arguments for the translator and the search engine.
-This is a dotnet project, so you can run it by typing the following into your terminal:
+The easiest way to run Flash Planner is to install it as a dotnet tool by running the following command:
 ```
-dotnet run
+dotnet tool install FlashPlanner
 ```
-It should give you a set of different arguments that it needs.
+The arguments that can be given to Flash Planner is heavily inspired by [Fast Downward](https://github.com/aibasel/downward), where there is seperate string arguments for the translator and the search engine.
 Generally, it needs a domain and problem file in the PDDL format as well as a search engine.
 The search engine, and translation, arguments is given as a string, e.g.:
 ```
@@ -40,29 +38,29 @@ There is also the option to use an alias, instead of a combination of search and
 ## Search Engines
 
 The available search engines are:
-* [`beam(h, b)`](FlashPlanner/Search/BeamS.cs): [Beam Search](https://en.wikipedia.org/wiki/Beam_search). H is the heuristic, b is the beta value as an integer.
-* [`greedy(h)`](FlashPlanner/Search/GreedyBFS.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search). H is the heuristic.
-* [`greedy_underaprox(h)`](FlashPlanner/Search/GreedyBFSUAR.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Under-Approximation Refinement (UAR)](https://ojs.aaai.org/index.php/ICAPS/article/view/13678). H is the heuristic.
-* [`greedy_prefered(h)`](FlashPlanner/Search/GreedyBFSPO.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Preferred Operators (PO)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf). H is the heuristic.
-* [`greedy_defered(h)`](FlashPlanner/Search/GreedyBFSDHE.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Deferred Heuristic Evaluation (DHE)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf). H is the heuristic.
-* [`greedy_lazy(h)`](FlashPlanner/Search/GreedyBFSLazy.cs): [Lazy Greedy Best First Search](https://www.fast-downward.org/Doc/SearchAlgorithm#Lazy_best-first_search). H is the heuristic.
-* [`greedy_focused(h, n, b, p)`](FlashPlanner/Search/GreedyBFSFocused.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Focused Macros](https://arxiv.org/abs/2004.13242). 
+* [`beam(h, b)`](FlashPlanner.Core/Search/BeamS.cs): [Beam Search](https://en.wikipedia.org/wiki/Beam_search). H is the heuristic, b is the beta value as an integer.
+* [`greedy(h)`](FlashPlanner.Core/Search/GreedyBFS.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search). H is the heuristic.
+* [`greedy_underaprox(h)`](FlashPlanner.Core/Search/GreedyBFSUAR.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Under-Approximation Refinement (UAR)](https://ojs.aaai.org/index.php/ICAPS/article/view/13678). H is the heuristic.
+* [`greedy_prefered(h)`](FlashPlanner.Core/Search/GreedyBFSPO.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Preferred Operators (PO)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf). H is the heuristic.
+* [`greedy_defered(h)`](FlashPlanner.Core/Search/GreedyBFSDHE.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Deferred Heuristic Evaluation (DHE)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf). H is the heuristic.
+* [`greedy_lazy(h)`](FlashPlanner.Core/Search/GreedyBFSLazy.cs): [Lazy Greedy Best First Search](https://www.fast-downward.org/Doc/SearchAlgorithm#Lazy_best-first_search). H is the heuristic.
+* [`greedy_focused(h, n, b, p)`](FlashPlanner.Core/Search/GreedyBFSFocused.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Focused Macros](https://arxiv.org/abs/2004.13242). 
 H is the heuristic, N is the maximum number of macros, B is the search budget in seconds and P is the parameter limit for added macros (too many parameters kills the translator).
 Do note, this implementation of the macro generation is not very good, and does NOT work for all domains.
 
 ## Heuristics
 
 The available heuristics are:
-* [`hConstant(n)`](FlashPlanner/Heuristics/hConstant.cs): Returns a given constant all the time. N being the constant.
-* [`hDepth()`](FlashPlanner/Heuristics/hDepth.cs): Simply returns a cost that is 1 lower than its parent
-* [`hFF()`](FlashPlanner/Heuristics/hFF.cs): Returns a cost based on a solution to the [relaxed planning graph](https://www.youtube.com/watch?app=desktop&v=7XH60fuMlIM) for the problem
-* [`hAdd()`](FlashPlanner/Heuristics/hAdd.cs): Is the [Additive Heuristic](https://www.cs.toronto.edu/~sheila/2542/s14/A1/bonetgeffner-heusearch-aij01.pdf) that returns the sum of actions needed to achive every goal fact.
-* [`hMax()`](FlashPlanner/Heuristics/hMax.cs): Is the [Max Heuristic](https://www.cs.toronto.edu/~sheila/2542/s14/A1/bonetgeffner-heusearch-aij01.pdf) that returns the highest amount of actions needed to achive a goal fact.
-* [`hGoal()`](FlashPlanner/Heuristics/hGoal.cs): Returns the amount of goals that are achived in the given state, i.e. `h = allGoals - achivedGoals`
-* [`hPath()`](FlashPlanner/Heuristics/hPath.cs): Returns the cost of the current branch being evaluated
-* [`hWeighted(h,w)`](FlashPlanner/Heuristics/hWeighted.cs): Takes one of the previously given heuristics, and weights its result from a constant. H is the heuristic and W is the weight.
-* [`hColMax([h1,...,hn])`](FlashPlanner/HeuristicsCollections/hColMax.cs): Takes a set of other heuristics and returns the highest value from any of the heuristics.
-* [`hColSum([h1,...,hn])`](FlashPlanner/HeuristicsCollections/hColSum.cs): Same as the previous one, but takes the sum of all the heuristics.
+* [`hConstant(n)`](FlashPlanner.Core/Heuristics/hConstant.cs): Returns a given constant all the time. N being the constant.
+* [`hDepth()`](FlashPlanner.Core/Heuristics/hDepth.cs): Simply returns a cost that is 1 lower than its parent
+* [`hFF()`](FlashPlanner.Core/Heuristics/hFF.cs): Returns a cost based on a solution to the [relaxed planning graph](https://www.youtube.com/watch?app=desktop&v=7XH60fuMlIM) for the problem
+* [`hAdd()`](FlashPlanner.Core/Heuristics/hAdd.cs): Is the [Additive Heuristic](https://www.cs.toronto.edu/~sheila/2542/s14/A1/bonetgeffner-heusearch-aij01.pdf) that returns the sum of actions needed to achive every goal fact.
+* [`hMax()`](FlashPlanner.Core/Heuristics/hMax.cs): Is the [Max Heuristic](https://www.cs.toronto.edu/~sheila/2542/s14/A1/bonetgeffner-heusearch-aij01.pdf) that returns the highest amount of actions needed to achive a goal fact.
+* [`hGoal()`](FlashPlanner.Core/Heuristics/hGoal.cs): Returns the amount of goals that are achived in the given state, i.e. `h = allGoals - achivedGoals`
+* [`hPath()`](FlashPlanner.Core/Heuristics/hPath.cs): Returns the cost of the current branch being evaluated
+* [`hWeighted(h,w)`](FlashPlanner.Core/Heuristics/hWeighted.cs): Takes one of the previously given heuristics, and weights its result from a constant. H is the heuristic and W is the weight.
+* [`hColMax([h1,...,hn])`](FlashPlanner.Core/HeuristicsCollections/hColMax.cs): Takes a set of other heuristics and returns the highest value from any of the heuristics.
+* [`hColSum([h1,...,hn])`](FlashPlanner.Core/HeuristicsCollections/hColSum.cs): Same as the previous one, but takes the sum of all the heuristics.
 
 ## Aliases
 
