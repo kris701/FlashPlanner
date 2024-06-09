@@ -12,11 +12,12 @@
 	  <Description>A PDDL planner that implements several search algorithms.</Description>
 	  <RepositoryUrl>https://github.com/kris701/FlashPlanner</RepositoryUrl>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <EmbedUntrackedSources>true</EmbedUntrackedSources>
   </PropertyGroup>
 
 	<PropertyGroup>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-		<Version>1.2.10</Version>
+		<Version>1.2.11</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -42,8 +43,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="2.9.1" />
-    <PackageReference Include="PlanVal" Version="1.0.4" />
+    <PackageReference Include="CommandLineParser" Version="2.9.1" PrivateAssets="All"/>
+    <PackageReference Include="PlanVal" Version="1.0.4" PrivateAssets="All"/>
   </ItemGroup>
 
   <ItemGroup>

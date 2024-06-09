@@ -35,6 +35,19 @@ The translator also have optional arguments, howevery they are usually not neede
 Below are the different Search Engines and Heuristics that can be combined to run FlashPlanner.
 There is also the option to use an alias, instead of a combination of search and translator arguments.
 
+If you dont wish to use the dotnet tool package, you can just clone the repository and use `dotnet run` from the `FlashPlanner` folder.
+
+### Examples
+Search on a domain file called `domain.pddl` and a problem file called `p01.pddl` with greedy best first search and the Goal Count heuristic:
+```
+flashplanner --domain domain.pddl --problem p01.pddl --search "greedy(hGoal())"
+```
+
+Search on a domain file called `domain.pddl` and a problem file called `p01.pddl` with greedy best first search and the hColMax with Goal Count and hAdd:
+```
+flashplanner --domain domain.pddl --problem p01.pddl --search "greedy(hColMax([hGoal(),hAdd()]))"
+```
+
 ## Search Engines
 
 The available search engines are:
