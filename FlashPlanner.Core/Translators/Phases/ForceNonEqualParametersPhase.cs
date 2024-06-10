@@ -5,6 +5,9 @@ using PDDLSharp.Models.PDDL.Overloads;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// If enabled, enforce a set of <seealso cref="PredicateExp"/>s that says no parameters in an action can be the same object.
+    /// </summary>
     public class ForceNonEqualParametersPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

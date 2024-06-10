@@ -1,12 +1,9 @@
 ﻿using FlashPlanner;
 using FlashPlanner.Core.Heuristics;
 using FlashPlanner.Core.HeuristicsCollections;
+using FlashPlanner.Core.Models;
 using FlashPlanner.Core.Models.SAS;
-using FlashPlanner.Heuristics;
-using FlashPlanner.HeuristicsCollections;
-using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
-using FlashPlanner.RelaxedPlanningGraphs;
+using FlashPlanner.Core.States;
 using PDDLSharp.Models.PDDL.Domain;
 using System;
 using System.Collections.Generic;
@@ -29,7 +26,7 @@ namespace FlashPlanner.Tests.HeuristicsCollections
             IHeuristicCollection h = new hColMax(new List<IHeuristic>());
             for (int i = 0; i < constants.Length; i++)
                 h.Heuristics.Add(new hConstant(constants[i]));
-            var parent = new StateMove(new States.SASStateSpace(new TranslatorContext()));
+            var parent = new StateMove(new SASStateSpace(new TranslatorContext()));
 
             // ACT
             var newValue = h.GetValue(parent, null, new List<Operator>());

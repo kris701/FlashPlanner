@@ -4,6 +4,9 @@ using FlashPlanner.Core.Translators.Helpers;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// If negative facts are present, insert nesessary negative facts into existing operators precondition and effects.
+    /// </summary>
     public class ProcessNegativeFactsPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

@@ -9,6 +9,9 @@ using PDDLSharp.Translators.Grounders;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Grounding of <seealso cref="ActionDecl"/>s into <seealso cref="Operator"/>s.
+    /// </summary>
     public class OperatorGroundingPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;
@@ -27,13 +30,19 @@ namespace FlashPlanner.Core.Translators.Phases
             DoLog?.Invoke($"Normalizing actions...");
             var normalizedActions = NormalizeActions(from.PDDL.Domain.Actions);
             DoLog?.Invoke($"A total of {normalizedActions.Count} normalized actions to ground.");
-            DoLog?.Invoke($"Grounding operators...");
-            var operators = GetOperators(normalizedActions, from.PDDL);
+            DoLog?.Invoke($"Grounding actions...");
+            var operators = GroundActions(normalizedActions, from.PDDL);
             DoLog?.Invoke($"A total of {operators.Count} operators have been made.");
             from.SAS = new SASDecl(operators, from.SAS.Goal, from.SAS.Init, from.SAS.Facts);
             return from;
         }
 
+        /// <summary>
+        /// Normalize actions.
+        /// I.e. remove more advanced PDDL constructs suchs as forall expressions.
+        /// </summary>
+        /// <param name="actions"></param>
+        /// <returns></returns>
         private List<ActionDecl> NormalizeActions(List<ActionDecl> actions)
         {
             var normalizedActions = new List<ActionDecl>();
@@ -48,7 +57,13 @@ namespace FlashPlanner.Core.Translators.Phases
             return normalizedActions;
         }
 
-        private List<Operator> GetOperators(List<ActionDecl> actions, PDDLDecl decl)
+        /// <summary>
+        /// Ground <seealso cref="ActionDecl"/>s into <seealso cref="Operator"/>s.
+        /// </summary>
+        /// <param name="actions"></param>
+        /// <param name="decl"></param>
+        /// <returns></returns>
+        private List<Operator> GroundActions(List<ActionDecl> actions, PDDLDecl decl)
         {
             var operators = new List<Operator>();
             foreach (var action in actions)

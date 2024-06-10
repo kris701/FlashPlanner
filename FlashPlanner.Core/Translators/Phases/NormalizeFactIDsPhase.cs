@@ -3,6 +3,10 @@ using FlashPlanner.Core.Models.SAS;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Take all <seealso cref="Fact"/>s that exists from the goal state, init state and operators, and  make sure that equivalent facts have the same ID.
+    /// This ID is increasing from 0, so we can make <seealso href="https://en.wikipedia.org/wiki/Bit_array">Bit Arrays</seealso> of it later.
+    /// </summary>
     public class NormalizeFactIDsPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

@@ -1,5 +1,8 @@
 ﻿using BenchmarkTool;
 using FlashPlanner.Core;
+using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.Search;
+using FlashPlanner.Core.Translators;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;

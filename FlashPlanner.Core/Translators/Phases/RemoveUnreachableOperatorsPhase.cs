@@ -1,9 +1,13 @@
 ﻿using FlashPlanner.Core.Models;
 using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Core.States;
 using PDDLSharp.Models.PDDL;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Remove all operators that is unreachable by means of a relaxed graph.
+    /// </summary>
     public class RemoveUnreachableOperatorsPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

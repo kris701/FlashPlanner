@@ -1,6 +1,6 @@
-﻿using FlashPlanner.Heuristics;
-using FlashPlanner.Models;
-using FlashPlanner.States;
+﻿using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.Models;
+using FlashPlanner.Core.States;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models;
 using PDDLSharp.Models;

@@ -4,6 +4,9 @@ using PDDLSharp.Models.PDDL.Expressions;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Remove actions that for some reason, contains predicates that is never set in the init state, and is never set in effects of any actions either.
+    /// </summary>
     public class RemoveUnreachablePredicatesPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

@@ -4,6 +4,9 @@ using PDDLSharp.ErrorListeners;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Contextualize the <seealso cref="PDDLSharp.Models.PDDL.PDDLDecl"/>
+    /// </summary>
     public class ContextualizationPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

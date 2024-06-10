@@ -2,6 +2,9 @@
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Represents some phase in the translation.
+    /// </summary>
     public interface ITranslatorPhase
     {
         public bool Abort { get; set; }

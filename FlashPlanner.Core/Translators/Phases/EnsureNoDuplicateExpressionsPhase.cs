@@ -4,6 +4,10 @@ using PDDLSharp.Models.PDDL.Overloads;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Ensure that there are no duplicate actions.
+    /// Also make sure that all actions preconditions and effects are an <seealso cref="AndExp"/>
+    /// </summary>
     public class EnsureNoDuplicateExpressionsPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

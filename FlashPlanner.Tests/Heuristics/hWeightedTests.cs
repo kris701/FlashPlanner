@@ -1,9 +1,8 @@
 ﻿using FlashPlanner;
 using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.Models;
 using FlashPlanner.Core.Models.SAS;
-using FlashPlanner.Heuristics;
-using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
+using FlashPlanner.Core.States;
 using FlashPlanner.Tests;
 using FlashPlanner.Tests.Heuristics;
 using PDDLSharp;
@@ -28,7 +27,7 @@ namespace FlashPlanner.Tests.Heuristics
         {
             // ARRANGE
             IHeuristic h = new hWeighted(new hConstant(constant), weight);
-            var parent = new StateMove(new States.SASStateSpace(new TranslatorContext()));
+            var parent = new StateMove(new SASStateSpace(new TranslatorContext()));
 
             // ACT
             var newValue = h.GetValue(parent, null, new List<Operator>());

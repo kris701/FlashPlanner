@@ -1,6 +1,5 @@
 ﻿using FlashPlanner.Core.Models;
-using FlashPlanner.Models;
-using FlashPlanner.Translators;
+using FlashPlanner.Core.Translators;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models;
 using PDDLSharp.Models.PDDL;

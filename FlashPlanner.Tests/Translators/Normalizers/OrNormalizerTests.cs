@@ -1,4 +1,4 @@
-﻿using FlashPlanner.Translators.Normalizers;
+﻿using FlashPlanner.Core.Translators.Normalizers;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;

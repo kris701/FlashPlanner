@@ -9,6 +9,9 @@ using PDDLSharp.Translators.Grounders;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Extract initial <seealso cref="Fact"/>s from the <seealso cref="PDDLDecl.Problem"/>
+    /// </summary>
     public class ExtractInitialFactsPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

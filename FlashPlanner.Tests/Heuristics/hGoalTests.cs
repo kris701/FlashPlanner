@@ -1,8 +1,7 @@
-﻿using FlashPlanner.Core.Models.SAS;
-using FlashPlanner.Heuristics;
-using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
-using FlashPlanner.States;
+﻿using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Core.States;
 using PDDLSharp.Models;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;

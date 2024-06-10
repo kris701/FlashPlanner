@@ -1,7 +1,12 @@
 ﻿using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Take all <seealso cref="Operator"/>s that exist, and give them IDs from 0 and up.
+    /// This is needed, since the ID is what distinguishes unique operators.
+    /// </summary>
     public class NormalizeOperatorIDsPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

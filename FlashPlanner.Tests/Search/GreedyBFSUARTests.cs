@@ -1,7 +1,6 @@
 ﻿using FlashPlanner;
 using FlashPlanner.Core.Heuristics;
-using FlashPlanner.Heuristics;
-using FlashPlanner.Search;
+using FlashPlanner.Core.Search;
 using FlashPlanner.Tests;
 using FlashPlanner.Tests.Search;
 using PDDLSharp;

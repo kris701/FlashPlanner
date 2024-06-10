@@ -1,5 +1,6 @@
 ﻿using FlashPlanner.Core.Models;
 using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Core.Translators.Exceptions;
 using FlashPlanner.Core.Translators.Helpers;
 using FlashPlanner.Core.Translators.Normalizers;
 using PDDLSharp.Models.PDDL;
@@ -8,6 +9,9 @@ using PDDLSharp.Translators.Grounders;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Extract goal <seealso cref="Fact"/>s from the <seealso cref="PDDLDecl.Problem"/>
+    /// </summary>
     public class ExtractGoalFactsPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

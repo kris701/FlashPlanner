@@ -3,6 +3,10 @@ using FlashPlanner.Core.Models.SAS;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// "Reset" operators.
+    /// Meaning to recreate all the operators, since the operators set their bitmasks in its constructor.
+    /// </summary>
     public class ResetOperatorsPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

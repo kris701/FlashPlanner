@@ -1,4 +1,7 @@
 ﻿using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.HeuristicsCollections;
+using FlashPlanner.Core.Search;
+using FlashPlanner.Core.Translators;
 
 namespace FlashPlanner.ArgumentParsing
 {

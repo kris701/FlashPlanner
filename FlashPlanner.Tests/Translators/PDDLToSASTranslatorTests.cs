@@ -1,7 +1,6 @@
 ﻿using FlashPlanner.Core;
 using FlashPlanner.Core.Models.SAS;
-using FlashPlanner.Models.SAS;
-using FlashPlanner.Translators;
+using FlashPlanner.Core.Translators;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;

@@ -1,5 +1,4 @@
 ﻿using FlashPlanner.Core.Heuristics;
-using FlashPlanner.Heuristics;
 using System;
 using System.Collections.Generic;
 using System.Linq;

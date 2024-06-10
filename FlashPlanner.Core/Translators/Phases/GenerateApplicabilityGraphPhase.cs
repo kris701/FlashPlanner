@@ -1,8 +1,15 @@
 ﻿using FlashPlanner.Core.Models;
 using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Core.States;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Generate an applicability graph for the <seealso cref="SASDecl"/>s <seealso cref="Operator"/>s.
+    /// If all the operators are bound by the same argument (e.g. in Rovers all the actions are bound by the 'rover0' argument), then ignore the graph and just make a total graph.
+    /// Otherwise, connect operators that has at least some arguments or add -> pre combinations in common.
+    /// Also set all operators to contain the applicable operators from the initial state. (so we can "return" to the start and continue)
+    /// </summary>
     public class GenerateApplicabilityGraphPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

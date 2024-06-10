@@ -3,6 +3,10 @@ using FlashPlanner.Core.Models.SAS;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Remove some clearly useless operators.
+    /// Such as operators that have the same <seealso cref="Fact"/>s in its add and del list.
+    /// </summary>
     public class RemoveUselessOperatorsPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

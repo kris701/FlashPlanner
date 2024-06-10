@@ -1,7 +1,9 @@
 ﻿using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.HeuristicsCollections;
 using FlashPlanner.Core.Models;
 using FlashPlanner.Core.Models.SAS;
 using FlashPlanner.Core.States;
+using FlashPlanner.Core.Translators;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;

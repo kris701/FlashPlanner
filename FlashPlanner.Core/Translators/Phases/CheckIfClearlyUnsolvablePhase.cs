@@ -3,6 +3,10 @@ using FlashPlanner.Core.Models.SAS;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Checks if for each goal <seealso cref="Fact"/>, there exists at least one <seealso cref="Operator"/> that has that effect.
+    /// If no operator have said effect, remove all operators and assume the problem to be unsolvable.
+    /// </summary>
     public class CheckIfClearlyUnsolvablePhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

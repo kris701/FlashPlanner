@@ -3,6 +3,10 @@ using FlashPlanner.Core.Models.SAS;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
+    /// <summary>
+    /// Generate a more in depth hash code for each <seealso cref="Fact"/> that exists.
+    /// This is to reduce <seealso href="https://en.wikipedia.org/wiki/Hash_collision">Hash Collisions</seealso>.
+    /// </summary>
     public class GenerateFactHashesPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;

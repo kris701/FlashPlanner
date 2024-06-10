@@ -1,7 +1,6 @@
-﻿using FlashPlanner.Heuristics;
-using FlashPlanner.Models;
-using FlashPlanner.RelaxedPlanningGraphs;
-using FlashPlanner.States;
+﻿using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.Models;
+using FlashPlanner.Core.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;

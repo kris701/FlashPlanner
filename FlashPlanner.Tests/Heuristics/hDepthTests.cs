@@ -1,9 +1,8 @@
 ﻿using FlashPlanner;
 using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.Models;
 using FlashPlanner.Core.Models.SAS;
-using FlashPlanner.Heuristics;
-using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
+using FlashPlanner.Core.States;
 using PDDLSharp.Models;
 using PDDLSharp.Models.PDDL.Domain;
 using System;
@@ -26,7 +25,7 @@ namespace FlashPlanner.Tests.Heuristics
         {
             // ARRANGE
             IHeuristic h = new hDepth();
-            var parent = new StateMove(new States.SASStateSpace(new TranslatorContext()));
+            var parent = new StateMove(new SASStateSpace(new TranslatorContext()));
             parent.hValue = inValue;
 
             // ACT
