@@ -1,7 +1,7 @@
-﻿using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
+﻿using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
 
-namespace FlashPlanner.Translators.Phases
+namespace FlashPlanner.Core.Translators.Phases
 {
     public class GenerateFactHashesPhase : BaseTranslatorPhase
     {
@@ -38,7 +38,7 @@ namespace FlashPlanner.Translators.Phases
         private int Hash32shiftmult(int key)
         {
             int c2 = 0x27d4eb2d; // a prime or an odd constant
-            key = (key ^ 61) ^ (key >>> 16);
+            key = key ^ 61 ^ (key >>> 16);
             key = key + (key << 3);
             key = key ^ (key >>> 4);
             key = key * c2;

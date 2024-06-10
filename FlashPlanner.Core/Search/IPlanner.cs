@@ -1,8 +1,8 @@
-﻿using FlashPlanner.Heuristics;
-using FlashPlanner.Models;
+﻿using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.Models;
 using PDDLSharp.Models.FastDownward.Plans;
 
-namespace FlashPlanner.Search
+namespace FlashPlanner.Core.Search
 {
     /// <summary>
     /// Main interface for heuristic planners

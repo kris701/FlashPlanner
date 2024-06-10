@@ -1,6 +1,6 @@
-﻿using FlashPlanner.Models;
+﻿using FlashPlanner.Core.Models;
 
-namespace FlashPlanner.Translators.Phases
+namespace FlashPlanner.Core.Translators.Phases
 {
     public interface ITranslatorPhase
     {

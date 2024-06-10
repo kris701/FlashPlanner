@@ -1,7 +1,7 @@
 ﻿using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Expressions;
 
-namespace FlashPlanner.Translators.Helpers
+namespace FlashPlanner.Core.Translators.Helpers
 {
     public static class ExpressionHelper
     {

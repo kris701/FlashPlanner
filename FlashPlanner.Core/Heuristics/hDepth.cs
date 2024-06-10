@@ -1,8 +1,8 @@
-﻿using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
-using FlashPlanner.States;
+﻿using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Core.States;
 
-namespace FlashPlanner.Heuristics
+namespace FlashPlanner.Core.Heuristics
 {
     /// <summary>
     /// Simply forces the search to be a depth first search

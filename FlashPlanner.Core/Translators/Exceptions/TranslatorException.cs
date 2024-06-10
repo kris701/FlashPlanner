@@ -1,4 +1,4 @@
-﻿namespace FlashPlanner.Translators.Exceptions
+﻿namespace FlashPlanner.Core.Translators.Exceptions
 {
     /// <summary>
     /// General translator exception

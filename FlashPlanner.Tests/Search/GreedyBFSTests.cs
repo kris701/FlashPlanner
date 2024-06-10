@@ -1,4 +1,5 @@
 ﻿using FlashPlanner;
+using FlashPlanner.Core.Heuristics;
 using FlashPlanner.Heuristics;
 using FlashPlanner.Search;
 using FlashPlanner.Tests;

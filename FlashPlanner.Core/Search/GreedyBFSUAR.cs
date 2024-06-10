@@ -1,11 +1,11 @@
-﻿using FlashPlanner.Heuristics;
-using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
-using FlashPlanner.RelaxedPlanningGraphs;
-using FlashPlanner.States;
+﻿using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Core.RelaxedPlanningGraphs;
+using FlashPlanner.Core.States;
 using PDDLSharp.Models.FastDownward.Plans;
 
-namespace FlashPlanner.Search
+namespace FlashPlanner.Core.Search
 {
     /// <summary>
     /// Greedy Search with <seealso href="https://ojs.aaai.org/index.php/ICAPS/article/view/13678">Under-Approximation Refinement</seealso>

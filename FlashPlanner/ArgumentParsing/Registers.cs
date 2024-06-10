@@ -1,9 +1,6 @@
-﻿using FlashPlanner.Heuristics;
-using FlashPlanner.HeuristicsCollections;
-using FlashPlanner.Search;
-using FlashPlanner.Translators;
+﻿using FlashPlanner.Core.Heuristics;
 
-namespace FlashPlanner.CLI.ArgumentParsing
+namespace FlashPlanner.ArgumentParsing
 {
     public static class Registers
     {

@@ -1,9 +1,8 @@
-﻿using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
-using FlashPlanner.States;
+﻿using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
 using PDDLSharp.Models.PDDL;
 
-namespace FlashPlanner.Translators.Phases
+namespace FlashPlanner.Core.Translators.Phases
 {
     public class RemoveUnreachableOperatorsPhase : BaseTranslatorPhase
     {

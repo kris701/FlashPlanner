@@ -1,4 +1,4 @@
-﻿namespace FlashPlanner.Models
+﻿namespace FlashPlanner.Core.Models
 {
     /// <summary>
     /// A priority queue, where you can still check if a given value exists in the queue.

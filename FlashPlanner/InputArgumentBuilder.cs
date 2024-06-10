@@ -1,9 +1,9 @@
-﻿using FlashPlanner.CLI.ArgumentParsing;
-using FlashPlanner.Search;
-using FlashPlanner.Translators;
+﻿using FlashPlanner.ArgumentParsing;
+using FlashPlanner.Core.Search;
+using FlashPlanner.Core.Translators;
 using PDDLSharp.Models.PDDL;
 
-namespace FlashPlanner.CLI
+namespace FlashPlanner
 {
     public static class InputArgumentBuilder
     {

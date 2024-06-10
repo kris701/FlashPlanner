@@ -1,15 +1,14 @@
-﻿using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
-using FlashPlanner.Translators.Exceptions;
-using FlashPlanner.Translators.Normalizers;
-using FlashPlanner.Translators.Phases;
+﻿using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Core.Translators.Normalizers;
+using FlashPlanner.Core.Translators.Phases;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Translators.Grounders;
 
-namespace FlashPlanner.Translators
+namespace FlashPlanner.Core.Translators
 {
     /// <summary>
     /// Primary translator for FlashPlanner

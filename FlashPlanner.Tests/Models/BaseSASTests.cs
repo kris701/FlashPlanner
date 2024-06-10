@@ -1,4 +1,5 @@
-﻿using FlashPlanner.Models.SAS;
+﻿using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Models.SAS;
 using System;
 using System.Collections.Generic;
 using System.Linq;

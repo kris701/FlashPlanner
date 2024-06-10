@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using CommandLine.Text;
-using FlashPlanner.Models;
+using FlashPlanner.Core;
+using FlashPlanner.Core.Models;
 using PDDLSharp.CodeGenerators.FastDownward.Plans;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.FastDownward.Plans;
@@ -10,7 +11,7 @@ using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
 using System.Diagnostics;
 
-namespace FlashPlanner.CLI
+namespace FlashPlanner
 {
     internal class Program
     {

@@ -1,7 +1,7 @@
-﻿using FlashPlanner.Models.SAS;
-using FlashPlanner.States;
+﻿using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Core.States;
 
-namespace FlashPlanner.Models
+namespace FlashPlanner.Core.Models
 {
     /// <summary>
     /// Represents a state during the search, with the actual state space, what operators have been executed and the heuristic value.

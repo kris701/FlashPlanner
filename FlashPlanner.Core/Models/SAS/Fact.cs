@@ -1,6 +1,6 @@
 ﻿using PDDLSharp.Tools;
 
-namespace FlashPlanner.Models.SAS
+namespace FlashPlanner.Core.Models.SAS
 {
     /// <summary>
     /// Representation of a Fact in the state space
@@ -58,7 +58,7 @@ namespace FlashPlanner.Models.SAS
             unchecked
             {
                 _hashCache = 50 * Name.GetHashCode() + Arguments.Length * Arguments.Aggregate(seed, (current, item) =>
-                    (current * modifier) * item.GetHashCode());
+                    current * modifier * item.GetHashCode());
                 return _hashCache;
             }
         }

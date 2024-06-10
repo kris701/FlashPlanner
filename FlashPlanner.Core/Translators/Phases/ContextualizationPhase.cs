@@ -1,8 +1,8 @@
-﻿using FlashPlanner.Models;
+﻿using FlashPlanner.Core.Models;
 using PDDLSharp.Contextualisers.PDDL;
 using PDDLSharp.ErrorListeners;
 
-namespace FlashPlanner.Translators.Phases
+namespace FlashPlanner.Core.Translators.Phases
 {
     public class ContextualizationPhase : BaseTranslatorPhase
     {

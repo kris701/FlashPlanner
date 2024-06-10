@@ -1,9 +1,7 @@
-﻿using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
-using FlashPlanner.States;
-using PDDLSharp.Tools;
+﻿using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
 
-namespace FlashPlanner.Translators.Phases
+namespace FlashPlanner.Core.Translators.Phases
 {
     public class GenerateApplicabilityGraphPhase : BaseTranslatorPhase
     {
@@ -63,7 +61,7 @@ namespace FlashPlanner.Translators.Phases
 
             var total = graphs.Sum(x => x.Value.Count);
             var worst = from.SAS.Operators.Count * from.SAS.Operators.Count;
-            DoLog?.Invoke($"Applicability graph reduces operator checking to {Math.Round(((double)total / worst) * 100, 2)}% of max");
+            DoLog?.Invoke($"Applicability graph reduces operator checking to {Math.Round((double)total / worst * 100, 2)}% of max");
 
             from = new TranslatorContext(from.SAS, from.PDDL, from.FactHashes, graphs);
             return from;

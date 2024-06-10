@@ -1,13 +1,12 @@
-﻿using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
-using FlashPlanner.Translators.Exceptions;
-using FlashPlanner.Translators.Helpers;
-using FlashPlanner.Translators.Normalizers;
+﻿using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Core.Translators.Helpers;
+using FlashPlanner.Core.Translators.Normalizers;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Translators.Grounders;
 
-namespace FlashPlanner.Translators.Phases
+namespace FlashPlanner.Core.Translators.Phases
 {
     public class ExtractGoalFactsPhase : BaseTranslatorPhase
     {

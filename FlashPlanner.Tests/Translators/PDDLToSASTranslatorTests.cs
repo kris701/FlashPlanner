@@ -1,4 +1,6 @@
-﻿using FlashPlanner.Models.SAS;
+﻿using FlashPlanner.Core;
+using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Models.SAS;
 using FlashPlanner.Translators;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL;

@@ -1,7 +1,7 @@
-﻿using FlashPlanner.Models.SAS;
+﻿using FlashPlanner.Core.Models.SAS;
 using PDDLSharp.Models.PDDL;
 
-namespace FlashPlanner.Models
+namespace FlashPlanner.Core.Models
 {
     /// <summary>
     /// The format of data that gets transfered from the translator to the search

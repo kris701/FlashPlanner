@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace FlashPlanner.CLI
+namespace FlashPlanner
 {
     public class Options
     {

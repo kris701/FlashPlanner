@@ -1,9 +1,9 @@
-﻿using FlashPlanner.Models;
+﻿using FlashPlanner.Core.Models;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Overloads;
 
-namespace FlashPlanner.Translators.Phases
+namespace FlashPlanner.Core.Translators.Phases
 {
     public class ForceNonEqualParametersPhase : BaseTranslatorPhase
     {

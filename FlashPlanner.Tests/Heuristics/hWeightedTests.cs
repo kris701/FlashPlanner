@@ -1,4 +1,6 @@
 ﻿using FlashPlanner;
+using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.Models.SAS;
 using FlashPlanner.Heuristics;
 using FlashPlanner.Models;
 using FlashPlanner.Models.SAS;

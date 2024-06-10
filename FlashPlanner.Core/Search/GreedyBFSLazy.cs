@@ -1,8 +1,8 @@
-﻿using FlashPlanner.Heuristics;
-using FlashPlanner.States;
+﻿using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.States;
 using PDDLSharp.Models.FastDownward.Plans;
 
-namespace FlashPlanner.Search
+namespace FlashPlanner.Core.Search
 {
     /// <summary>
     /// Lazy Greedy Best First Search based on the 

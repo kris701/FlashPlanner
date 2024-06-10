@@ -1,6 +1,6 @@
-﻿using FlashPlanner.Heuristics;
+﻿using FlashPlanner.Core.Heuristics;
 
-namespace FlashPlanner.HeuristicsCollections
+namespace FlashPlanner.Core.HeuristicsCollections
 {
     /// <summary>
     /// Extension to <seealso cref="IHeuristic"/>, that contains several heuristics in it.

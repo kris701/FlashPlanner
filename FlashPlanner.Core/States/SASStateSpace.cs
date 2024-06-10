@@ -1,10 +1,10 @@
-﻿using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
+﻿using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
 using System.Collections;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("FlashPlanner.Tests")]
-namespace FlashPlanner.States
+namespace FlashPlanner.Core.States
 {
     /// <summary>
     /// Representation of a state space

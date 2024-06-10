@@ -1,7 +1,7 @@
-﻿using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
+﻿using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
 
-namespace FlashPlanner.States
+namespace FlashPlanner.Core.States
 {
     /// <summary>
     /// Representation of a relaxed state space

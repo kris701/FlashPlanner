@@ -1,8 +1,8 @@
-﻿using FlashPlanner.Helpers;
+﻿using FlashPlanner.Core.Helpers;
 using System.Diagnostics;
 using System.Timers;
 
-namespace FlashPlanner
+namespace FlashPlanner.Core
 {
     /// <summary>
     /// A container-like abstract class, that makes sure the process dont take too much time or memory.

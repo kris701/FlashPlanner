@@ -1,7 +1,7 @@
-﻿using FlashPlanner.Models.SAS;
-using FlashPlanner.States;
+﻿using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Core.States;
 
-namespace FlashPlanner.RelaxedPlanningGraphs
+namespace FlashPlanner.Core.RelaxedPlanningGraphs
 {
     /// <summary>
     /// Operator Relaxed Planning Graphs

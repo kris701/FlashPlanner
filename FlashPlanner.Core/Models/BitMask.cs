@@ -1,4 +1,4 @@
-﻿namespace FlashPlanner.Models
+﻿namespace FlashPlanner.Core.Models
 {
 
     /// <summary>

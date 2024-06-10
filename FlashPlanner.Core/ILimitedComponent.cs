@@ -1,4 +1,4 @@
-﻿namespace FlashPlanner
+﻿namespace FlashPlanner.Core
 {
     /// <summary>
     /// Simple event to send text.

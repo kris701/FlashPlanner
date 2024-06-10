@@ -1,10 +1,10 @@
-﻿using FlashPlanner.Heuristics;
-using FlashPlanner.Models.SAS;
-using FlashPlanner.RelaxedPlanningGraphs;
-using FlashPlanner.States;
+﻿using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Core.RelaxedPlanningGraphs;
+using FlashPlanner.Core.States;
 using PDDLSharp.Models.FastDownward.Plans;
 
-namespace FlashPlanner.Search
+namespace FlashPlanner.Core.Search
 {
     /// <summary>
     /// Greedy Best First Search with Preferred Operators

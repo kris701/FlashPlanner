@@ -1,15 +1,13 @@
-﻿using FlashPlanner.Heuristics;
-using FlashPlanner.HeuristicsCollections;
-using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
-using FlashPlanner.States;
-using FlashPlanner.Translators;
+﻿using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Core.States;
 using PDDLSharp.Models.FastDownward.Plans;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Toolkits;
 
-namespace FlashPlanner.Search
+namespace FlashPlanner.Core.Search
 {
     /// <summary>
     /// Greedy Best First Search with Focused Macros.

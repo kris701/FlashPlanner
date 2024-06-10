@@ -1,9 +1,9 @@
-﻿using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
-using FlashPlanner.RelaxedPlanningGraphs;
-using FlashPlanner.States;
+﻿using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
+using FlashPlanner.Core.RelaxedPlanningGraphs;
+using FlashPlanner.Core.States;
 
-namespace FlashPlanner.Heuristics
+namespace FlashPlanner.Core.Heuristics
 {
     /// <summary>
     /// Retuns the max of actions needed to achive every goal fact

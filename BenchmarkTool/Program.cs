@@ -1,13 +1,10 @@
 ﻿using BenchmarkTool;
-using FlashPlanner.Heuristics;
-using FlashPlanner.Search;
-using FlashPlanner.Translators;
+using FlashPlanner.Core;
 using PDDLSharp.CodeGenerators.PDDL;
 using PDDLSharp.ErrorListeners;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Parsers.PDDL;
-using System.Diagnostics;
 using ToMarkdown;
 
 var tmpFolder = "tmp";
@@ -119,7 +116,7 @@ foreach (var domainName in targetDomains)
         planner.TimeLimit = TimeSpan.FromSeconds(timeLimit);
         planner.MemoryLimit = memoryLimit;
         var plan = planner.Solve(sasDecl);
-        if (planner.Code == FlashPlanner.ILimitedComponent.ReturnCode.Success && plan != null)
+        if (planner.Code == ILimitedComponent.ReturnCode.Success && plan != null)
             solvedB++;
     }
 

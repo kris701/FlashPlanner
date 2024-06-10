@@ -1,4 +1,5 @@
-﻿using FlashPlanner.Heuristics;
+﻿using FlashPlanner.Core.Heuristics;
+using FlashPlanner.Heuristics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,14 +36,14 @@ namespace FlashPlanner.Tests.Search
             { () => new hAdd() },
             { () => new hMax() },
             { () => new hFF() },
-        }; 
+        };
 
         public static IEnumerable<object[]> GetTestingData(List<string> domains = null)
         {
             if (domains == null)
                 domains = TargetDomain;
 
-            foreach(var fHeuristic in Heuristics)
+            foreach (var fHeuristic in Heuristics)
             {
                 foreach (var domainName in domains)
                 {
@@ -56,7 +57,7 @@ namespace FlashPlanner.Tests.Search
                         if (problems.Count >= FirstNProblems)
                             break;
                     }
-                    foreach(var problem in problems)
+                    foreach (var problem in problems)
                         yield return new object[] { domain.FullName, problem.FullName, fHeuristic() };
                 }
             }

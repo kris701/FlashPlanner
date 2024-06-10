@@ -3,7 +3,7 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Translators.Grounders;
 
-namespace FlashPlanner.Translators.Normalizers
+namespace FlashPlanner.Core.Translators.Normalizers
 {
     /// <summary>
     /// Combined deconstructor

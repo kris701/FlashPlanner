@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace FlashPlanner.Helpers
+namespace FlashPlanner.Core.Helpers
 {
     internal static class MemoryHelper
     {

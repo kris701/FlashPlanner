@@ -1,7 +1,6 @@
-﻿using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
+﻿using FlashPlanner.Core.Models;
 
-namespace FlashPlanner.Translators.Phases
+namespace FlashPlanner.Core.Translators.Phases
 {
     public class NormalizeOperatorIDsPhase : BaseTranslatorPhase
     {

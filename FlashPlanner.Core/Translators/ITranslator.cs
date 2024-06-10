@@ -1,7 +1,7 @@
-﻿using FlashPlanner.Models;
+﻿using FlashPlanner.Core.Models;
 using PDDLSharp.Models.PDDL;
 
-namespace FlashPlanner.Translators
+namespace FlashPlanner.Core.Translators
 {
     /// <summary>
     /// Main interface to convert a <seealso cref="PDDLDecl"/> into a <seealso cref="TranslatorContext"/>

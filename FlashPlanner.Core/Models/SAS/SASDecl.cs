@@ -1,6 +1,6 @@
 ﻿using PDDLSharp.Tools;
 
-namespace FlashPlanner.Models.SAS
+namespace FlashPlanner.Core.Models.SAS
 {
     /// <summary>
     /// Internal representation of the SAS task

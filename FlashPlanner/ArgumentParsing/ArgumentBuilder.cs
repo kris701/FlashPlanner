@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace FlashPlanner.CLI.ArgumentParsing
+namespace FlashPlanner.ArgumentParsing
 {
     public static class ArgumentBuilder
     {

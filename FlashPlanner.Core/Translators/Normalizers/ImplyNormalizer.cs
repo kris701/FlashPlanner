@@ -1,8 +1,8 @@
-﻿using FlashPlanner.Translators.Exceptions;
+﻿using FlashPlanner.Core.Translators.Exceptions;
 using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Expressions;
 
-namespace FlashPlanner.Translators.Normalizers
+namespace FlashPlanner.Core.Translators.Normalizers
 {
     /// <summary>
     /// A class able to deconstruct <seealso cref="ImplyExp"/> into simpler formats.

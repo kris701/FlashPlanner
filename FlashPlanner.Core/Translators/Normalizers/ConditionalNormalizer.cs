@@ -2,7 +2,7 @@
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 
-namespace FlashPlanner.Translators.Normalizers
+namespace FlashPlanner.Core.Translators.Normalizers
 {
     /// <summary>
     /// A class able to deconstruct <seealso cref="WhenExp"/> into simpler formats.

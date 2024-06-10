@@ -1,12 +1,7 @@
-﻿using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
 
-namespace FlashPlanner.Translators.Phases
+namespace FlashPlanner.Core.Translators.Phases
 {
     public class RemoveUselessOperatorsPhase : BaseTranslatorPhase
     {
@@ -20,7 +15,7 @@ namespace FlashPlanner.Translators.Phases
         {
             DoLog?.Invoke($"Removing operators that are useless...");
             var newOps = new List<Operator>();
-            foreach(var op in from.SAS.Operators)
+            foreach (var op in from.SAS.Operators)
             {
                 if (op.Add.All(x => op.Del.Any(y => y.ContentEquals(x))))
                     continue;

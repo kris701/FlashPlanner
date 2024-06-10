@@ -1,7 +1,7 @@
-﻿using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
+﻿using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
 
-namespace FlashPlanner.Translators.Phases
+namespace FlashPlanner.Core.Translators.Phases
 {
     public class ResetOperatorsPhase : BaseTranslatorPhase
     {

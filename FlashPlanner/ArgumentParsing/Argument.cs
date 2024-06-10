@@ -1,4 +1,4 @@
-﻿namespace FlashPlanner.CLI.ArgumentParsing
+﻿namespace FlashPlanner.ArgumentParsing
 {
     public class Argument
     {

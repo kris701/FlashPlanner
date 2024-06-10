@@ -1,10 +1,9 @@
-﻿using FlashPlanner.Translators.Exceptions;
-using PDDLSharp.Models.PDDL;
+﻿using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Overloads;
 
-namespace FlashPlanner.Translators.Normalizers
+namespace FlashPlanner.Core.Translators.Normalizers
 {
     /// <summary>
     /// A class able to deconstruct <seealso cref="OrExp"/> into simpler formats.

@@ -1,7 +1,7 @@
-﻿using FlashPlanner.Models;
-using FlashPlanner.Models.SAS;
+﻿using FlashPlanner.Core.Models;
+using FlashPlanner.Core.Models.SAS;
 
-namespace FlashPlanner.Translators.Phases
+namespace FlashPlanner.Core.Translators.Phases
 {
     public class NormalizeFactIDsPhase : BaseTranslatorPhase
     {
@@ -31,7 +31,7 @@ namespace FlashPlanner.Translators.Phases
                 check.AddRange(op.Del);
             }
             var unique = new List<Fact>();
-            foreach(var fact in check)
+            foreach (var fact in check)
                 if (!unique.Any(x => x.ContentEquals(fact)))
                     unique.Add(fact);
             int count = 0;
