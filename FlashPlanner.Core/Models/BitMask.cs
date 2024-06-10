@@ -13,7 +13,7 @@
         public int Length { get; set; }
 
         internal int[] _data;
-        private readonly int _dataLength;
+        internal readonly int _dataLength;
 
         /// <summary>
         /// Indexer to get and set a boolean value for a given index in the bitmask
@@ -81,19 +81,9 @@
             return (i + (i >> 4) & 0x0F0F0F0F) * 0x01010101 >> 24;
         }
 
-        /// <summary>
-        /// Get the value at some index
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public bool Get(int index) => (_data[index >> 5] & 1 << index) != 0;
+        private bool Get(int index) => (_data[index >> 5] & 1 << index) != 0;
 
-        /// <summary>
-        /// Set the value at some index
-        /// </summary>
-        /// <param name="index"></param>
-        /// <param name="value"></param>
-        public void Set(int index, bool value)
+        private void Set(int index, bool value)
         {
             int bitMask = 1 << index;
             ref int segment = ref _data[index >> 5];
