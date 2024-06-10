@@ -113,7 +113,10 @@ namespace FlashPlanner.Core.States
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool Contains(int id) => _state[id];
+        public bool this[int id]
+        {
+            get => _state[id];
+        }
 
         /// <summary>
         /// Equals override for the state
@@ -157,10 +160,6 @@ namespace FlashPlanner.Core.States
         {
             if (Count < op.PreCount) return false;
             return op.PreMask.IsSubsetOf(_state);
-            //foreach (var pre in op.Pre)
-            //    if (!_state[pre.ID])
-            //        return false;
-            //return true;
         }
 
         /// <summary>

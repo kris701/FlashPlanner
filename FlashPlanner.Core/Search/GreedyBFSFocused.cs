@@ -212,10 +212,10 @@ namespace FlashPlanner.Core.Search
             {
                 var changed = 0;
                 foreach (var item in _initial)
-                    if (!state.Contains(item))
+                    if (!state[item])
                         changed++;
                 foreach (var item in state)
-                    if (!_initial.Contains(item))
+                    if (!_initial[item])
                         changed++;
                 if (changed > 0)
                     return changed;

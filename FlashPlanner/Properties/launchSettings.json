@@ -2,7 +2,7 @@
   "profiles": {
     "FlashPlanner.CLI": {
       "commandName": "Project",
-      "commandLineArgs": "--domain ../../../../Dependencies/downward-benchmarks/movie/domain.pddl --problem ../../../../Dependencies/downward-benchmarks/movie/prob01.pddl --search \"greedy(hGoal())\" --validate\""
+      "commandLineArgs": "--domain ../../../../Dependencies/FocusedMetaActionsData/Benchmarks/gripper/domain.pddl --problem ../../../../Dependencies/FocusedMetaActionsData/Benchmarks/gripper/testing/p01.pddl --search \"ehc(hFF())\" --validate\""
     }
   }
 }

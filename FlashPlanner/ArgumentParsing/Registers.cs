@@ -96,6 +96,14 @@ namespace FlashPlanner.ArgumentParsing
                     return new GreedyBFSLazy(h);
                 throw new Exception("Invalid arguments given for planner!");
             }),
+            new Argument("ehc", new Dictionary<string, Type>(){
+                { "h", typeof(IHeuristic) }
+            }, (args) =>
+            {
+                if (args["h"] is IHeuristic h)
+                    return new EnforcedHillClimbingS(h);
+                throw new Exception("Invalid arguments given for planner!");
+            }),
 
             // Heuristics
             new Argument("hAdd", new Dictionary<string, Type>(), (args) => new hAdd()),

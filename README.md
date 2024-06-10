@@ -52,6 +52,7 @@ flashplanner --domain domain.pddl --problem p01.pddl --search "greedy(hColMax([h
 
 The available search engines are:
 * [`beam(h, b)`](FlashPlanner.Core/Search/BeamS.cs): [Beam Search](https://en.wikipedia.org/wiki/Beam_search). H is the heuristic, b is the beta value as an integer.
+* [`ehc(h)`](FlashPlanner.Core/Search/EnforcedHillClimbingS.cs): [Enforced Hill Climbing Search](https://www.cs.cmu.edu/afs/cs/project/jair/pub/volume28/coles07a-html/node5.html). H is the heuristic.
 * [`greedy(h)`](FlashPlanner.Core/Search/GreedyBFS.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search). H is the heuristic.
 * [`greedy_underaprox(h)`](FlashPlanner.Core/Search/GreedyBFSUAR.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Under-Approximation Refinement (UAR)](https://ojs.aaai.org/index.php/ICAPS/article/view/13678). H is the heuristic.
 * [`greedy_prefered(h)`](FlashPlanner.Core/Search/GreedyBFSPO.cs): [Greedy Best First Search](https://en.wikipedia.org/wiki/Best-first_search) with [Preferred Operators (PO)](https://ai.dmi.unibas.ch/papers/helmert-jair06.pdf). H is the heuristic.

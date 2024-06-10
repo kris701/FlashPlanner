@@ -2,58 +2,61 @@
 using FlashPlanner.Core.Models;
 using FlashPlanner.Core.States;
 using PDDLSharp.Models.FastDownward.Plans;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FlashPlanner.Core.Search
 {
     /// <summary>
-    /// Simple <seealso href="https://en.wikipedia.org/wiki/Beam_search">Beam Search</seealso> implementation 
+    /// Search algorithm based on <seealso href="https://www.cs.cmu.edu/afs/cs/project/jair/pub/volume28/coles07a-html/node5.html">Enforced Hill Climbing</seealso>
     /// </summary>
-    public class BeamS : BaseHeuristicPlanner
+    public class EnforcedHillClimbingS : BaseHeuristicPlanner
     {
-        /// <summary>
-        /// How many states should be added to the open list pr expansion
-        /// </summary>
-        public int Beta { get; set; }
-
         /// <summary>
         /// Main constructor
         /// </summary>
         /// <param name="heuristic"></param>
         /// <param name="beta"></param>
-        public BeamS(IHeuristic heuristic, int beta) : base(heuristic)
+        public EnforcedHillClimbingS(IHeuristic heuristic) : base(heuristic)
         {
-            Beta = beta;
         }
 
         internal override ActionPlan? Solve(SASStateSpace state)
         {
+            var bestH = int.MaxValue;
             while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();
-                var newItems = new RefPriorityQueue<StateMove>();
                 foreach (var op in _context.ApplicabilityGraph[stateMove.Operator])
                 {
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
                     {
                         var newMove = GenerateNewState(stateMove, op);
-                        if (!IsVisited(newMove) && !newItems.Contains(newMove))
+                        if (!IsVisited(newMove))
                         {
+                            _closedList.Add(newMove);
+                            if (newMove.State.IsInGoal())
+                            {
+                                QueueOpenList(stateMove, newMove, op);
+                                return GeneratePlanChain(newMove);
+                            }
+
                             var value = Heuristic.GetValue(stateMove, newMove.State, _context.SAS.Operators);
                             newMove.hValue = value;
+                            if (value < bestH)
+                            {
+                                _openList.Clear();
+                                QueueOpenList(stateMove, newMove, op);
+                                bestH = value;
+                                continue;
+                            }
                             QueueOpenList(stateMove, newMove, op);
                         }
-                        if (newMove.State.IsInGoal())
-                            return GeneratePlanChain(newMove);
                     }
-                }
-                var count = newItems.Count;
-                if (count > Beta)
-                    count = Beta;
-                for (int i = 0; i < count; i++)
-                {
-                    var item = newItems.Dequeue();
-                    _openList.Enqueue(item, item.hValue);
                 }
             }
             return null;
