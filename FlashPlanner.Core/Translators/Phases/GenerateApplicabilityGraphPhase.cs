@@ -1,6 +1,7 @@
 ﻿using FlashPlanner.Core.Models;
 using FlashPlanner.Core.Models.SAS;
 using FlashPlanner.Core.States;
+using System.Xml.Linq;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
@@ -33,26 +34,27 @@ namespace FlashPlanner.Core.Translators.Phases
 
         private TranslatorContext GenerateTotalGraph(TranslatorContext from)
         {
-            var graphs = new Dictionary<int, List<Operator>>();
+            var graphs = new Dictionary<int, List<int>>();
             var inits = GetInitApplicableOperators(from);
+            var all = from.SAS.Operators.Select(x => x.ID).ToList();
             // -1 is from the initial state
             graphs.Add(-1, inits.ToList());
             foreach (var op in from.SAS.Operators)
-                graphs.Add(op.ID, from.SAS.Operators);
+                graphs.Add(op.ID, all);
 
             from = new TranslatorContext(from.SAS, from.PDDL, from.FactHashes, graphs);
             return from;
         }
 
-        private TranslatorContext GenerateApplicabilityGraph(TranslatorContext from, Dictionary<string, List<Operator>> argGraph, Dictionary<int, List<Operator>> preGraph)
+        private TranslatorContext GenerateApplicabilityGraph(TranslatorContext from, Dictionary<string, List<int>> argGraph, Dictionary<int, List<int>> preGraph)
         {
-            var graphs = new Dictionary<int, List<Operator>>();
+            var graphs = new Dictionary<int, List<int>>();
             var inits = GetInitApplicableOperators(from);
             // -1 is from the initial state
             graphs.Add(-1, inits.ToList());
             foreach (var op in from.SAS.Operators)
             {
-                var possibles = new List<Operator>();
+                var possibles = new List<int>();
                 foreach (var arg in op.Arguments)
                     if (argGraph.ContainsKey(arg))
                         possibles.AddRange(argGraph[arg]);
@@ -60,11 +62,11 @@ namespace FlashPlanner.Core.Translators.Phases
                     if (preGraph.ContainsKey(add.ID))
                         possibles.AddRange(preGraph[add.ID]);
                 possibles.AddRange(inits);
-                graphs.Add(op.ID, possibles.DistinctBy(x => x.ID).ToList());
+                graphs.Add(op.ID, possibles.Distinct().ToList());
             }
 
             foreach (var key in graphs.Keys)
-                graphs[key].RemoveAll(x => x.ID == key);
+                graphs[key].RemoveAll(x => x == key);
 
             var total = graphs.Sum(x => x.Value.Count);
             var worst = from.SAS.Operators.Count * from.SAS.Operators.Count;
@@ -74,29 +76,29 @@ namespace FlashPlanner.Core.Translators.Phases
             return from;
         }
 
-        private HashSet<Operator> GetInitApplicableOperators(TranslatorContext context)
+        private HashSet<int> GetInitApplicableOperators(TranslatorContext context)
         {
-            var ops = new HashSet<Operator>();
+            var ops = new HashSet<int>();
             var initState = new SASStateSpace(context);
 
             foreach (var op in context.SAS.Operators)
                 if (initState.IsApplicable(op))
-                    ops.Add(op);
+                    ops.Add(op.ID);
 
             return ops;
         }
 
-        private Dictionary<string, List<Operator>> GenerateOpArgumentGraph(SASDecl decl)
+        private Dictionary<string, List<int>> GenerateOpArgumentGraph(SASDecl decl)
         {
-            var argGraph = new Dictionary<string, List<Operator>>();
+            var argGraph = new Dictionary<string, List<int>>();
             foreach (var op in decl.Operators)
             {
                 foreach (var arg in op.Arguments)
                 {
                     if (argGraph.ContainsKey(arg))
-                        argGraph[arg].Add(op);
+                        argGraph[arg].Add(op.ID);
                     else
-                        argGraph.Add(arg, new List<Operator>() { op });
+                        argGraph.Add(arg, new List<int>() { op.ID });
                 }
             }
             foreach (var key in argGraph.Keys)
@@ -104,17 +106,17 @@ namespace FlashPlanner.Core.Translators.Phases
             return argGraph;
         }
 
-        private Dictionary<int, List<Operator>> GeneratePreconditionGraph(SASDecl decl)
+        private Dictionary<int, List<int>> GeneratePreconditionGraph(SASDecl decl)
         {
-            var preGraph = new Dictionary<int, List<Operator>>();
+            var preGraph = new Dictionary<int, List<int>>();
             foreach (var op in decl.Operators)
             {
                 foreach (var pre in op.Pre)
                 {
                     if (preGraph.ContainsKey(pre.ID))
-                        preGraph[pre.ID].Add(op);
+                        preGraph[pre.ID].Add(op.ID);
                     else
-                        preGraph.Add(pre.ID, new List<Operator>() { op });
+                        preGraph.Add(pre.ID, new List<int>() { op.ID });
                 }
             }
             foreach (var key in preGraph.Keys)

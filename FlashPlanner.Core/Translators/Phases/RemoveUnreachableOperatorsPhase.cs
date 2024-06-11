@@ -29,7 +29,7 @@ namespace FlashPlanner.Core.Translators.Phases
         {
             bool any = true;
             bool[] covered = new bool[decl.Operators.Count];
-            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[decl.Facts], new Dictionary<int, List<Operator>>()));
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[decl.Facts], new Dictionary<int, List<int>>()));
             var applicables = new List<Operator>();
             while (any)
             {

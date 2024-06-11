@@ -94,7 +94,7 @@ namespace FlashPlanner.Core.Translators
             CheckIfValid(from);
 
             var phases = GetTranslatorPhases(from);
-            var result = new TranslatorContext(new SASDecl(), from, new int[0], new Dictionary<int, List<Operator>>());
+            var result = new TranslatorContext(new SASDecl(), from, new int[0], new Dictionary<int, List<int>>());
             foreach (var phase in phases)
             {
                 if (Abort) return new TranslatorContext();

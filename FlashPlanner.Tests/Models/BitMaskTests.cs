@@ -51,12 +51,12 @@ namespace FlashPlanner.Tests.Models
         }
 
         [TestMethod]
-        [DataRow(0,0)]
-        [DataRow(1,0,true)]
-        [DataRow(1,1,true,false)]
-        [DataRow(2,1,true,false,true)]
-        [DataRow(4,1,true,true,true,false,true)]
-        [DataRow(4,2,true,true,true,false,true, false)]
+        [DataRow(0, 0)]
+        [DataRow(1, 0, true)]
+        [DataRow(1, 1, true, false)]
+        [DataRow(2, 1, true, false, true)]
+        [DataRow(4, 1, true, true, true, false, true)]
+        [DataRow(4, 2, true, true, true, false, true, false)]
         public void Can_SetSomeValues(int expectedTrue, int expectedFalse, params bool[] targets)
         {
             // ARRANGE
@@ -119,7 +119,7 @@ namespace FlashPlanner.Tests.Models
             // ARRANGE
             var mask1 = new BitMask(targets.Length);
             var mask2 = new BitMask(targets.Length);
-            for(int i = 0; i < targets.Length; i++)
+            for (int i = 0; i < targets.Length; i++)
             {
                 mask1[i] = targets[i];
                 mask2[i] = targets[i];

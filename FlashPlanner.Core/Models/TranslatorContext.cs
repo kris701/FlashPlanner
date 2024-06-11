@@ -23,7 +23,7 @@ namespace FlashPlanner.Core.Models
         /// <summary>
         /// A graph saying that when a given operator have been executed, these following operators could now be applicable
         /// </summary>
-        public Dictionary<int, List<Operator>> ApplicabilityGraph;
+        public Dictionary<int, List<int>> ApplicabilityGraph;
 
         /// <summary>
         /// Main constructor
@@ -32,7 +32,7 @@ namespace FlashPlanner.Core.Models
         /// <param name="pDDL"></param>
         /// <param name="factHashes"></param>
         /// <param name="applicabilityGraph"></param>
-        public TranslatorContext(SASDecl sas, PDDLDecl pDDL, int[] factHashes, Dictionary<int, List<Operator>> applicabilityGraph)
+        public TranslatorContext(SASDecl sas, PDDLDecl pDDL, int[] factHashes, Dictionary<int, List<int>> applicabilityGraph)
         {
             SAS = sas;
             PDDL = pDDL;
@@ -48,7 +48,7 @@ namespace FlashPlanner.Core.Models
             SAS = new SASDecl();
             PDDL = new PDDLDecl();
             FactHashes = new int[0];
-            ApplicabilityGraph = new Dictionary<int, List<Operator>>();
+            ApplicabilityGraph = new Dictionary<int, List<int>>();
         }
     }
 }

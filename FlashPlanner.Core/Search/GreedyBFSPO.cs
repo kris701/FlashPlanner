@@ -63,8 +63,9 @@ namespace FlashPlanner.Core.Search
 
                     var stateMove = ExpandBestState();
 
-                    foreach (var op in _context.ApplicabilityGraph[stateMove.Operator])
+                    foreach (var opID in _context.ApplicabilityGraph[stateMove.Operator])
                     {
+                        var op = _context.SAS.GetOperatorByID(opID);
                         if (Abort) break;
                         if (stateMove.State.IsApplicable(op))
                         {

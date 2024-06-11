@@ -32,8 +32,9 @@ namespace FlashPlanner.Core.Search
                     stateMove.hValue = Heuristic.GetValue(stateMove, stateMove.State, _context.SAS.Operators);
 
                 bool lowerFound = false;
-                foreach (var op in _context.ApplicabilityGraph[stateMove.Operator])
+                foreach (var opID in _context.ApplicabilityGraph[stateMove.Operator])
                 {
+                    var op = _context.SAS.GetOperatorByID(opID);
                     if (Abort) break;
                     if (stateMove.State.IsApplicable(op))
                     {

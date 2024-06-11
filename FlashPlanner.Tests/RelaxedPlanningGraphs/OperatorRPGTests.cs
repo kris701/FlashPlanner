@@ -141,7 +141,7 @@ namespace FlashPlanner.Tests.RelaxedPlanningGraphs
             goal.Add(new Fact("abc"));
             goal.ElementAt(0).ID = 0;
             var decl = new SASDecl(new List<Operator>(), goal.ToArray(), new Fact[0], 1);
-            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[1], new Dictionary<int, List<Operator>>()));
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[1], new Dictionary<int, List<int>>()));
             var generator = new OperatorRPG();
 
             // ACT
@@ -159,7 +159,7 @@ namespace FlashPlanner.Tests.RelaxedPlanningGraphs
             goal.Add(new Fact("abc"));
             goal.ElementAt(0).ID = 0;
             var decl = new SASDecl(new List<Operator>(), goal.ToArray(), new Fact[0], 2);
-            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[2], new Dictionary<int, List<Operator>>()));
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[2], new Dictionary<int, List<int>>()));
 
             var actions = new List<Operator>()
             {
@@ -188,7 +188,7 @@ namespace FlashPlanner.Tests.RelaxedPlanningGraphs
             goal.Add(new Fact("abc"));
             goal.ElementAt(0).ID = 0;
             var decl = new SASDecl(new List<Operator>(), goal.ToArray(), new Fact[0], 1);
-            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[1], new Dictionary<int, List<Operator>>()));
+            var state = new RelaxedSASStateSpace(new TranslatorContext(decl, new PDDLDecl(), new int[1], new Dictionary<int, List<int>>()));
 
             var operators = new List<Operator>()
             {
