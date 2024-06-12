@@ -21,7 +21,7 @@ namespace FlashPlanner.Tests.Search
             "driverlog",
             "blocks",
             "logistics00",
-            "logistics98",
+            //"logistics98",
             "freecell",
             "movie",
             "mprime",

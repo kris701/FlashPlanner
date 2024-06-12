@@ -11,15 +11,25 @@
                 _matrix[i] = new BitMask(size);
         }
 
+        public LinkedGraph(BitMask[] other)
+        {
+            _matrix = other;
+        }
+
         public BitMask this[int from] => _matrix[from];
+
+        public void Link(int from, int to)
+        {
+            if (to != from)
+                _matrix[from][to] = true;
+        }
 
         public void LinkAll(int from, List<int> tos)
         {
             foreach (var to in tos)
-                if (to != from)
-                    _matrix[from][to] = true;
+                Link(from, to);
         }
 
-        public int Count => _matrix.Sum(x => x.GetTrueBits());
+        public float Count => _matrix.Sum(x => (float)x.GetTrueBits());
     }
 }

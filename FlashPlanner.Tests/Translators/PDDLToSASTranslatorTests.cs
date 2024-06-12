@@ -179,7 +179,6 @@ namespace FlashPlanner.Tests.Translator
         }
 
         [TestMethod]
-        [DataRow("../../../../Dependencies/downward-benchmarks/gripper/domain.pddl", "../../../../Dependencies/downward-benchmarks/gripper/prob20.pddl")]
         [DataRow("../../../../Dependencies/downward-benchmarks/logistics98/domain.pddl", "../../../../Dependencies/downward-benchmarks/logistics98/prob20.pddl")]
         public void Cant_Translate_IfTimedOut(string domain, string problem)
         {

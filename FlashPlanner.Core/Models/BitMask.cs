@@ -24,8 +24,8 @@ namespace FlashPlanner.Core.Models
         /// <returns></returns>
         public bool this[int index]
         {
-            get => Get(index);
-            set => Set(index, value);
+            get => Get(ref index);
+            set => Set(ref index, ref value);
         }
 
         /// <summary>
@@ -83,9 +83,9 @@ namespace FlashPlanner.Core.Models
             return (i + (i >> 4) & 0x0F0F0F0F) * 0x01010101 >> 24;
         }
 
-        private bool Get(int index) => (_data[index >> 5] & 1 << index) != 0;
+        private bool Get(ref int index) => (_data[index >> 5] & 1 << index) != 0;
 
-        private void Set(int index, bool value)
+        private void Set(ref int index, ref bool value)
         {
             int bitMask = 1 << index;
             ref int segment = ref _data[index >> 5];
@@ -131,6 +131,12 @@ namespace FlashPlanner.Core.Models
                 if ((_data[i] & other._data[i]) != _data[i])
                     return false;
             return true;
+        }
+
+        public void Xor(BitMask other)
+        {
+            for (int i = 0; i < _data.Length; i++)
+                _data[i] |= other._data[i];
         }
 
         public override string ToString()

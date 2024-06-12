@@ -1,6 +1,7 @@
 ﻿using FlashPlanner.Core.Models;
 using FlashPlanner.Core.Models.SAS;
 using FlashPlanner.Core.States;
+using System.Diagnostics;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
@@ -13,6 +14,7 @@ namespace FlashPlanner.Core.Translators.Phases
     public class GenerateApplicabilityGraphPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;
+        private static int _initialStateID = 0;
         public GenerateApplicabilityGraphPhase(LogEventHandler? doLog)
         {
             DoLog = doLog;
@@ -22,7 +24,7 @@ namespace FlashPlanner.Core.Translators.Phases
         {
             DoLog?.Invoke($"Generate applicability graphs of operators...");
             var argGraph = GenerateOpArgumentGraph(from.SAS);
-            if (argGraph.Any(x => x.Value.Count == from.SAS.Operators.Count))
+            if (argGraph.Any(x => x.Value.GetTrueBits() == from.SAS.Operators.Count))
             {
                 DoLog?.Invoke($"Fully connected operators detected! Generating total graph instead...");
                 return GenerateTotalGraph(from);
@@ -33,40 +35,51 @@ namespace FlashPlanner.Core.Translators.Phases
 
         private TranslatorContext GenerateTotalGraph(TranslatorContext from)
         {
-            var graphs = new LinkedGraph(from.SAS.Operators.Count + 1);
+            var baseMask = new BitMask(from.SAS.Operators.Count + 1);
+            for (int i = 1; i < from.SAS.Operators.Count; i++)
+                baseMask[i] = true;
+            var matrixes = new BitMask[from.SAS.Operators.Count + 1];
+            foreach(var op in from.SAS.Operators)
+                matrixes[op.ID] = baseMask;
+            matrixes[0] = new BitMask(from.SAS.Operators.Count + 1);
+
+            var graphs = new LinkedGraph(matrixes);
             var inits = GetInitApplicableOperators(from);
-            var all = from.SAS.Operators.Select(x => x.ID).ToList();
-            // 0 is from the initial state
-            graphs.LinkAll(0, inits);
-            foreach (var op in from.SAS.Operators)
-                graphs.LinkAll(op.ID, all);
+            graphs.LinkAll(_initialStateID, inits);
 
             from = new TranslatorContext(from) { ApplicabilityGraph = graphs };
             return from;
         }
 
-        private TranslatorContext GenerateApplicabilityGraph(TranslatorContext from, Dictionary<string, List<int>> argGraph, Dictionary<int, List<int>> preGraph)
+        private TranslatorContext GenerateApplicabilityGraph(TranslatorContext from, Dictionary<string, BitMask> argGraph, Dictionary<int, BitMask> preGraph)
         {
-            var graphs = new LinkedGraph(from.SAS.Operators.Count + 1);
+            var watch = new Stopwatch();
+            watch.Start();
+            var matrixes = new BitMask[from.SAS.Operators.Count + 1];
             var inits = GetInitApplicableOperators(from);
-            // 0 is from the initial state
-            graphs.LinkAll(0, inits);
+            var baseMask = new BitMask(from.SAS.Operators.Count + 1);
+            foreach (var id in inits)
+                baseMask[id] = true;
+            matrixes[0] = baseMask;
+
             foreach (var op in from.SAS.Operators)
             {
-                var possibles = new List<int>();
+                var newMask = new BitMask(baseMask);
                 foreach (var arg in op.Arguments)
-                    if (argGraph.TryGetValue(arg, out List<int>? value))
-                        possibles.AddRange(value);
+                    newMask.Xor(argGraph[arg]);
                 foreach (var add in op.Add)
-                    if (preGraph.TryGetValue(add.ID, out List<int>? value))
-                        possibles.AddRange(value);
-                possibles.AddRange(inits);
-                graphs.LinkAll(op.ID, possibles);
+                    if (preGraph.ContainsKey(add.ID))
+                        newMask.Xor(preGraph[add.ID]);
+                matrixes[op.ID] = newMask;
             }
 
-            var total = graphs.Count;
-            var worst = from.SAS.Operators.Count * from.SAS.Operators.Count;
-            DoLog?.Invoke($"Applicability graph reduces operator checking to {Math.Round((double)total / worst * 100, 2)}% of max");
+            var graphs = new LinkedGraph(matrixes);
+
+            watch.Stop();
+            DoLog?.Invoke($"Applicability graph generated! Took {Math.Round(watch.Elapsed.TotalSeconds, 2)}s");
+            //float total = graphs.Count;
+            //float worst = (float)from.SAS.Operators.Count * (float)from.SAS.Operators.Count;
+            //DoLog?.Invoke($"Applicability graph reduces operator checking to {Math.Round((double)total / worst * 100, 2)}% of max");
 
             from = new TranslatorContext(from) { ApplicabilityGraph = graphs };
             return from;
@@ -84,39 +97,54 @@ namespace FlashPlanner.Core.Translators.Phases
             return ops;
         }
 
-        private Dictionary<string, List<int>> GenerateOpArgumentGraph(SASDecl decl)
+        private Dictionary<string, BitMask> GenerateOpArgumentGraph(SASDecl decl)
         {
-            var argGraph = new Dictionary<string, List<int>>();
+            var argRefs = new Dictionary<string, List<int>>();
             foreach (var op in decl.Operators)
             {
                 foreach (var arg in op.Arguments)
                 {
-                    if (argGraph.ContainsKey(arg))
-                        argGraph[arg].Add(op.ID);
+                    if (argRefs.ContainsKey(arg))
+                        argRefs[arg].Add(op.ID);
                     else
-                        argGraph.Add(arg, new List<int>() { op.ID });
+                        argRefs.Add(arg, new List<int>() { op.ID });
                 }
             }
-            foreach (var key in argGraph.Keys)
-                argGraph[key] = argGraph[key].Distinct().ToList();
+
+            var argGraph = new Dictionary<string, BitMask>();
+            foreach (var arg in argRefs.Keys)
+            {
+                var newMask = new BitMask(decl.Operators.Count + 1);
+                foreach (var id in argRefs[arg])
+                    newMask[id] = true;
+                argGraph.Add(arg, newMask);
+            }
+
             return argGraph;
         }
 
-        private Dictionary<int, List<int>> GeneratePreconditionGraph(SASDecl decl)
+        private Dictionary<int, BitMask> GeneratePreconditionGraph(SASDecl decl)
         {
-            var preGraph = new Dictionary<int, List<int>>();
+            var preRef = new Dictionary<int, List<int>>();
             foreach (var op in decl.Operators)
             {
                 foreach (var pre in op.Pre)
                 {
-                    if (preGraph.ContainsKey(pre.ID))
-                        preGraph[pre.ID].Add(op.ID);
+                    if (preRef.ContainsKey(pre.ID))
+                        preRef[pre.ID].Add(op.ID);
                     else
-                        preGraph.Add(pre.ID, new List<int>() { op.ID });
+                        preRef.Add(pre.ID, new List<int>() { op.ID });
                 }
             }
-            foreach (var key in preGraph.Keys)
-                preGraph[key] = preGraph[key].Distinct().ToList();
+            var preGraph = new Dictionary<int, BitMask>();
+            foreach (var arg in preRef.Keys)
+            {
+                var newMask = new BitMask(decl.Operators.Count + 1);
+                foreach (var id in preRef[arg])
+                    newMask[id] = true;
+                preGraph.Add(arg, newMask);
+            }
+
             return preGraph;
         }
     }
