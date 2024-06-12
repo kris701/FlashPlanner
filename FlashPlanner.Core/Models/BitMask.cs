@@ -1,16 +1,18 @@
-﻿namespace FlashPlanner.Core.Models
+﻿using System.Collections;
+
+namespace FlashPlanner.Core.Models
 {
 
     /// <summary>
     /// An implementation of 32 bit bitmasks.
     /// It is strongly inspired by the <seealso cref="System.Collections.BitArray"/> class
     /// </summary>
-    public class BitMask
+    public class BitMask : IEnumerable<int>
     {
         /// <summary>
         /// How many indexes can be stored in the bitmask
         /// </summary>
-        public int Length { get; set; }
+        public int Length;
 
         internal int[] _data;
         internal readonly int _dataLength;
@@ -129,6 +131,54 @@
                 if ((_data[i] & other._data[i]) != _data[i])
                     return false;
             return true;
+        }
+
+        public override string ToString()
+        {
+            var str = $"Facts ({GetTrueBits()}): ";
+            foreach (var fact in this)
+                str += $"{fact}, ";
+            return str;
+        }
+
+        public IEnumerator<int> GetEnumerator() => new BitMaskEnumerator(this);
+
+        IEnumerator IEnumerable.GetEnumerator() => new BitMaskEnumerator(this);
+    }
+
+    public class BitMaskEnumerator : IEnumerator<int>
+    {
+        private readonly BitMask _mask;
+        private int _position = -1;
+
+        public BitMaskEnumerator(BitMask mask)
+        {
+            _mask = mask;
+        }
+
+        public bool MoveNext()
+        {
+            do
+            {
+                _position++;
+                if (_position >= _mask.Length)
+                    return false;
+            }
+            while (!_mask[_position]);
+            return (_position < _mask.Length);
+        }
+
+        public void Reset()
+        {
+            _position = -1;
+        }
+
+        object IEnumerator.Current => Current;
+
+        public int Current => _position;
+
+        public void Dispose()
+        {
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using FlashPlanner.Core.Models.SAS;
 using PDDLSharp.Models.PDDL;
-using PDDLSharp.Models.PDDL.Expressions;
 
 namespace FlashPlanner.Core.Models
 {
@@ -24,7 +23,7 @@ namespace FlashPlanner.Core.Models
         /// <summary>
         /// A graph saying that when a given operator have been executed, these following operators could now be applicable
         /// </summary>
-        public Dictionary<int, List<int>> ApplicabilityGraph;
+        public LinkedGraph ApplicabilityGraph;
 
         /// <summary>
         /// Main constructor
@@ -49,7 +48,7 @@ namespace FlashPlanner.Core.Models
             SAS = new SASDecl();
             PDDL = new PDDLDecl();
             FactHashes = new int[0];
-            ApplicabilityGraph = new Dictionary<int, List<int>>();
+            ApplicabilityGraph = new LinkedGraph(0);
         }
     }
 }

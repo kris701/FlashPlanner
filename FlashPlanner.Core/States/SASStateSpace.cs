@@ -95,28 +95,11 @@ namespace FlashPlanner.Core.States
         }
 
         /// <summary>
-        /// Get all the facts in the state space.
-        /// </summary>
-        /// <returns></returns>
-        public HashSet<int> GetFacts()
-        {
-            var set = new HashSet<int>();
-            for (int i = 0; i < _state.Length; i++)
-                if (_state[i])
-                    set.Add(i);
-
-            return set;
-        }
-
-        /// <summary>
         /// If the state contains a given fact, by its SAS ID
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool this[int id]
-        {
-            get => _state[id];
-        }
+        public bool this[int id] => _state[id];
 
         /// <summary>
         /// Equals override for the state
@@ -172,7 +155,7 @@ namespace FlashPlanner.Core.States
         /// Iterator to iterate through the facts in the state space.
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<int> GetEnumerator() => GetFacts().GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetFacts().GetEnumerator();
+        public IEnumerator<int> GetEnumerator() => _state.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => _state.GetEnumerator();
     }
 }

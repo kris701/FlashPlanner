@@ -1,7 +1,6 @@
 ﻿using FlashPlanner.Core.Models;
 using FlashPlanner.Core.Models.SAS;
 using FlashPlanner.Core.States;
-using PDDLSharp.Models.PDDL;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
@@ -29,7 +28,7 @@ namespace FlashPlanner.Core.Translators.Phases
         {
             bool any = true;
             bool[] covered = new bool[decl.Operators.Count];
-            var state = new RelaxedSASStateSpace(new TranslatorContext(){ SAS = decl, FactHashes = new int[decl.Facts] });
+            var state = new RelaxedSASStateSpace(new TranslatorContext() { SAS = decl, FactHashes = new int[decl.Facts] });
             var applicables = new List<Operator>();
             while (any)
             {

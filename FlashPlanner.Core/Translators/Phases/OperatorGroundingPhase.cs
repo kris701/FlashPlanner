@@ -2,13 +2,11 @@
 using FlashPlanner.Core.Models.SAS;
 using FlashPlanner.Core.Translators.Helpers;
 using FlashPlanner.Core.Translators.Normalizers;
-using PDDLSharp.Models.PDDL;
 using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Overloads;
 using PDDLSharp.Toolkits;
 using PDDLSharp.Translators.Grounders;
-using System;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
@@ -77,16 +75,16 @@ namespace FlashPlanner.Core.Translators.Phases
 
                 DoLog?.Invoke($"Grounding action '{action.Name}'...");
                 var permutations = Grounder.GetPermutations(action);
-                foreach(var permutation in permutations)
+                foreach (var permutation in permutations)
                 {
                     var newOp = baseOp.Copy();
                     var map = new Dictionary<string, string>();
-                    for(int i = 0; i < baseOp.Arguments.Length; i++)
+                    for (int i = 0; i < baseOp.Arguments.Length; i++)
                         map.Add(baseOp.Arguments[i], Grounder.GetObjectFromIndex(permutation[i]));
 
                     for (int i = 0; i < newOp.Arguments.Length; i++)
                         newOp.Arguments[i] = map[newOp.Arguments[i]];
-                    for(int i = 0; i < newOp.Pre.Length; i++)
+                    for (int i = 0; i < newOp.Pre.Length; i++)
                         for (int j = 0; j < newOp.Pre[i].Arguments.Length; j++)
                             if (newOp.Pre[i].Arguments[j].StartsWith('?'))
                                 newOp.Pre[i].Arguments[j] = map[newOp.Pre[i].Arguments[j]];

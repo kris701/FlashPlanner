@@ -34,7 +34,7 @@ namespace FlashPlanner.Core.Models
             State = state;
             hValue = int.MaxValue;
             Steps = 0;
-            Operator = -1;
+            Operator = 0;
         }
 
         /// <summary>

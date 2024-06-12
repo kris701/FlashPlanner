@@ -155,7 +155,7 @@ namespace FlashPlanner.Core.RelaxedPlanningGraphs
             List<Layer> layers = new List<Layer>();
             var newLayer = new Layer(
                 GetNewApplicableOperators(state, operators, covered),
-                state.GetFacts());
+                state.ToHashSet());
             layers.Add(newLayer);
             int previousLayer = 0;
             while (!state.IsInGoal())
@@ -168,7 +168,7 @@ namespace FlashPlanner.Core.RelaxedPlanningGraphs
 
                 newLayer = new Layer(
                     GetNewApplicableOperators(state, operators, covered),
-                    state.GetFacts());
+                    state.ToHashSet());
 
                 // Error condition: there are no applicable actions at all (most likely means the problem is unsolvable)
                 if (newLayer.Operators.Count == 0 && !state.IsInGoal())

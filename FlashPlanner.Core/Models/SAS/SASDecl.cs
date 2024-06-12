@@ -50,7 +50,7 @@ namespace FlashPlanner.Core.Models.SAS
             Operators = operators;
             Goal = goal;
             Init = init;
-            _operatorDict = new Dictionary<int, Operator>();
+            _operatorDict = new Dictionary<int, Operator>(operators.Count);
             foreach (var op in operators)
             {
                 if (_operatorDict.ContainsKey(op.ID))

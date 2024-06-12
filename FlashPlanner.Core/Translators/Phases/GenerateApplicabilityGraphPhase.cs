@@ -1,7 +1,6 @@
 ﻿using FlashPlanner.Core.Models;
 using FlashPlanner.Core.Models.SAS;
 using FlashPlanner.Core.States;
-using System.Xml.Linq;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
@@ -34,13 +33,13 @@ namespace FlashPlanner.Core.Translators.Phases
 
         private TranslatorContext GenerateTotalGraph(TranslatorContext from)
         {
-            var graphs = new Dictionary<int, List<int>>();
+            var graphs = new LinkedGraph(from.SAS.Operators.Count + 1);
             var inits = GetInitApplicableOperators(from);
             var all = from.SAS.Operators.Select(x => x.ID).ToList();
-            // -1 is from the initial state
-            graphs.Add(-1, inits.ToList());
+            // 0 is from the initial state
+            graphs.LinkAll(0, inits);
             foreach (var op in from.SAS.Operators)
-                graphs.Add(op.ID, all);
+                graphs.LinkAll(op.ID, all);
 
             from = new TranslatorContext(from) { ApplicabilityGraph = graphs };
             return from;
@@ -48,10 +47,10 @@ namespace FlashPlanner.Core.Translators.Phases
 
         private TranslatorContext GenerateApplicabilityGraph(TranslatorContext from, Dictionary<string, List<int>> argGraph, Dictionary<int, List<int>> preGraph)
         {
-            var graphs = new Dictionary<int, List<int>>();
+            var graphs = new LinkedGraph(from.SAS.Operators.Count + 1);
             var inits = GetInitApplicableOperators(from);
-            // -1 is from the initial state
-            graphs.Add(-1, inits.ToList());
+            // 0 is from the initial state
+            graphs.LinkAll(0, inits);
             foreach (var op in from.SAS.Operators)
             {
                 var possibles = new List<int>();
@@ -62,14 +61,10 @@ namespace FlashPlanner.Core.Translators.Phases
                     if (preGraph.TryGetValue(add.ID, out List<int>? value))
                         possibles.AddRange(value);
                 possibles.AddRange(inits);
-                possibles = possibles.Distinct().ToList();
-                graphs.Add(op.ID, possibles);
+                graphs.LinkAll(op.ID, possibles);
             }
 
-            foreach (var key in graphs.Keys)
-                graphs[key].RemoveAll(x => x == key);
-
-            var total = graphs.Sum(x => x.Value.Count);
+            var total = graphs.Count;
             var worst = from.SAS.Operators.Count * from.SAS.Operators.Count;
             DoLog?.Invoke($"Applicability graph reduces operator checking to {Math.Round((double)total / worst * 100, 2)}% of max");
 
@@ -77,9 +72,9 @@ namespace FlashPlanner.Core.Translators.Phases
             return from;
         }
 
-        private HashSet<int> GetInitApplicableOperators(TranslatorContext context)
+        private List<int> GetInitApplicableOperators(TranslatorContext context)
         {
-            var ops = new HashSet<int>();
+            var ops = new List<int>();
             var initState = new SASStateSpace(context);
 
             foreach (var op in context.SAS.Operators)

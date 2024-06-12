@@ -41,7 +41,7 @@ namespace FlashPlanner.Core.Translators.Phases
                 unique.Add(fact);
                 check.RemoveAll(x => x.ContentEquals(fact));
             }
-            var uniqueDict = new Dictionary<string,Fact>();
+            var uniqueDict = new Dictionary<string, Fact>();
             foreach (var fact in unique)
                 uniqueDict.Add(fact.ToString(), fact);
             int count = 0;

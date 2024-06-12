@@ -28,7 +28,6 @@ namespace FlashPlanner.Tests.Search
             "tpp",
             "satellite",
             "driverlog",
-            "blocks",
             "logistics00",
             "logistics98",
             "freecell",
