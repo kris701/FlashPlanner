@@ -32,7 +32,7 @@ namespace FlashPlanner.Core.Translators.Phases
                 DoLog?.Invoke($"Removed {toRemove.Count} actions by being uncreachable by preconditions.");
                 var cpy = from.PDDL.Copy();
                 cpy.Domain.Actions.RemoveAll(x => toRemove.Any(y => x.Equals(y)));
-                from = new TranslatorContext(from.SAS, cpy, from.FactHashes, from.ApplicabilityGraph);
+                from = new TranslatorContext(from) { PDDL = cpy };
             }
             return from;
         }

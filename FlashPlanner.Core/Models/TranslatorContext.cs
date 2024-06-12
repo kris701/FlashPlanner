@@ -1,5 +1,6 @@
 ﻿using FlashPlanner.Core.Models.SAS;
 using PDDLSharp.Models.PDDL;
+using PDDLSharp.Models.PDDL.Expressions;
 
 namespace FlashPlanner.Core.Models
 {
@@ -32,12 +33,12 @@ namespace FlashPlanner.Core.Models
         /// <param name="pDDL"></param>
         /// <param name="factHashes"></param>
         /// <param name="applicabilityGraph"></param>
-        public TranslatorContext(SASDecl sas, PDDLDecl pDDL, int[] factHashes, Dictionary<int, List<int>> applicabilityGraph)
+        public TranslatorContext(TranslatorContext other)
         {
-            SAS = sas;
-            PDDL = pDDL;
-            FactHashes = factHashes;
-            ApplicabilityGraph = applicabilityGraph;
+            SAS = other.SAS;
+            PDDL = other.PDDL;
+            FactHashes = other.FactHashes;
+            ApplicabilityGraph = other.ApplicabilityGraph;
         }
 
         /// <summary>

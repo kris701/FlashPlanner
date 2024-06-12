@@ -138,13 +138,13 @@ namespace FlashPlanner.Core.Search
 
             if (Abort) return new List<MacroDecl>();
             var queue = new FixedMaxPriorityQueue<MacroDecl>(nMacros);
-            var h = new EffectHeuristic(new SASStateSpace(new TranslatorContext(newDecl, _context.PDDL, _context.FactHashes, _context.ApplicabilityGraph)));
+            var h = new EffectHeuristic(new SASStateSpace(new TranslatorContext(_context) { SAS = newDecl }));
             var g = new hPath();
 
             // Explore state space
             var planner = new GreedyBFS(new hColSum(new List<IHeuristic>() { g, h }));
             planner.TimeLimit = TimeSpan.FromSeconds(budget);
-            planner.Solve(new TranslatorContext(newDecl, _context.PDDL, _context.FactHashes, _context.ApplicabilityGraph));
+            planner.Solve(new TranslatorContext(_context) { SAS = newDecl });
             foreach (var state in planner._closedList)
             {
                 if (Abort) return new List<MacroDecl>();
@@ -152,7 +152,7 @@ namespace FlashPlanner.Core.Search
                 if (plan.Count > 1)
                     queue.Enqueue(
                         GenerateMacroFromOperatorSteps(plan),
-                        h.GetValue(new StateMove(new SASStateSpace(new TranslatorContext(new SASDecl(), _context.PDDL, _context.FactHashes, _context.ApplicabilityGraph))), state.State, new List<Operator>()));
+                        h.GetValue(new StateMove(new SASStateSpace(new TranslatorContext(_context) { SAS = new SASDecl() })), state.State, new List<Operator>()));
             }
 
             // Add unique macros

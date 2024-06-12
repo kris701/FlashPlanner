@@ -15,7 +15,7 @@ namespace FlashPlanner.Core.Translators.Phases
             DoLog = doLog;
         }
 
-        public override TranslatorContext ExecutePhase(TranslatorContext from) => new TranslatorContext(from.SAS, from.PDDL, GenerateFactHashes(from.SAS), from.ApplicabilityGraph);
+        public override TranslatorContext ExecutePhase(TranslatorContext from) => new TranslatorContext(from) { FactHashes = GenerateFactHashes(from.SAS) };
 
         private int[] GenerateFactHashes(SASDecl decl)
         {

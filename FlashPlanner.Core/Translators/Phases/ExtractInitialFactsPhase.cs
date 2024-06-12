@@ -30,16 +30,16 @@ namespace FlashPlanner.Core.Translators.Phases
             DoLog?.Invoke($"Extracting init facts...");
             var inits = new HashSet<Fact>();
             if (from.PDDL.Problem.Init != null)
-                inits = ExtractInitFacts(from.PDDL.Problem.Init.Predicates, from.PDDL);
+                inits = ExtractInitFacts(from.PDDL.Problem.Init.Predicates, from);
             DoLog?.Invoke($"A total of {inits.Count} initial facts have been extracted.");
             from.SAS = new SASDecl(from.SAS.Operators, from.SAS.Goal, inits.ToArray(), from.SAS.Facts);
             return from;
         }
 
-        private HashSet<Fact> ExtractInitFacts(List<IExp> inits, PDDLDecl decl)
+        private HashSet<Fact> ExtractInitFacts(List<IExp> inits, TranslatorContext from)
         {
             var initFacts = new List<Fact>();
-            var statics = SimpleStaticPredicateDetector.FindStaticPredicates(decl);
+            var statics = SimpleStaticPredicateDetector.FindStaticPredicates(from.PDDL);
 
             var normalized = new List<IExp>();
             foreach (var exp in inits)

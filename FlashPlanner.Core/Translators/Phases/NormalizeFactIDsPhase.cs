@@ -35,29 +35,35 @@ namespace FlashPlanner.Core.Translators.Phases
                 check.AddRange(op.Del);
             }
             var unique = new List<Fact>();
-            foreach (var fact in check)
-                if (!unique.Any(x => x.ContentEquals(fact)))
-                    unique.Add(fact);
+            while (check.Count > 0)
+            {
+                var fact = check[0];
+                unique.Add(fact);
+                check.RemoveAll(x => x.ContentEquals(fact));
+            }
+            var uniqueDict = new Dictionary<string,Fact>();
+            foreach (var fact in unique)
+                uniqueDict.Add(fact.ToString(), fact);
             int count = 0;
             foreach (var fact in unique)
                 fact.ID = count++;
 
-            ReplaceFacts(decl.Init, unique);
-            ReplaceFacts(decl.Goal, unique);
+            ReplaceFacts(decl.Init, uniqueDict);
+            ReplaceFacts(decl.Goal, uniqueDict);
             foreach (var op in decl.Operators)
             {
-                ReplaceFacts(op.Pre, unique);
-                ReplaceFacts(op.Add, unique);
-                ReplaceFacts(op.Del, unique);
+                ReplaceFacts(op.Pre, uniqueDict);
+                ReplaceFacts(op.Add, uniqueDict);
+                ReplaceFacts(op.Del, uniqueDict);
             }
 
             decl.Facts = count;
         }
 
-        private void ReplaceFacts(Fact[] from, List<Fact> with)
+        private void ReplaceFacts(Fact[] from, Dictionary<string, Fact> with)
         {
             for (int i = 0; i < from.Length; i++)
-                from[i] = with.First(x => x.ContentEquals(from[i]));
+                from[i] = with[from[i].ToString()];
         }
     }
 }

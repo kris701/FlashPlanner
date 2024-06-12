@@ -42,7 +42,7 @@ namespace FlashPlanner.Core.Translators.Phases
             foreach (var op in from.SAS.Operators)
                 graphs.Add(op.ID, all);
 
-            from = new TranslatorContext(from.SAS, from.PDDL, from.FactHashes, graphs);
+            from = new TranslatorContext(from) { ApplicabilityGraph = graphs };
             return from;
         }
 
@@ -56,13 +56,14 @@ namespace FlashPlanner.Core.Translators.Phases
             {
                 var possibles = new List<int>();
                 foreach (var arg in op.Arguments)
-                    if (argGraph.ContainsKey(arg))
-                        possibles.AddRange(argGraph[arg]);
+                    if (argGraph.TryGetValue(arg, out List<int>? value))
+                        possibles.AddRange(value);
                 foreach (var add in op.Add)
-                    if (preGraph.ContainsKey(add.ID))
-                        possibles.AddRange(preGraph[add.ID]);
+                    if (preGraph.TryGetValue(add.ID, out List<int>? value))
+                        possibles.AddRange(value);
                 possibles.AddRange(inits);
-                graphs.Add(op.ID, possibles.Distinct().ToList());
+                possibles = possibles.Distinct().ToList();
+                graphs.Add(op.ID, possibles);
             }
 
             foreach (var key in graphs.Keys)
@@ -72,7 +73,7 @@ namespace FlashPlanner.Core.Translators.Phases
             var worst = from.SAS.Operators.Count * from.SAS.Operators.Count;
             DoLog?.Invoke($"Applicability graph reduces operator checking to {Math.Round((double)total / worst * 100, 2)}% of max");
 
-            from = new TranslatorContext(from.SAS, from.PDDL, from.FactHashes, graphs);
+            from = new TranslatorContext(from) { ApplicabilityGraph = graphs };
             return from;
         }
 
