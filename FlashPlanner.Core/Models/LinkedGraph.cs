@@ -1,4 +1,6 @@
-﻿namespace FlashPlanner.Core.Models
+﻿using System.Drawing;
+
+namespace FlashPlanner.Core.Models
 {
     public class LinkedGraph
     {
@@ -28,6 +30,12 @@
         {
             foreach (var to in tos)
                 Link(from, to);
+        }
+
+        public void GenerateBounds()
+        {
+            for (int i = 0; i < _matrix.Length; i++)
+                _matrix[i].GenerateBounds();
         }
 
         public float Count => _matrix.Sum(x => (float)x.GetTrueBits());

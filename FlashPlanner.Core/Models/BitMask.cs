@@ -16,6 +16,8 @@ namespace FlashPlanner.Core.Models
 
         internal int[] _data;
         internal readonly int _dataLength;
+        internal int _from;
+        internal int _to;
 
         /// <summary>
         /// Indexer to get and set a boolean value for a given index in the bitmask
@@ -37,6 +39,8 @@ namespace FlashPlanner.Core.Models
             Length = length;
             _data = new int[Length / 32 + 1];
             _dataLength = _data.Length;
+            _from = -1;
+            _to = length;
         }
 
         /// <summary>
@@ -48,7 +52,10 @@ namespace FlashPlanner.Core.Models
             Length = other.Length;
             _data = new int[Length / 32 + 1];
             _dataLength = _data.Length;
-            Array.Copy(other._data, _data, _data.Length);
+            Buffer.BlockCopy(other._data, 0, _data, 0, _data.Length * sizeof(int));
+            //Array.Copy(other._data, _data, _data.Length);
+            _from = other._from;
+            _to = other._to;
         }
 
         /// <summary>
@@ -68,13 +75,6 @@ namespace FlashPlanner.Core.Models
         /// </summary>
         /// <returns></returns>
         public int GetFalseBits() => Length - GetTrueBits();
-
-        //private int NumberOfSetBits(ulong i)
-        //{
-        //    i = i - ((i >> 1) & 0x5555555555555555UL);
-        //    i = (i & 0x3333333333333333UL) + ((i >> 2) & 0x3333333333333333UL);
-        //    return (int)(unchecked(((i + (i >> 4)) & 0xF0F0F0F0F0F0F0FUL) * 0x101010101010101UL) >> 56);
-        //}
 
         private int NumberOfSetBits(int i)
         {
@@ -133,10 +133,48 @@ namespace FlashPlanner.Core.Models
             return true;
         }
 
-        public void Xor(BitMask other)
+        /// <summary>
+        /// Apply another bitmask on the current one with or
+        /// </summary>
+        /// <param name="other"></param>
+        public void Or(BitMask other)
         {
             for (int i = 0; i < _data.Length; i++)
                 _data[i] |= other._data[i];
+        }
+
+        /// <summary>
+        /// Sets bits from another bitmask to false in the current bitmask
+        /// </summary>
+        /// <param name="other"></param>
+        public void NAnd(BitMask other)
+        {
+            for (int i = 0; i < _data.Length; i++)
+                _data[i] &= ~other._data[i];
+        }
+
+        /// <summary>
+        /// Generate bounds for iteration.
+        /// Do note, this is a "static" thing and does not update itself when changes are made to this bitmask!
+        /// </summary>
+        public void GenerateBounds()
+        {
+            for(int i = 0; i < Length; i++)
+            {
+                if (this[i])
+                {
+                    _from = i - 1;
+                    break;
+                }
+            }
+            for(int i = Length; i >= _from + 1; i--)
+            {
+                if (this[i])
+                {
+                    _to = i + 1;
+                    break;
+                }
+            }
         }
 
         public override string ToString()
@@ -160,6 +198,7 @@ namespace FlashPlanner.Core.Models
         public BitMaskEnumerator(BitMask mask)
         {
             _mask = mask;
+            _position = mask._from;
         }
 
         public bool MoveNext()
@@ -167,16 +206,16 @@ namespace FlashPlanner.Core.Models
             do
             {
                 _position++;
-                if (_position >= _mask.Length)
+                if (_position >= _mask._to)
                     return false;
             }
             while (!_mask[_position]);
-            return (_position < _mask.Length);
+            return (_position < _mask._to);
         }
 
         public void Reset()
         {
-            _position = -1;
+            _position = _mask._from;
         }
 
         object IEnumerator.Current => Current;

@@ -53,8 +53,6 @@ namespace FlashPlanner.Core.Translators.Phases
 
         private TranslatorContext GenerateApplicabilityGraph(TranslatorContext from, Dictionary<string, BitMask> argGraph, Dictionary<int, BitMask> preGraph)
         {
-            var watch = new Stopwatch();
-            watch.Start();
             var matrixes = new BitMask[from.SAS.Operators.Count + 1];
             var inits = GetInitApplicableOperators(from);
             var baseMask = new BitMask(from.SAS.Operators.Count + 1);
@@ -66,17 +64,16 @@ namespace FlashPlanner.Core.Translators.Phases
             {
                 var newMask = new BitMask(baseMask);
                 foreach (var arg in op.Arguments)
-                    newMask.Xor(argGraph[arg]);
+                    newMask.Or(argGraph[arg]);
                 foreach (var add in op.Add)
                     if (preGraph.ContainsKey(add.ID))
-                        newMask.Xor(preGraph[add.ID]);
+                        newMask.Or(preGraph[add.ID]);
                 matrixes[op.ID] = newMask;
             }
 
             var graphs = new LinkedGraph(matrixes);
 
-            watch.Stop();
-            DoLog?.Invoke($"Applicability graph generated! Took {Math.Round(watch.Elapsed.TotalSeconds, 2)}s");
+            DoLog?.Invoke($"Applicability graph generated!");
             //float total = graphs.Count;
             //float worst = (float)from.SAS.Operators.Count * (float)from.SAS.Operators.Count;
             //DoLog?.Invoke($"Applicability graph reduces operator checking to {Math.Round((double)total / worst * 100, 2)}% of max");

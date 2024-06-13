@@ -41,11 +41,9 @@ namespace FlashPlanner.Core.States
         {
             _hashCache = other._hashCache;
             foreach (var add in op.Add)
-            {
                 if (!_state[add.ID])
                     _hashCache ^= Context.FactHashes[add.ID];
-                _state[add.ID] = true;
-            }
+            _state.Or(op.AddMask);
             Count = _state.GetTrueBits();
         }
 
@@ -58,11 +56,9 @@ namespace FlashPlanner.Core.States
         {
             _hashCache = other._hashCache;
             foreach (var add in op.Add)
-            {
                 if (!_state[add.ID])
                     _hashCache ^= Context.FactHashes[add.ID];
-                _state[add.ID] = true;
-            }
+            _state.Or(op.AddMask);
             Count = _state.GetTrueBits();
         }
 
@@ -77,11 +73,9 @@ namespace FlashPlanner.Core.States
             foreach (var op in ops)
             {
                 foreach (var add in op.Add)
-                {
                     if (!_state[add.ID])
                         _hashCache ^= Context.FactHashes[add.ID];
-                    _state[add.ID] = true;
-                }
+                _state.Or(op.AddMask);
             }
             Count = _state.GetTrueBits();
         }
@@ -97,11 +91,9 @@ namespace FlashPlanner.Core.States
             foreach (var op in ops)
             {
                 foreach (var add in op.Add)
-                {
                     if (!_state[add.ID])
                         _hashCache ^= Context.FactHashes[add.ID];
-                    _state[add.ID] = true;
-                }
+                _state.Or(op.AddMask);
             }
             Count = _state.GetTrueBits();
         }

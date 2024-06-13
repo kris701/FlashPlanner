@@ -8,6 +8,7 @@ using PDDLSharp.Models.PDDL.Domain;
 using PDDLSharp.Models.PDDL.Expressions;
 using PDDLSharp.Models.PDDL.Problem;
 using PDDLSharp.Translators.Grounders;
+using System.Diagnostics;
 
 namespace FlashPlanner.Core.Translators
 {
@@ -77,6 +78,7 @@ namespace FlashPlanner.Core.Translators
             phases.Add(new ResetOperatorsPhase(DoLog));
             phases.Add(new GenerateFactHashesPhase(DoLog));
             phases.Add(new GenerateApplicabilityGraphPhase(DoLog));
+            phases.Add(new GenerateBitMaskBoundsPhase(DoLog));
 
             return phases;
         }
@@ -99,7 +101,11 @@ namespace FlashPlanner.Core.Translators
             {
                 if (Abort) return new TranslatorContext();
                 _currentPhase = phase;
+                var watch = new Stopwatch();
+                watch.Start();
                 result = phase.ExecutePhase(result);
+                watch.Stop();
+                DoLog?.Invoke($"\tTook {Math.Round(watch.Elapsed.TotalSeconds,2)}s");
             }
             Stop();
             return result;
