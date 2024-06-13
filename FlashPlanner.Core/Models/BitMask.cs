@@ -50,10 +50,10 @@ namespace FlashPlanner.Core.Models
         public BitMask(BitMask other)
         {
             Length = other.Length;
-            _data = new int[Length / 32 + 1];
-            _dataLength = _data.Length;
-            Buffer.BlockCopy(other._data, 0, _data, 0, _data.Length * sizeof(int));
-            //Array.Copy(other._data, _data, _data.Length);
+            _data = GC.AllocateUninitializedArray<int>(Length / 32 + 1);
+            _dataLength = other._dataLength;
+            //Buffer.BlockCopy(other._data, 0, _data, 0, _data.Length * sizeof(int));
+            Array.Copy(other._data, _data, _data.Length);
             _from = other._from;
             _to = other._to;
         }

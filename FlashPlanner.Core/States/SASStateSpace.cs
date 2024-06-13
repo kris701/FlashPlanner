@@ -42,7 +42,7 @@ namespace FlashPlanner.Core.States
         {
             Context = other.Context;
             _state = new BitMask(other._state);
-            Count = _state.GetTrueBits();
+            Count = other.Count;
         }
 
         /// <summary>
