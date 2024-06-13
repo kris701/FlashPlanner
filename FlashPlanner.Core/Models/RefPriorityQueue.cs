@@ -6,7 +6,7 @@
     public class RefPriorityQueue<T>
     {
         private readonly HashSet<T> _referenceList;
-        private readonly PriorityQueue<T, int> _queue;
+        private readonly PriorityQueue<T, uint> _queue;
 
         /// <summary>
         /// Main constructor.
@@ -14,7 +14,7 @@
         public RefPriorityQueue()
         {
             _referenceList = new HashSet<T>();
-            _queue = new PriorityQueue<T, int>();
+            _queue = new PriorityQueue<T, uint>();
         }
 
         /// <summary>
@@ -38,7 +38,7 @@
         /// </summary>
         /// <param name="move"></param>
         /// <param name="priority"></param>
-        public void Enqueue(T move, int priority)
+        public void Enqueue(T move, uint priority)
         {
             _queue.Enqueue(move, priority);
             _referenceList.Add(move);

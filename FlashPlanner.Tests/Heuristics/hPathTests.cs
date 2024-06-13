@@ -17,10 +17,10 @@ namespace FlashPlanner.Tests.Heuristics
     public class hPathTests
     {
         [TestMethod]
-        [DataRow(1, 1 + 1)]
-        [DataRow(20, 20 + 1)]
-        [DataRow(566, 566 + 1)]
-        public void Can_GeneratehPathCorrectly(int inValue, int expected)
+        [DataRow(1, 1u + 1u)]
+        [DataRow(20, 20u + 1u)]
+        [DataRow(566, 566u + 1u)]
+        public void Can_GeneratehPathCorrectly(int inValue, uint expected)
         {
             // ARRANGE
             IHeuristic h = new hPath();

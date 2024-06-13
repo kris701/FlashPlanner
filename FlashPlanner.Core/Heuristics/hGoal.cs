@@ -9,13 +9,13 @@ namespace FlashPlanner.Core.Heuristics
     /// </summary>
     public class hGoal : BaseHeuristic
     {
-        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
+        internal override uint GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
-            int count = 0;
+            uint count = 0;
             foreach (var goal in state.Context.SAS.Goal)
                 if (state[goal.ID])
                     count++;
-            return state.Context.SAS.Goal.Length - count;
+            return (uint)state.Context.SAS.Goal.Length - count;
         }
     }
 }

@@ -9,11 +9,11 @@ namespace FlashPlanner.Tests.Models
 {
     public abstract class BaseSASTests
     {
-        internal List<Fact> GenerateRandomFacts(int fromID, int amount)
+        internal List<Fact> GenerateRandomFacts(uint fromID, uint amount)
         {
             var facts = new List<Fact>();
             var rnd = new Random();
-            for (int i = 0; i < amount; i++)
+            for (uint i = 0; i < amount; i++)
             {
                 var newFact = new Fact($"fact-{fromID + i}");
                 newFact.ID = fromID + i;
@@ -23,11 +23,11 @@ namespace FlashPlanner.Tests.Models
             return facts;
         }
 
-        internal List<Operator> GenerateRandomOperator(int fromID, int amount)
+        internal List<Operator> GenerateRandomOperator(uint fromID, uint amount)
         {
             var ops = new List<Operator>();
             var rnd = new Random();
-            for (int i = 0; i < amount; i++)
+            for (uint i = 0; i < amount; i++)
             {
                 var newOp = new Operator($"fact-{fromID + i}", new string[0], new Fact[0], new Fact[0], new Fact[0], 0);
                 newOp.ID = fromID + i;

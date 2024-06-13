@@ -10,7 +10,7 @@ namespace FlashPlanner.Core.Models.SAS
         /// <summary>
         /// ID of this operator
         /// </summary>
-        public int ID = 0;
+        public uint ID = 0;
         /// <summary>
         /// Name of this operator
         /// </summary>
@@ -31,7 +31,7 @@ namespace FlashPlanner.Core.Models.SAS
         /// <summary>
         /// Cached size of the preconditions
         /// </summary>
-        public int PreCount;
+        public uint PreCount;
 
         /// <summary>
         /// The add list of this operator
@@ -44,7 +44,7 @@ namespace FlashPlanner.Core.Models.SAS
         /// <summary>
         /// Caches size of the add list
         /// </summary>
-        public int AddCount;
+        public uint AddCount;
 
         /// <summary>
         /// The delete list of this operator
@@ -57,10 +57,10 @@ namespace FlashPlanner.Core.Models.SAS
         /// <summary>
         /// Cached size of the delete list
         /// </summary>
-        public int DelCount;
+        public uint DelCount;
 
         private int _hashCache = -1;
-        private readonly int _factCount;
+        private readonly uint _factCount;
 
         /// <summary>
         /// Main constructor
@@ -71,20 +71,20 @@ namespace FlashPlanner.Core.Models.SAS
         /// <param name="add"></param>
         /// <param name="del"></param>
         /// <param name="factCount"></param>
-        public Operator(string name, string[] arguments, Fact[] pre, Fact[] add, Fact[] del, int factCount)
+        public Operator(string name, string[] arguments, Fact[] pre, Fact[] add, Fact[] del, uint factCount)
         {
             Name = name;
             Arguments = arguments;
             Pre = pre;
-            PreCount = pre.Length;
+            PreCount = (uint)pre.Length;
             Add = add;
-            AddCount = add.Length;
+            AddCount = (uint)add.Length;
             Del = del;
-            DelCount = del.Length;
+            DelCount = (uint)del.Length;
             PreMask = new BitMask(factCount);
             foreach (var fact in pre)
                 PreMask[fact.ID] = true;
-            PreCount = pre.Length;
+            PreCount = (uint)pre.Length;
             AddMask = new BitMask(factCount);
             foreach (var fact in add)
                 AddMask[fact.ID] = true;
@@ -125,11 +125,7 @@ namespace FlashPlanner.Core.Models.SAS
         public override bool Equals(object? obj)
         {
             if (obj is Operator o)
-            {
-                if (ID != o.ID)
-                    return false;
-                return true;
-            }
+                return ID == o.ID;
             return false;
         }
 

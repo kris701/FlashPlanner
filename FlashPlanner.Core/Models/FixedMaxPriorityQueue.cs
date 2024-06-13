@@ -16,7 +16,7 @@
         /// </summary>
         public int Size { get; }
 
-        private readonly List<int> _keys;
+        private readonly List<uint> _keys;
         private readonly List<T> _values;
 
         /// <summary>
@@ -29,7 +29,7 @@
             if (size <= 0)
                 throw new ArgumentOutOfRangeException("Size must be larger than 0!");
             Size = size;
-            _keys = new List<int>(size);
+            _keys = new List<uint>(size);
             _values = new List<T>(size);
         }
 
@@ -38,7 +38,7 @@
         /// </summary>
         /// <param name="value">The value</param>
         /// <param name="key">The priority</param>
-        public void Enqueue(T value, int key)
+        public void Enqueue(T value, uint key)
         {
             int insertIndex = GetInsertIndex(key);
             _keys.Insert(insertIndex, key);
@@ -51,7 +51,7 @@
             }
         }
 
-        private int GetInsertIndex(int key)
+        private int GetInsertIndex(uint key)
         {
             for (int i = 0; i < Count; i++)
                 if (key > _keys[i])

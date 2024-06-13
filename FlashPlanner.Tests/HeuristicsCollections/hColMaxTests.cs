@@ -17,10 +17,10 @@ namespace FlashPlanner.Tests.HeuristicsCollections
     public class hColMaxTests
     {
         [TestMethod]
-        [DataRow(5, 1, 2, 3, 5)]
-        [DataRow(2, 1, 2)]
-        [DataRow(int.MaxValue, int.MaxValue, 2)]
-        public void Can_GeneratehColMaxCorrectly(int expected, params int[] constants)
+        [DataRow(5u, 1u, 2u, 3u, 5u)]
+        [DataRow(2u, 1u, 2u)]
+        [DataRow(uint.MaxValue, uint.MaxValue, 2u)]
+        public void Can_GeneratehColMaxCorrectly(uint expected, params uint[] constants)
         {
             // ARRANGE
             IHeuristicCollection h = new hColMax(new List<IHeuristic>());

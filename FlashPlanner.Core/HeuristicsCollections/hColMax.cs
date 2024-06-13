@@ -18,9 +18,9 @@ namespace FlashPlanner.Core.HeuristicsCollections
         {
         }
 
-        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
+        internal override uint GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
-            int max = -1;
+            uint max = 0;
             foreach (var heuristic in Heuristics)
             {
                 var hValue = heuristic.GetValue(parent, state, operators);

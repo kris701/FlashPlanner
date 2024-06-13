@@ -1,7 +1,6 @@
 ﻿using FlashPlanner.Core.Models;
 using FlashPlanner.Core.Models.SAS;
 using FlashPlanner.Core.States;
-using System.Diagnostics;
 
 namespace FlashPlanner.Core.Translators.Phases
 {
@@ -14,7 +13,7 @@ namespace FlashPlanner.Core.Translators.Phases
     public class GenerateApplicabilityGraphPhase : BaseTranslatorPhase
     {
         public override event LogEventHandler? DoLog;
-        private static int _initialStateID = 0;
+        private static readonly uint _initialStateID = 0;
         public GenerateApplicabilityGraphPhase(LogEventHandler? doLog)
         {
             DoLog = doLog;
@@ -35,13 +34,13 @@ namespace FlashPlanner.Core.Translators.Phases
 
         private TranslatorContext GenerateTotalGraph(TranslatorContext from)
         {
-            var baseMask = new BitMask(from.SAS.Operators.Count + 1);
-            for (int i = 1; i < from.SAS.Operators.Count; i++)
+            var baseMask = new BitMask((uint)from.SAS.Operators.Count + 1);
+            for (uint i = 1; i < from.SAS.Operators.Count; i++)
                 baseMask[i] = true;
-            var matrixes = new BitMask[from.SAS.Operators.Count + 1];
-            foreach(var op in from.SAS.Operators)
+            var matrixes = new BitMask[(uint)from.SAS.Operators.Count + 1];
+            foreach (var op in from.SAS.Operators)
                 matrixes[op.ID] = baseMask;
-            matrixes[0] = new BitMask(from.SAS.Operators.Count + 1);
+            matrixes[0] = new BitMask((uint)from.SAS.Operators.Count + 1);
 
             var graphs = new LinkedGraph(matrixes);
             var inits = GetInitApplicableOperators(from);
@@ -51,11 +50,11 @@ namespace FlashPlanner.Core.Translators.Phases
             return from;
         }
 
-        private TranslatorContext GenerateApplicabilityGraph(TranslatorContext from, Dictionary<string, BitMask> argGraph, Dictionary<int, BitMask> preGraph)
+        private TranslatorContext GenerateApplicabilityGraph(TranslatorContext from, Dictionary<string, BitMask> argGraph, Dictionary<uint, BitMask> preGraph)
         {
-            var matrixes = new BitMask[from.SAS.Operators.Count + 1];
+            var matrixes = new BitMask[(uint)from.SAS.Operators.Count + 1];
             var inits = GetInitApplicableOperators(from);
-            var baseMask = new BitMask(from.SAS.Operators.Count + 1);
+            var baseMask = new BitMask((uint)from.SAS.Operators.Count + 1);
             foreach (var id in inits)
                 baseMask[id] = true;
             matrixes[0] = baseMask;
@@ -82,9 +81,9 @@ namespace FlashPlanner.Core.Translators.Phases
             return from;
         }
 
-        private List<int> GetInitApplicableOperators(TranslatorContext context)
+        private List<uint> GetInitApplicableOperators(TranslatorContext context)
         {
-            var ops = new List<int>();
+            var ops = new List<uint>();
             var initState = new SASStateSpace(context);
 
             foreach (var op in context.SAS.Operators)
@@ -96,7 +95,7 @@ namespace FlashPlanner.Core.Translators.Phases
 
         private Dictionary<string, BitMask> GenerateOpArgumentGraph(SASDecl decl)
         {
-            var argRefs = new Dictionary<string, List<int>>();
+            var argRefs = new Dictionary<string, List<uint>>();
             foreach (var op in decl.Operators)
             {
                 foreach (var arg in op.Arguments)
@@ -104,14 +103,14 @@ namespace FlashPlanner.Core.Translators.Phases
                     if (argRefs.ContainsKey(arg))
                         argRefs[arg].Add(op.ID);
                     else
-                        argRefs.Add(arg, new List<int>() { op.ID });
+                        argRefs.Add(arg, new List<uint>() { op.ID });
                 }
             }
 
             var argGraph = new Dictionary<string, BitMask>();
             foreach (var arg in argRefs.Keys)
             {
-                var newMask = new BitMask(decl.Operators.Count + 1);
+                var newMask = new BitMask((uint)decl.Operators.Count + 1);
                 foreach (var id in argRefs[arg])
                     newMask[id] = true;
                 argGraph.Add(arg, newMask);
@@ -120,9 +119,9 @@ namespace FlashPlanner.Core.Translators.Phases
             return argGraph;
         }
 
-        private Dictionary<int, BitMask> GeneratePreconditionGraph(SASDecl decl)
+        private Dictionary<uint, BitMask> GeneratePreconditionGraph(SASDecl decl)
         {
-            var preRef = new Dictionary<int, List<int>>();
+            var preRef = new Dictionary<uint, List<uint>>();
             foreach (var op in decl.Operators)
             {
                 foreach (var pre in op.Pre)
@@ -130,13 +129,13 @@ namespace FlashPlanner.Core.Translators.Phases
                     if (preRef.ContainsKey(pre.ID))
                         preRef[pre.ID].Add(op.ID);
                     else
-                        preRef.Add(pre.ID, new List<int>() { op.ID });
+                        preRef.Add(pre.ID, new List<uint>() { op.ID });
                 }
             }
-            var preGraph = new Dictionary<int, BitMask>();
+            var preGraph = new Dictionary<uint, BitMask>();
             foreach (var arg in preRef.Keys)
             {
-                var newMask = new BitMask(decl.Operators.Count + 1);
+                var newMask = new BitMask((uint)decl.Operators.Count + 1);
                 foreach (var id in preRef[arg])
                     newMask[id] = true;
                 preGraph.Add(arg, newMask);

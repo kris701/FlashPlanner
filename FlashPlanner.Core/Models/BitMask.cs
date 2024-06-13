@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using System.Buffers;
+using System.Collections;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace FlashPlanner.Core.Models
 {
@@ -7,24 +10,24 @@ namespace FlashPlanner.Core.Models
     /// An implementation of 32 bit bitmasks.
     /// It is strongly inspired by the <seealso cref="System.Collections.BitArray"/> class
     /// </summary>
-    public class BitMask : IEnumerable<int>
+    public class BitMask : IEnumerable<uint>
     {
         /// <summary>
         /// How many indexes can be stored in the bitmask
         /// </summary>
-        public int Length;
+        public readonly uint Length;
 
-        internal int[] _data;
-        internal readonly int _dataLength;
-        internal int _from;
-        internal int _to;
+        internal readonly uint[] _data;
+        internal readonly uint _dataLength;
+        internal uint _from;
+        internal uint _to;
 
         /// <summary>
         /// Indexer to get and set a boolean value for a given index in the bitmask
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public bool this[int index]
+        public bool this[uint index]
         {
             get => Get(ref index);
             set => Set(ref index, ref value);
@@ -34,13 +37,13 @@ namespace FlashPlanner.Core.Models
         /// Initialize the bitmask with a set length
         /// </summary>
         /// <param name="length"></param>
-        public BitMask(int length)
+        public BitMask(uint length)
         {
             Length = length;
-            _data = new int[Length / 32 + 1];
-            _dataLength = _data.Length;
-            _from = -1;
-            _to = length;
+            _dataLength = Length / 32 + 1;
+            _data = new uint[_dataLength];
+            _from = 0;
+            _to = _dataLength;
         }
 
         /// <summary>
@@ -50,10 +53,12 @@ namespace FlashPlanner.Core.Models
         public BitMask(BitMask other)
         {
             Length = other.Length;
-            _data = GC.AllocateUninitializedArray<int>(Length / 32 + 1);
             _dataLength = other._dataLength;
+            _data = new uint[_dataLength];
+            other._data.AsSpan().CopyTo(_data);
+            //_data = GC.AllocateUninitializedArray<int>(Length / 32 + 1, true);
             //Buffer.BlockCopy(other._data, 0, _data, 0, _data.Length * sizeof(int));
-            Array.Copy(other._data, _data, _data.Length);
+            //Array.Copy(other._data, _data, _data.Length);
             _from = other._from;
             _to = other._to;
         }
@@ -62,11 +67,11 @@ namespace FlashPlanner.Core.Models
         /// Get how many bits are currently true in the bitmask
         /// </summary>
         /// <returns></returns>
-        public int GetTrueBits()
+        public uint GetTrueBits()
         {
-            var count = 0;
-            foreach (int value in _data)
-                count += NumberOfSetBits(value);
+            var count = 0u;
+            for (uint i = 0; i < _data.Length; i++)
+                count += (uint)BitOperations.PopCount(_data[i]);
             return count;
         }
 
@@ -74,21 +79,16 @@ namespace FlashPlanner.Core.Models
         /// Get how many bits are currently false in the bitmask
         /// </summary>
         /// <returns></returns>
-        public int GetFalseBits() => Length - GetTrueBits();
+        public uint GetFalseBits() => Length - GetTrueBits();
 
-        private int NumberOfSetBits(int i)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool Get(ref uint index) => (_data[index >> 5] & (1u << (int)index)) != 0;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Set(ref uint index, ref bool value)
         {
-            i = i - (i >> 1 & 0x55555555);
-            i = (i & 0x33333333) + (i >> 2 & 0x33333333);
-            return (i + (i >> 4) & 0x0F0F0F0F) * 0x01010101 >> 24;
-        }
-
-        private bool Get(ref int index) => (_data[index >> 5] & 1 << index) != 0;
-
-        private void Set(ref int index, ref bool value)
-        {
-            int bitMask = 1 << index;
-            ref int segment = ref _data[index >> 5];
+            uint bitMask = 1u << (int)index;
+            ref uint segment = ref _data[index >> 5];
 
             if (value)
                 segment |= bitMask;
@@ -106,7 +106,7 @@ namespace FlashPlanner.Core.Models
             if (obj is BitMask other)
             {
                 if (other.Length != Length) return false;
-                for (int i = 0; i < _data.Length; i++)
+                for (uint i = 0; i < _dataLength; i++)
                     if (other._data[i] != _data[i])
                         return false;
                 return true;
@@ -127,7 +127,7 @@ namespace FlashPlanner.Core.Models
         /// <returns></returns>
         public bool IsSubsetOf(BitMask other)
         {
-            for (int i = 0; i < _data.Length; i++)
+            for (uint i = 0; i < _dataLength; i++)
                 if ((_data[i] & other._data[i]) != _data[i])
                     return false;
             return true;
@@ -139,7 +139,7 @@ namespace FlashPlanner.Core.Models
         /// <param name="other"></param>
         public void Or(BitMask other)
         {
-            for (int i = 0; i < _data.Length; i++)
+            for (uint i = 0; i < _dataLength; i++)
                 _data[i] |= other._data[i];
         }
 
@@ -149,7 +149,7 @@ namespace FlashPlanner.Core.Models
         /// <param name="other"></param>
         public void NAnd(BitMask other)
         {
-            for (int i = 0; i < _data.Length; i++)
+            for (uint i = 0; i < _dataLength; i++)
                 _data[i] &= ~other._data[i];
         }
 
@@ -159,17 +159,17 @@ namespace FlashPlanner.Core.Models
         /// </summary>
         public void GenerateBounds()
         {
-            for(int i = 0; i < Length; i++)
+            for (uint i = 0; i < _dataLength; i++)
             {
-                if (this[i])
+                if (_data[i] != 0)
                 {
-                    _from = i - 1;
+                    _from = i;
                     break;
                 }
             }
-            for(int i = Length; i >= _from + 1; i--)
+            for (uint i = _dataLength - 1; i >= _from + 1; i--)
             {
-                if (this[i])
+                if (_data[i] != 0)
                 {
                     _to = i + 1;
                     break;
@@ -185,42 +185,72 @@ namespace FlashPlanner.Core.Models
             return str;
         }
 
-        public IEnumerator<int> GetEnumerator() => new BitMaskEnumerator(this);
+        public IEnumerator<uint> GetEnumerator() => new BitMaskEnumerator(this);
 
         IEnumerator IEnumerable.GetEnumerator() => new BitMaskEnumerator(this);
     }
 
-    public class BitMaskEnumerator : IEnumerator<int>
+    public class BitMaskEnumerator : IEnumerator<uint>
     {
         private readonly BitMask _mask;
-        private int _position = -1;
+        private uint _maskOffset = 0;
+        private uint _tmpOffset = 32;
+        private uint _tmpMax = 0;
+        private uint[] _tmp;
 
         public BitMaskEnumerator(BitMask mask)
         {
             _mask = mask;
-            _position = mask._from;
+            _maskOffset = mask._from;
+            _tmp = new uint[32];
         }
 
         public bool MoveNext()
         {
-            do
+            _tmpOffset++;
+            while (_tmpOffset >= _tmpMax)
             {
-                _position++;
-                if (_position >= _mask._to)
+                if (_maskOffset >= _mask._to)
                     return false;
+                GetExponents(_mask._data[_maskOffset], _maskOffset++ * 32, ref _tmp);
+                if (_tmpMax > 0)
+                {
+                    _tmpOffset = 0;
+                    break;
+                }
             }
-            while (!_mask[_position]);
-            return (_position < _mask._to);
+
+            return true;
+        }
+
+        static uint[] MulDeBruijnBitPos = new uint[32]
+        {
+          0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8,
+          31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
+        };
+
+        private uint[] GetExponents(uint value, uint offset, ref uint[] data)
+        {
+            uint enabledBitCounter = 0;
+
+            while (value != 0)
+            {
+                uint m = (value & (0 - value));
+                value ^= m;
+                data[enabledBitCounter++] = MulDeBruijnBitPos[(m * 0x077CB531U) >> 27] + offset;
+            }
+
+            _tmpMax = enabledBitCounter;
+            return data;
         }
 
         public void Reset()
         {
-            _position = _mask._from;
         }
 
         object IEnumerator.Current => Current;
 
-        public int Current => _position;
+        public uint Current => _tmp[_tmpOffset];
 
         public void Dispose()
         {

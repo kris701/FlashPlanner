@@ -20,14 +20,14 @@ namespace FlashPlanner.Core.Heuristics
             _graphGenerator = new OperatorRPG();
         }
 
-        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
+        internal override uint GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
             var relaxedPlan = _graphGenerator.GenerateReplaxedPlan(
                 state,
                 operators);
             if (_graphGenerator.Failed)
-                return int.MaxValue;
-            return relaxedPlan.Count;
+                return uint.MaxValue;
+            return (uint)relaxedPlan.Count;
         }
     }
 }

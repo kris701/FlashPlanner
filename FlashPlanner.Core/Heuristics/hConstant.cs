@@ -12,17 +12,17 @@ namespace FlashPlanner.Core.Heuristics
         /// <summary>
         /// What constant to return
         /// </summary>
-        public int Constant { get; }
+        public uint Constant { get; }
 
         /// <summary>
         /// Main constructor
         /// </summary>
         /// <param name="constant"></param>
-        public hConstant(int constant)
+        public hConstant(uint constant)
         {
             Constant = constant;
         }
 
-        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators) => Constant;
+        internal override uint GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators) => Constant;
     }
 }

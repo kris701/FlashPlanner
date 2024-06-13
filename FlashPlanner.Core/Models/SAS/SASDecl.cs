@@ -33,10 +33,10 @@ namespace FlashPlanner.Core.Models.SAS
         /// <summary>
         /// Facts in the state space (used for the bitmasks)
         /// </summary>
-        public int Facts;
+        public uint Facts;
 
         private int _hashCache = -1;
-        private readonly Dictionary<int, Operator> _operatorDict;
+        private readonly Dictionary<uint, Operator> _operatorDict;
 
         /// <summary>
         /// Main constructor
@@ -45,12 +45,12 @@ namespace FlashPlanner.Core.Models.SAS
         /// <param name="goal"></param>
         /// <param name="init"></param>
         /// <param name="factCount"></param>
-        public SASDecl(List<Operator> operators, Fact[] goal, Fact[] init, int factCount)
+        public SASDecl(List<Operator> operators, Fact[] goal, Fact[] init, uint factCount)
         {
             Operators = operators;
             Goal = goal;
             Init = init;
-            _operatorDict = new Dictionary<int, Operator>(operators.Count);
+            _operatorDict = new Dictionary<uint, Operator>(operators.Count);
             foreach (var op in operators)
             {
                 if (_operatorDict.ContainsKey(op.ID))
@@ -136,6 +136,6 @@ namespace FlashPlanner.Core.Models.SAS
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Operator GetOperatorByID(int id) => _operatorDict[id];
+        public Operator GetOperatorByID(uint id) => _operatorDict[id];
     }
 }

@@ -14,7 +14,7 @@ namespace FlashPlanner.Core.RelaxedPlanningGraphs
         public bool Failed { get; internal set; } = false;
 
         private SASDecl _currentDecl = new SASDecl();
-        private Dictionary<int, List<Operator>> _addOps = new Dictionary<int, List<Operator>>();
+        private Dictionary<uint, List<Operator>> _addOps = new Dictionary<uint, List<Operator>>();
 
         /// <summary>
         /// Generate a relaxed plan
@@ -50,7 +50,7 @@ namespace FlashPlanner.Core.RelaxedPlanningGraphs
         /// </summary>
         private void GenerateAddCache()
         {
-            _addOps = new Dictionary<int, List<Operator>>();
+            _addOps = new Dictionary<uint, List<Operator>>();
             foreach (var op in _currentDecl.Operators)
             {
                 foreach (var add in op.Add)
@@ -66,18 +66,18 @@ namespace FlashPlanner.Core.RelaxedPlanningGraphs
         private List<Operator> ReconstructPlan(List<Layer> graphLayers, SASDecl decl)
         {
             var selectedOperators = new List<Operator>();
-            var G = new Dictionary<int, HashSet<int>>();
-            var trues = new Dictionary<int, HashSet<int>>();
+            var G = new Dictionary<int, HashSet<uint>>();
+            var trues = new Dictionary<int, HashSet<uint>>();
             var m = -1;
             foreach (var fact in decl.Goal)
                 m = Math.Max(m, FirstLevel(fact, graphLayers));
 
-            G.Add(0, new HashSet<int>());
-            trues.Add(0, new HashSet<int>());
+            G.Add(0, new HashSet<uint>());
+            trues.Add(0, new HashSet<uint>());
             for (int t = 1; t <= m; t++)
             {
-                G.Add(t, new HashSet<int>());
-                trues.Add(t, new HashSet<int>());
+                G.Add(t, new HashSet<uint>());
+                trues.Add(t, new HashSet<uint>());
                 foreach (var fact in decl.Goal)
                     if (FirstLevel(fact, graphLayers) == t)
                         G[t].Add(fact.ID);

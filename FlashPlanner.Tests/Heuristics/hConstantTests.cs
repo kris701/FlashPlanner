@@ -16,11 +16,10 @@ namespace FlashPlanner.Tests.Heuristics
     public class hConstantTests
     {
         [TestMethod]
-        [DataRow(1)]
-        [DataRow(int.MaxValue)]
-        [DataRow(62362524)]
-        [DataRow(-62362524)]
-        public void Can_GeneratehConstantCorrectly(int expected)
+        [DataRow(1u)]
+        [DataRow(uint.MaxValue)]
+        [DataRow(62362524u)]
+        public void Can_GeneratehConstantCorrectly(uint expected)
         {
             // ARRANGE
             IHeuristic h = new hConstant(expected);

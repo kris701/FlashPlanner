@@ -11,10 +11,10 @@ namespace FlashPlanner.Tests.Models
     public class BitMaskTests
     {
         [TestMethod]
-        [DataRow(1)]
-        [DataRow(10)]
-        [DataRow(10000)]
-        public void Can_SetCorrectLength(int length)
+        [DataRow(1u)]
+        [DataRow(10u)]
+        [DataRow(10000u)]
+        public void Can_SetCorrectLength(uint length)
         {
             // ARRANGE
             // ACT
@@ -24,10 +24,10 @@ namespace FlashPlanner.Tests.Models
         }
 
         [TestMethod]
-        [DataRow(1, 1)]
-        [DataRow(40, 2)]
-        [DataRow(10000, 313)]
-        public void Can_SetCorrectDataLength(int length, int expected)
+        [DataRow(1u, 1u)]
+        [DataRow(40u, 2u)]
+        [DataRow(10000u, 313u)]
+        public void Can_SetCorrectDataLength(uint length, uint expected)
         {
             // ARRANGE
             // ACT
@@ -41,7 +41,7 @@ namespace FlashPlanner.Tests.Models
         public void Can_SetEntireArrayToZero()
         {
             // ARRANGE
-            var length = 10;
+            var length = 10u;
 
             // ACT
             var mask = new BitMask(length);
@@ -51,19 +51,19 @@ namespace FlashPlanner.Tests.Models
         }
 
         [TestMethod]
-        [DataRow(0, 0)]
-        [DataRow(1, 0, true)]
-        [DataRow(1, 1, true, false)]
-        [DataRow(2, 1, true, false, true)]
-        [DataRow(4, 1, true, true, true, false, true)]
-        [DataRow(4, 2, true, true, true, false, true, false)]
-        public void Can_SetSomeValues(int expectedTrue, int expectedFalse, params bool[] targets)
+        [DataRow(0u, 0u)]
+        [DataRow(1u, 0u, true)]
+        [DataRow(1u, 1u, true, false)]
+        [DataRow(2u, 1u, true, false, true)]
+        [DataRow(4u, 1u, true, true, true, false, true)]
+        [DataRow(4u, 2u, true, true, true, false, true, false)]
+        public void Can_SetSomeValues(uint expectedTrue, uint expectedFalse, params bool[] targets)
         {
             // ARRANGE
-            var mask = new BitMask(targets.Length);
+            var mask = new BitMask((uint)targets.Length);
 
             // ACT
-            for (int i = 0; i < targets.Length; i++)
+            for (uint i = 0; i < targets.Length; i++)
                 mask[i] = targets[i];
 
             // ASSERT
@@ -72,12 +72,12 @@ namespace FlashPlanner.Tests.Models
         }
 
         [TestMethod]
-        [DataRow(1, 0, 0)]
-        [DataRow(1, 1, 1)]
-        [DataRow(1, 2, 2)]
-        [DataRow(1, 200, 200)]
-        [DataRow(2, 199, 200, 150)]
-        public void Can_SetSomeValues_Large(int expectedTrue, int expectedFalse, params int[] targets)
+        [DataRow(1u, 0u, 0u)]
+        [DataRow(1u, 1u, 1u)]
+        [DataRow(1u, 2u, 2u)]
+        [DataRow(1u, 200u, 200u)]
+        [DataRow(2u, 199u, 200u, 150u)]
+        public void Can_SetSomeValues_Large(uint expectedTrue, uint expectedFalse, params uint[] targets)
         {
             // ARRANGE
             var mask = new BitMask(targets.Max() + 1);
@@ -95,8 +95,8 @@ namespace FlashPlanner.Tests.Models
         public void Can_SetSingleValue()
         {
             // ARRANGE
-            var length = 10;
-            var target = 3;
+            var length = 10u;
+            var target = 3u;
             var mask = new BitMask(length);
             Assert.IsFalse(mask[target]);
 
@@ -117,9 +117,9 @@ namespace FlashPlanner.Tests.Models
         public void Can_EqualsIfTheSame(params bool[] targets)
         {
             // ARRANGE
-            var mask1 = new BitMask(targets.Length);
-            var mask2 = new BitMask(targets.Length);
-            for (int i = 0; i < targets.Length; i++)
+            var mask1 = new BitMask((uint)targets.Length);
+            var mask2 = new BitMask((uint)targets.Length);
+            for (uint i = 0; i < targets.Length; i++)
             {
                 mask1[i] = targets[i];
                 mask2[i] = targets[i];
@@ -140,9 +140,9 @@ namespace FlashPlanner.Tests.Models
         public void Cant_EqualsIfNotTheSame(params bool[] targets)
         {
             // ARRANGE
-            var mask1 = new BitMask(targets.Length);
-            var mask2 = new BitMask(targets.Length);
-            for (int i = 0; i < targets.Length; i++)
+            var mask1 = new BitMask((uint)targets.Length);
+            var mask2 = new BitMask((uint)targets.Length);
+            for (uint i = 0; i < targets.Length; i++)
             {
                 mask1[i] = targets[i];
                 mask2[i] = !targets[i];
@@ -170,7 +170,7 @@ namespace FlashPlanner.Tests.Models
             mask1[4] = false;
 
             var mask2 = new BitMask(5);
-            for (int i = 0; i < targets.Length; i++)
+            for (uint i = 0; i < targets.Length; i++)
                 mask2[i] = targets[i];
 
             // ACT
@@ -185,8 +185,8 @@ namespace FlashPlanner.Tests.Models
         public void Can_CopyOtherBitMask(params bool[] targets)
         {
             // ARRANGE
-            var mask = new BitMask(targets.Length);
-            for (int i = 0; i < targets.Length; i++)
+            var mask = new BitMask((uint)targets.Length);
+            for (uint i = 0; i < targets.Length; i++)
                 mask[i] = targets[i];
 
             // ACT
@@ -198,10 +198,10 @@ namespace FlashPlanner.Tests.Models
         }
 
         [TestMethod]
-        [DataRow(2, 56)]
-        [DataRow(2, 56, 512)]
-        [DataRow(2, 5, 56, 512)]
-        public void Can_CopyOtherBitMask_Large(params int[] targets)
+        [DataRow(2u, 56u)]
+        [DataRow(2u, 56u, 512u)]
+        [DataRow(2u, 5u, 56u, 512u)]
+        public void Can_CopyOtherBitMask_Large(params uint[] targets)
         {
             // ARRANGE
             var mask = new BitMask(targets.Max() + 1);

@@ -35,13 +35,13 @@ namespace FlashPlanner.Core.HeuristicsCollections
         /// <param name="state"></param>
         /// <param name="operators"></param>
         /// <returns></returns>
-        public int GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
+        public uint GetValue(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
             Evaluations++;
             return GetValueInner(parent, state, operators);
         }
 
-        internal abstract int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators);
+        internal abstract uint GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators);
         /// <summary>
         /// Reset the heuristic.
         /// </summary>

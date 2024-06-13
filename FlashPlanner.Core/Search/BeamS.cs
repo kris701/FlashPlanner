@@ -1,6 +1,5 @@
 ﻿using FlashPlanner.Core.Heuristics;
 using FlashPlanner.Core.Models;
-using FlashPlanner.Core.States;
 using PDDLSharp.Models.FastDownward.Plans;
 
 namespace FlashPlanner.Core.Search
@@ -25,7 +24,7 @@ namespace FlashPlanner.Core.Search
             Beta = beta;
         }
 
-        internal override ActionPlan? Solve(SASStateSpace state)
+        internal override ActionPlan? Solve()
         {
             while (!Abort && _openList.Count > 0)
             {

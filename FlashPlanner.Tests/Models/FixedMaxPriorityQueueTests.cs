@@ -37,28 +37,28 @@ namespace FlashPlanner.Tests.Models
 
         [TestMethod]
         // Size 5
-        [DataRow(5, 1, 2, 3, 4)]
-        [DataRow(5, -10, 50, 2, 16)]
-        [DataRow(5, -10, 50, 2, 16, 10, 4, 100)]
+        [DataRow(5, 1u, 2u, 3u, 4u)]
+        [DataRow(5, 50u, 2u, 16u)]
+        [DataRow(5, 50u, 2u, 16u, 10u, 4u, 100u)]
         // Size 1
-        [DataRow(1, 1, 2, 3, 4)]
-        [DataRow(1, -10, 50, 2, 16)]
-        [DataRow(1, -10, 50, 2, 16, 10, 4, 100)]
+        [DataRow(1, 1u, 2u, 3u, 4u)]
+        [DataRow(1, 50u, 2u, 16u)]
+        [DataRow(1, 50u, 2u, 16u, 10u, 4u, 100u)]
         // Size 50
-        [DataRow(50, 1, 2, 3, 4)]
-        [DataRow(50, -10, 50, 2, 16)]
-        [DataRow(50, -10, 50, 2, 16, 10, 4, 100)]
-        public void Can_EnqueueWithPriority(int size, params int[] elements)
+        [DataRow(50, 1u, 2u, 3u, 4u)]
+        [DataRow(50, 50u, 2u, 16u)]
+        [DataRow(50, 50u, 2u, 16u, 10u, 4u, 100u)]
+        public void Can_EnqueueWithPriority(int size, params uint[] elements)
         {
             // ARRANGE
-            var queue = new FixedMaxPriorityQueue<int>(size);
+            var queue = new FixedMaxPriorityQueue<uint>(size);
 
             // ACT
             for (int i = 0; i < elements.Length; i++)
                 queue.Enqueue(elements[i], elements[i]);
 
             // ASSERT
-            int prev = int.MaxValue;
+            uint prev = uint.MaxValue;
             while (queue.Count > 0)
             {
                 var element = queue.Dequeue();

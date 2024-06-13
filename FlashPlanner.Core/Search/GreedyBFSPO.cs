@@ -24,10 +24,10 @@ namespace FlashPlanner.Core.Search
             _graphGenerator = new OperatorRPG();
         }
 
-        internal override ActionPlan? Solve(SASStateSpace state)
+        internal override ActionPlan? Solve()
         {
             var preferedOperators = GetPreferredOperators();
-            var preferredQueue = InitializeQueue(state);
+            var preferredQueue = InitializeQueue(new SASStateSpace(_context));
 
             int iteration = 0;
             while (!Abort && (_openList.Count > 0 || preferredQueue.Count > 0))

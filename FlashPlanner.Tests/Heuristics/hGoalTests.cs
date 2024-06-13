@@ -35,7 +35,7 @@ namespace FlashPlanner.Tests.Heuristics
             var newValue = h.GetValue(parent, state, new List<Operator>());
 
             // ASSERT
-            Assert.AreEqual(1, newValue);
+            Assert.AreEqual(1u, newValue);
         }
 
         [TestMethod]
@@ -58,7 +58,7 @@ namespace FlashPlanner.Tests.Heuristics
             var newValue = h.GetValue(parent, state, new List<Operator>());
 
             // ASSERT
-            Assert.AreEqual(0, newValue);
+            Assert.AreEqual(0u, newValue);
         }
 
         [TestMethod]
@@ -87,7 +87,7 @@ namespace FlashPlanner.Tests.Heuristics
             var newValue = h.GetValue(parent, state, new List<Operator>());
 
             // ASSERT
-            Assert.AreEqual(1, newValue);
+            Assert.AreEqual(1u, newValue);
         }
 
         [TestMethod]
@@ -119,7 +119,7 @@ namespace FlashPlanner.Tests.Heuristics
             var newValue = h.GetValue(parent, state, new List<Operator>());
 
             // ASSERT
-            Assert.AreEqual(0, newValue);
+            Assert.AreEqual(0u, newValue);
         }
     }
 }

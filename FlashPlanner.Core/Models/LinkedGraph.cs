@@ -1,15 +1,13 @@
-﻿using System.Drawing;
-
-namespace FlashPlanner.Core.Models
+﻿namespace FlashPlanner.Core.Models
 {
     public class LinkedGraph
     {
         private readonly BitMask[] _matrix;
 
-        public LinkedGraph(int size)
+        public LinkedGraph(uint size)
         {
             _matrix = new BitMask[size];
-            for (int i = 0; i < size; i++)
+            for (uint i = 0; i < size; i++)
                 _matrix[i] = new BitMask(size);
         }
 
@@ -18,15 +16,15 @@ namespace FlashPlanner.Core.Models
             _matrix = other;
         }
 
-        public BitMask this[int from] => _matrix[from];
+        public BitMask this[uint from] => _matrix[from];
 
-        public void Link(int from, int to)
+        public void Link(uint from, uint to)
         {
             if (to != from)
                 _matrix[from][to] = true;
         }
 
-        public void LinkAll(int from, List<int> tos)
+        public void LinkAll(uint from, List<uint> tos)
         {
             foreach (var to in tos)
                 Link(from, to);

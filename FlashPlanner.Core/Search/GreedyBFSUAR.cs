@@ -20,7 +20,7 @@ namespace FlashPlanner.Core.Search
         private int _operatorsUsed = -1;
         private readonly OperatorRPG _graphGenerator;
         private HashSet<StateMove> _fullyClosed = new HashSet<StateMove>();
-        private readonly Dictionary<int, List<Operator>> _relaxedCache = new Dictionary<int, List<Operator>>();
+        private readonly Dictionary<StateMove, List<Operator>> _relaxedCache = new Dictionary<StateMove, List<Operator>>();
 
         /// <summary>
         /// Main constructor
@@ -31,12 +31,12 @@ namespace FlashPlanner.Core.Search
             _graphGenerator = new OperatorRPG();
         }
 
-        internal override ActionPlan? Solve(SASStateSpace state)
+        internal override ActionPlan? Solve()
         {
             // Initial Operator Subset
             _operatorsUsed = -1;
             var operators = GetInitialOperators();
-            _openList = InitializeQueue(state);
+            _openList = InitializeQueue(new SASStateSpace(_context));
             _fullyClosed = new HashSet<StateMove>();
             bool haveOnce = false;
 
@@ -47,8 +47,8 @@ namespace FlashPlanner.Core.Search
                     operators = RefineOperators(operators);
 
                 var stateMove = ExpandBestState();
-                int best = stateMove.hValue;
-                int current = int.MaxValue;
+                uint best = stateMove.hValue;
+                uint current = uint.MaxValue;
                 foreach (var op in operators)
                 {
                     if (Abort) break;
@@ -116,7 +116,7 @@ namespace FlashPlanner.Core.Search
 
             bool refinedOperatorsFound = false;
             bool lookForApplicaple = false;
-            int smallestHValue = -1;
+            uint smallestHValue = 0;
             // Refinement Step 2
             while (!refinedOperatorsFound)
             {
@@ -134,7 +134,7 @@ namespace FlashPlanner.Core.Search
                     }
 
                     // Refinement Step 4
-                    smallestHValue = -1;
+                    smallestHValue = 0;
                     lookForApplicaple = true;
                 }
                 else
@@ -187,15 +187,14 @@ namespace FlashPlanner.Core.Search
             }
         }
 
-        private List<Operator> GetNewRelaxedOperators(int smallestHValue, List<Operator> operators, HashSet<StateMove> newClosed)
+        private List<Operator> GetNewRelaxedOperators(uint smallestHValue, List<Operator> operators, HashSet<StateMove> newClosed)
         {
             var allSmallest = newClosed.Where(x => x.hValue == smallestHValue).ToList();
             var relaxedPlanOperators = new List<Operator>();
             foreach (var item in allSmallest)
             {
                 if (Abort) return new List<Operator>();
-                var hash = item.GetHashCode();
-                if (_relaxedCache.TryGetValue(hash, out List<Operator>? value))
+                if (_relaxedCache.TryGetValue(item, out List<Operator>? value))
                     relaxedPlanOperators.AddRange(value.Except(operators).Except(relaxedPlanOperators));
                 else
                 {
@@ -205,7 +204,7 @@ namespace FlashPlanner.Core.Search
                         );
                     if (!_graphGenerator.Failed)
                     {
-                        _relaxedCache.Add(hash, newOps);
+                        _relaxedCache.Add(item, newOps);
                         relaxedPlanOperators.AddRange(newOps.Except(operators).Except(relaxedPlanOperators));
                     }
                 }
@@ -213,7 +212,7 @@ namespace FlashPlanner.Core.Search
             return relaxedPlanOperators;
         }
 
-        private List<Operator> GetNewApplicableOperators(int smallestHValue, List<Operator> operators, HashSet<StateMove> newClosed)
+        private List<Operator> GetNewApplicableOperators(uint smallestHValue, List<Operator> operators, HashSet<StateMove> newClosed)
         {
             var allSmallest = newClosed.Where(x => x.hValue == smallestHValue).ToList();
             var applicableOperators = new List<Operator>();
@@ -221,15 +220,8 @@ namespace FlashPlanner.Core.Search
             {
                 if (Abort) return new List<Operator>();
                 foreach (var op in _context.SAS.Operators)
-                {
-                    if (!operators.Contains(op))
-                    {
-                        if (item.State.IsApplicable(op))
-                        {
-                            applicableOperators.Add(op);
-                        }
-                    }
-                }
+                    if (item.State.IsApplicable(op) && !applicableOperators.Contains(op) && !operators.Any(x => x.ID == op.ID))
+                        applicableOperators.Add(op);
             }
             return applicableOperators;
         }

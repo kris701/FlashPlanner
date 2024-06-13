@@ -43,7 +43,7 @@ namespace FlashPlanner.Core.Search
             _parameterLimit = parameterLimit;
         }
 
-        internal override ActionPlan? Solve(SASStateSpace state)
+        internal override ActionPlan? Solve()
         {
             DoLog?.Invoke($"Finding focused macros...");
             _learnedMacros = LearnFocusedMacros(_numberOfMacros, _searchBudget);
@@ -86,7 +86,7 @@ namespace FlashPlanner.Core.Search
 
             while (_planMap.ContainsKey(state))
             {
-                if (state.Operator == -1)
+                if (state.Operator == uint.MaxValue)
                     break;
                 var previousState = _planMap[state];
                 var macroOp = macroOps.FirstOrDefault(x => x.ID == state.Operator);
@@ -113,13 +113,13 @@ namespace FlashPlanner.Core.Search
             return new ActionPlan(chain);
         }
 
-        private List<int> GeneratePlanOperatorChain(StateMove state)
+        private List<uint> GeneratePlanOperatorChain(StateMove state)
         {
-            var chain = new List<int>();
+            var chain = new List<uint>();
 
             while (_planMap.ContainsKey(state))
             {
-                if (state.Operator == -1)
+                if (state.Operator == uint.MaxValue)
                     break;
                 chain.Add(state.Operator);
                 state = _planMap[state];
@@ -178,7 +178,7 @@ namespace FlashPlanner.Core.Search
 
         // This section is mostly based on Algorithm 2 from appendix
         // Its quite slow, but this search algorithm is mostly to show the possibilities of reducing generated states, not search time.
-        private MacroDecl GenerateMacroFromOperatorSteps(List<int> steps)
+        private MacroDecl GenerateMacroFromOperatorSteps(List<uint> steps)
         {
             var actionCombiner = new ActionDeclCombiner();
 
@@ -209,9 +209,9 @@ namespace FlashPlanner.Core.Search
                 _initial = initial;
             }
 
-            internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
+            internal override uint GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
             {
-                var changed = 0;
+                uint changed = 0;
                 foreach (var item in _initial)
                     if (!state[item])
                         changed++;

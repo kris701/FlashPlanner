@@ -9,7 +9,7 @@ namespace FlashPlanner.Core.States
     /// <summary>
     /// Representation of a state space
     /// </summary>
-    public class SASStateSpace : IEnumerable<int>
+    public class SASStateSpace : IEnumerable<uint>
     {
         /// <summary>
         /// A reference to the translated context
@@ -18,7 +18,7 @@ namespace FlashPlanner.Core.States
         /// <summary>
         /// Amount of facts in the state space.
         /// </summary>
-        public int Count;
+        public uint Count;
 
         internal BitMask _state;
         internal int _hashCache = -1;
@@ -91,7 +91,7 @@ namespace FlashPlanner.Core.States
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool this[int id] => _state[id];
+        public bool this[uint id] => _state[id];
 
         /// <summary>
         /// Equals override for the state
@@ -119,7 +119,7 @@ namespace FlashPlanner.Core.States
             if (_hashCache != -1)
                 return _hashCache;
             int hash = 359412394;
-            for (int i = 0; i < _state.Length; i++)
+            for (uint i = 0; i < _state.Length; i++)
                 if (_state[i])
                     hash ^= Context.FactHashes[i];
             _hashCache = hash;
@@ -147,7 +147,7 @@ namespace FlashPlanner.Core.States
         /// Iterator to iterate through the facts in the state space.
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<int> GetEnumerator() => _state.GetEnumerator();
+        public IEnumerator<uint> GetEnumerator() => _state.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _state.GetEnumerator();
     }
 }

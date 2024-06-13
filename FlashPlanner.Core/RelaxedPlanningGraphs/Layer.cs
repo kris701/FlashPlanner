@@ -10,20 +10,20 @@ namespace FlashPlanner.Core.RelaxedPlanningGraphs
         /// <summary>
         /// What operators have been executed
         /// </summary>
-        public Dictionary<int, Operator> Operators;
+        public Dictionary<uint, Operator> Operators;
         /// <summary>
         /// What propositions (facts) are true
         /// </summary>
-        public HashSet<int> Propositions;
+        public HashSet<uint> Propositions;
 
         /// <summary>
         /// Main constuctor
         /// </summary>
         /// <param name="operators"></param>
         /// <param name="propositions"></param>
-        public Layer(List<Operator> operators, HashSet<int> propositions)
+        public Layer(List<Operator> operators, HashSet<uint> propositions)
         {
-            Operators = new Dictionary<int, Operator>(operators.Count);
+            Operators = new Dictionary<uint, Operator>(operators.Count);
             foreach (var op in operators)
                 Operators.Add(op.ID, op);
             Propositions = propositions;

@@ -72,7 +72,7 @@ namespace FlashPlanner.Core.Search
             Generated = 0;
             Heuristic.Reset();
 
-            var result = Solve(state);
+            var result = Solve();
 
             Stop();
 
@@ -84,7 +84,7 @@ namespace FlashPlanner.Core.Search
             return result;
         }
 
-        internal abstract ActionPlan? Solve(SASStateSpace state);
+        internal abstract ActionPlan? Solve();
 
         internal StateMove GenerateNewState(StateMove state, Operator op)
         {

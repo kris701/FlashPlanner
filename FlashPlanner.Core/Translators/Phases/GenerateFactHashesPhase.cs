@@ -22,10 +22,10 @@ namespace FlashPlanner.Core.Translators.Phases
             var factHashes = new int[decl.Facts];
             foreach (var fact in decl.Init)
                 if (factHashes[fact.ID] == 0)
-                    factHashes[fact.ID] = Hash32shiftmult(fact.ID);
+                    factHashes[fact.ID] = Hash32shiftmult((int)fact.ID);
             foreach (var fact in decl.Goal)
                 if (factHashes[fact.ID] == 0)
-                    factHashes[fact.ID] = Hash32shiftmult(fact.ID);
+                    factHashes[fact.ID] = Hash32shiftmult((int)fact.ID);
             foreach (var op in decl.Operators)
             {
                 var all = new List<Fact>(op.Pre);
@@ -33,7 +33,7 @@ namespace FlashPlanner.Core.Translators.Phases
                 all.AddRange(op.Del);
                 foreach (var fact in all)
                     if (factHashes[fact.ID] == 0)
-                        factHashes[fact.ID] = Hash32shiftmult(fact.ID);
+                        factHashes[fact.ID] = Hash32shiftmult((int)fact.ID);
             }
             return factHashes;
         }

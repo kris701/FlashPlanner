@@ -37,6 +37,6 @@ namespace FlashPlanner.Core.Heuristics
         /// <param name="state"></param>
         /// <param name="operators"></param>
         /// <returns></returns>
-        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators) => (int)(Heuristic.GetValue(parent, state, operators) * Weight);
+        internal override uint GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators) => (uint)(Heuristic.GetValue(parent, state, operators) * Weight);
     }
 }

@@ -43,8 +43,8 @@ namespace FlashPlanner.Core.Translators.Phases
             }
             var uniqueDict = new Dictionary<string, Fact>();
             foreach (var fact in unique)
-                uniqueDict.Add(fact.ToString(), fact);
-            int count = 0;
+                uniqueDict.Add($"{fact}", fact);
+            uint count = 0;
             foreach (var fact in unique)
                 fact.ID = count++;
 
@@ -63,7 +63,7 @@ namespace FlashPlanner.Core.Translators.Phases
         private void ReplaceFacts(Fact[] from, Dictionary<string, Fact> with)
         {
             for (int i = 0; i < from.Length; i++)
-                from[i] = with[from[i].ToString()];
+                from[i] = with[$"{from[i]}"];
         }
     }
 }

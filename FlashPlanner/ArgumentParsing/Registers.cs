@@ -108,10 +108,10 @@ namespace FlashPlanner.ArgumentParsing
             // Heuristics
             new Argument("hAdd", new Dictionary<string, Type>(), (args) => new hAdd()),
             new Argument("hConstant", new Dictionary<string, Type>(){
-                { "c", typeof(int) }
+                { "c", typeof(uint) }
             }, (args) =>
             {
-                if (args["c"] is int constant)
+                if (args["c"] is uint constant)
                     return new hConstant(constant);
                 throw new Exception("Invalid arguments given for heuristic!");
             }),

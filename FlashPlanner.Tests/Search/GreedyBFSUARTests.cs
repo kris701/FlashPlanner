@@ -25,7 +25,6 @@ namespace FlashPlanner.Tests.Search
             "zenotravel",
             "tpp",
             "satellite",
-            "driverlog",
             "blocks",
             "logistics00",
             "freecell",

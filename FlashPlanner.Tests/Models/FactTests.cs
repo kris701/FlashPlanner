@@ -11,10 +11,10 @@ namespace FlashPlanner.Tests.Models
     public class FactTests : BaseSASTests
     {
         [TestMethod]
-        [DataRow(0, 1)]
-        [DataRow(0, 10)]
-        [DataRow(0, 10000)]
-        public void Can_Equals_IfTrue(int from, int count)
+        [DataRow(0u, 1u)]
+        [DataRow(0u, 10u)]
+        [DataRow(0u, 10000u)]
+        public void Can_Equals_IfTrue(uint from, uint count)
         {
             // ARRANGE
             var facts1 = GenerateRandomFacts(from, count);
@@ -27,10 +27,10 @@ namespace FlashPlanner.Tests.Models
         }
 
         [TestMethod]
-        [DataRow(0, 100, 100)]
-        [DataRow(10, 30, 1)]
-        [DataRow(10, 20, 5)]
-        public void Can_Equals_IfFalse(int from1, int from2, int count)
+        [DataRow(0u, 100u, 100u)]
+        [DataRow(10u, 30u, 1u)]
+        [DataRow(10u, 20u, 5u)]
+        public void Can_Equals_IfFalse(uint from1, uint from2, uint count)
         {
             // ARRANGE
             var facts1 = GenerateRandomFacts(from1, count);
@@ -59,10 +59,10 @@ namespace FlashPlanner.Tests.Models
         }
 
         [TestMethod]
-        [DataRow(1)]
-        [DataRow(100)]
-        [DataRow(1000)]
-        public void Can_GetHashCode(int count)
+        [DataRow(1u)]
+        [DataRow(100u)]
+        [DataRow(1000u)]
+        public void Can_GetHashCode(uint count)
         {
             // ARRANGE
             var facts = GenerateRandomFacts(0, count);

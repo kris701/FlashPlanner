@@ -17,11 +17,10 @@ namespace FlashPlanner.Tests.Heuristics
     public class hDepthTests
     {
         [TestMethod]
-        [DataRow(1, 1 - 1)]
-        [DataRow(int.MaxValue, int.MaxValue - 1)]
-        [DataRow(62362524, 62362524 - 1)]
-        [DataRow(-62362524, -62362524 - 1)]
-        public void Can_GeneratehDepthCorrectly(int inValue, int expected)
+        [DataRow(1u, 1u - 1u)]
+        [DataRow(uint.MaxValue, uint.MaxValue - 1)]
+        [DataRow(62362524u, 62362524u - 1u)]
+        public void Can_GeneratehDepthCorrectly(uint inValue, uint expected)
         {
             // ARRANGE
             IHeuristic h = new hDepth();

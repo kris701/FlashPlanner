@@ -17,9 +17,9 @@ namespace FlashPlanner.Tests.HeuristicsCollections
     public class hColSumTests
     {
         [TestMethod]
-        [DataRow(11, 1, 2, 3, 5)]
-        [DataRow(3, 1, 2)]
-        public void Can_GeneratehColSumCorrectly(int expected, params int[] constants)
+        [DataRow(11u, 1u, 2u, 3u, 5u)]
+        [DataRow(3u, 1u, 2u)]
+        public void Can_GeneratehColSumCorrectly(uint expected, params uint[] constants)
         {
             // ARRANGE
             IHeuristicCollection h = new hColSum(new List<IHeuristic>());

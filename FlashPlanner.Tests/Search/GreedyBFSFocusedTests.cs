@@ -41,7 +41,7 @@ namespace FlashPlanner.Tests.Search
         {
             // ARRANGE
             var context = GetTranslatorContext(domain, problem);
-            var planner = new GreedyBFSUAR(h);
+            var planner = new GreedyBFSFocused(h, 2, 1, 2);
             var validator = new PlanValidator();
 
             // ACT

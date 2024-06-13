@@ -19,11 +19,11 @@ namespace FlashPlanner.Tests.Heuristics
     public class hWeightedTests
     {
         [TestMethod]
-        [DataRow(1, 1, 1)]
-        [DataRow(1, 2, 2)]
-        [DataRow(50, 2, 100)]
-        [DataRow(50, 0.5, 25)]
-        public void Can_GeneratehWeightedCorrectly(int constant, double weight, int expected)
+        [DataRow(1u, 1, 1u)]
+        [DataRow(1u, 2, 2u)]
+        [DataRow(50u, 2, 100u)]
+        [DataRow(50u, 0.5, 25u)]
+        public void Can_GeneratehWeightedCorrectly(uint constant, double weight, uint expected)
         {
             // ARRANGE
             IHeuristic h = new hWeighted(new hConstant(constant), weight);

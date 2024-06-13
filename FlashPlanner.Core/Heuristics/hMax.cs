@@ -19,9 +19,9 @@ namespace FlashPlanner.Core.Heuristics
             _graphGenerator = new FactRPG();
         }
 
-        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
+        internal override uint GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
-            var max = 0;
+            uint max = 0;
             var dict = _graphGenerator.GenerateRelaxedGraph(state, operators);
             foreach (var fact in state.Context.SAS.Goal)
             {

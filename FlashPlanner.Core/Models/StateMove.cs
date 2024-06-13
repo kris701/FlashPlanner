@@ -19,11 +19,11 @@ namespace FlashPlanner.Core.Models
         /// <summary>
         /// What operator was executed to get here
         /// </summary>
-        public int Operator { get; set; }
+        public uint Operator { get; set; }
         /// <summary>
         /// Heuristic value of this state
         /// </summary>
-        public int hValue { get; set; }
+        public uint hValue { get; set; }
 
         /// <summary>
         /// Initial state constructor
@@ -32,7 +32,7 @@ namespace FlashPlanner.Core.Models
         public StateMove(SASStateSpace state)
         {
             State = state;
-            hValue = int.MaxValue;
+            hValue = uint.MaxValue;
             Steps = 0;
             Operator = 0;
         }
@@ -46,7 +46,7 @@ namespace FlashPlanner.Core.Models
         {
             State = new SASStateSpace(move.State, op);
             Steps = move.Steps + 1;
-            hValue = -1;
+            hValue = uint.MaxValue;
             Operator = op.ID;
         }
 

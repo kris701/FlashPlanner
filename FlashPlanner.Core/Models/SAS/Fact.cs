@@ -10,7 +10,7 @@ namespace FlashPlanner.Core.Models.SAS
         /// <summary>
         /// ID of this fact
         /// </summary>
-        public int ID = 0;
+        public uint ID = 0;
         /// <summary>
         /// Name of this fact 
         /// </summary>
@@ -39,7 +39,7 @@ namespace FlashPlanner.Core.Models.SAS
         /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="arguments"></param>
-        public Fact(int id, string name, params string[] arguments) : this(name, arguments)
+        public Fact(uint id, string name, params string[] arguments) : this(name, arguments)
         {
             ID = id;
         }
@@ -70,12 +70,8 @@ namespace FlashPlanner.Core.Models.SAS
         /// <returns></returns>
         public override bool Equals(object? obj)
         {
-            if (obj is Fact f)
-            {
-                if (ID != f.ID)
-                    return false;
-                return true;
-            }
+            if (obj is Fact f) 
+                return ID == f.ID;
             return false;
         }
 

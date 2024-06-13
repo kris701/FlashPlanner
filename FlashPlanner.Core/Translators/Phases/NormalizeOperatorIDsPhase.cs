@@ -18,7 +18,7 @@ namespace FlashPlanner.Core.Translators.Phases
         public override TranslatorContext ExecutePhase(TranslatorContext from)
         {
             DoLog?.Invoke($"Normalizing remaining operator IDs...");
-            int count = from.SAS.Operators.Count;
+            uint count = (uint)from.SAS.Operators.Count;
             foreach (var op in from.SAS.Operators)
                 op.ID = count--;
             from.SAS = new SASDecl(from.SAS.Operators, from.SAS.Goal, from.SAS.Init, from.SAS.Facts);

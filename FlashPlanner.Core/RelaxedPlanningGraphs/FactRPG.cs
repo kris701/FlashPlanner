@@ -14,22 +14,22 @@ namespace FlashPlanner.Core.RelaxedPlanningGraphs
         /// <param name="state"></param>
         /// <param name="operators"></param>
         /// <returns></returns>
-        public Dictionary<int, int> GenerateRelaxedGraph(SASStateSpace state, List<Operator> operators)
+        public Dictionary<uint, uint> GenerateRelaxedGraph(SASStateSpace state, List<Operator> operators)
         {
             state = new RelaxedSASStateSpace(state);
             bool[] covered = new bool[operators.Count];
-            var dict = new Dictionary<int, int>();
+            var dict = new Dictionary<uint, uint>();
             foreach (var fact in state)
                 dict.Add(fact, 0);
 
-            int layer = 1;
+            uint layer = 1;
             while (!state.IsInGoal())
             {
                 var apply = GetNewApplicableOperators(state, operators, covered);
                 if (apply.Count == 0)
                     return dict;
 
-                int changed = state.Count;
+                uint changed = state.Count;
                 state = new RelaxedSASStateSpace(state, apply);
                 foreach (var op in apply)
                     foreach (var add in op.Add)

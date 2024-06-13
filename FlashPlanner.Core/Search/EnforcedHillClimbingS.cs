@@ -1,5 +1,4 @@
 ﻿using FlashPlanner.Core.Heuristics;
-using FlashPlanner.Core.States;
 using PDDLSharp.Models.FastDownward.Plans;
 
 namespace FlashPlanner.Core.Search
@@ -18,9 +17,9 @@ namespace FlashPlanner.Core.Search
         {
         }
 
-        internal override ActionPlan? Solve(SASStateSpace state)
+        internal override ActionPlan? Solve()
         {
-            var bestH = int.MaxValue;
+            var bestH = uint.MaxValue;
             while (!Abort && _openList.Count > 0)
             {
                 var stateMove = ExpandBestState();

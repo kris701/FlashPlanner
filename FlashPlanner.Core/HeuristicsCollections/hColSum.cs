@@ -18,19 +18,19 @@ namespace FlashPlanner.Core.HeuristicsCollections
         {
         }
 
-        internal override int GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
+        internal override uint GetValueInner(StateMove parent, SASStateSpace state, List<Operator> operators)
         {
-            int sum = 0;
+            uint sum = 0;
             foreach (var heuristic in Heuristics)
-                if (sum < int.MaxValue)
+                if (sum < uint.MaxValue)
                     sum = ClampSum(sum, heuristic.GetValue(parent, state, operators));
             return sum;
         }
 
-        private int ClampSum(int value1, int value2)
+        private uint ClampSum(uint value1, uint value2)
         {
-            if (value1 == int.MaxValue || value2 == int.MaxValue)
-                return int.MaxValue;
+            if (value1 == uint.MaxValue || value2 == uint.MaxValue)
+                return uint.MaxValue;
             return value1 + value2;
         }
     }

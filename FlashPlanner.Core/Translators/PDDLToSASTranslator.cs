@@ -105,7 +105,7 @@ namespace FlashPlanner.Core.Translators
                 watch.Start();
                 result = phase.ExecutePhase(result);
                 watch.Stop();
-                DoLog?.Invoke($"\tTook {Math.Round(watch.Elapsed.TotalSeconds,2)}s");
+                DoLog?.Invoke($"\tTook {Math.Round(watch.Elapsed.TotalSeconds, 2)}s");
             }
             Stop();
             return result;
