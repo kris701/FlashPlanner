@@ -23,6 +23,8 @@ namespace FlashPlanner.Core.Translators.Phases
                 var toRemove = new List<ActionDecl>();
                 foreach (var pred in from.PDDL.Domain.Predicates.Predicates)
                 {
+                    if (pred.Name == "=")
+                        continue;
                     if (from.PDDL.Problem.Init.Predicates.Any(x => x is PredicateExp pred2 && pred2.Name == pred.Name))
                         continue;
                     if (from.PDDL.Domain.Actions.Any(x => x.Effects.FindNames(pred.Name).Count > 0))

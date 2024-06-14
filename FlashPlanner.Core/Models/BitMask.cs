@@ -229,7 +229,7 @@ namespace FlashPlanner.Core.Models
           31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
         };
 
-        private uint[] GetExponents(uint value, uint offset, ref uint[] data)
+        private void GetExponents(uint value, uint offset, ref uint[] data)
         {
             uint enabledBitCounter = 0;
 
@@ -241,7 +241,6 @@ namespace FlashPlanner.Core.Models
             }
 
             _tmpMax = enabledBitCounter;
-            return data;
         }
 
         public void Reset()

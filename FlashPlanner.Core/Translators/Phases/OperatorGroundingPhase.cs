@@ -67,6 +67,7 @@ namespace FlashPlanner.Core.Translators.Phases
         private List<Operator> GroundActions(List<ActionDecl> actions, TranslatorContext from)
         {
             var statics = SimpleStaticPredicateDetector.FindStaticPredicates(from.PDDL);
+            statics.Add(new PredicateExp("="));
             var operators = new List<Operator>();
             foreach (var action in actions)
             {

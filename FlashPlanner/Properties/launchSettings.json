@@ -2,7 +2,7 @@
   "profiles": {
     "FlashPlanner": {
       "commandName": "Project",
-      "commandLineArgs": "--domain ../../../../Dependencies/downward-benchmarks/logistics98/domain.pddl --problem ../../../../Dependencies/downward-benchmarks/logistics98/prob03.pddl --search \"greedy(hGoal())\" --validate\""
+      "commandLineArgs": "--domain ../../../../Dependencies/unload/domain.pddl --problem ../../../../Dependencies/unload/instances/3-3-1-1.pddl --search \"greedy(hGoal())\" --validate\""
     }
   }
 } 
